@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/usr/local/Cellar/php/8.4.3/bin/php",
+            "args": [
+                "/Users/thealejandro/Projects/QxLog/QxLog/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
