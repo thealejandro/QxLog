@@ -1,0 +1,14 @@
+{
+    "Dashboard": "Panel de Control",
+    "Log in": "Iniciar Sesión",
+    "Register": "Registrarse",
+    "Name": "Nombre",
+    "Email": "Correo electrónico",
+    "Password": "Contraseña",
+    "Confirm Password": "Confirmar Contraseña",
+    "Already registered?": "¿Ya estás registrado?",
+    "Forgot your password?": "¿Olvidaste tu contraseña?",
+    "Remember me": "Recordarme",
+    "Log Out": "Cerrar Sesión",
+    "Profile": "Perfil"
+}
