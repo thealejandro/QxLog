@@ -188,10 +188,14 @@ return [
 
     'attributes' => [
         'name' => 'nombre',
+        'username' => 'nombre de usuario',
         'email' => 'correo electrónico',
         'password' => 'contraseña',
         'password_confirmation' => 'confirmación de contraseña',
         'current_password' => 'contraseña actual',
+        'new_password' => 'nueva contraseña',
+        'new_password_confirmation' => 'confirmación de nueva contraseña',
+        'old_password' => 'contraseña anterior',
     ],
 
 ];

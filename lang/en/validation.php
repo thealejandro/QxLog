@@ -195,6 +195,16 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'username' => 'username',
+        'password' => 'password',
+        'password_confirmation' => 'password confirmation',
+        'email' => 'email',
+        'name' => 'name',
+        'current_password' => 'current password',
+        'new_password' => 'new password',
+        'new_password_confirmation' => 'new password confirmation',
+        'old_password' => 'old password',
+    ],
 
 ];
