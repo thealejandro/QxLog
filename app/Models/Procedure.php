@@ -6,5 +6,38 @@ use Illuminate\Database\Eloquent\Model;
 
 class Procedure extends Model
 {
-    //
+    protected $fillable = [
+        'procedure_date',
+        'start_time',
+        'end_time',
+        'duration_minutes',
+        'patient_name',
+        'procedure_type',
+        'is_videosurgery',
+
+        'instrumentist_id',
+        'instrumentist_name',
+
+        'doctor_id',
+        'doctor_name',
+
+        'circulating_id',
+        'circulating_name',
+
+        'calculated_amount',
+        'pricing_snapshot',
+        'status',
+    ];
+
+    protected $casts = [
+        'procedure_date' => 'date',
+        'start_time' => 'string',
+        'end_time' => 'string',
+        'is_videosurgery' => 'boolean',
+        'pricing_snapshot' => 'array',      // JSON ↔ array
+        'calculated_amount' => 'decimal:2', // siempre 2 decimales
+    ];
+
+
+
 }
