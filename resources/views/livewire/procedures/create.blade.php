@@ -341,49 +341,64 @@ $selectCirculating = function (int $id) {
         class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:bg-slate-800 dark:border-slate-700 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Fecha</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
+                    {{ __('Fecha') }}
+                </label>
                 <input type="date"
                     class="w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:border-teal-500 focus:ring-teal-500 shadow-sm"
                     wire:model.live="procedure_date">
-                @error('procedure_date') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                @error('procedure_date')
+                    <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Hora inicio</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
+                    {{ __('Hora de inicio') }}
+                </label>
                 <input type="time"
                     class="w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:border-teal-500 focus:ring-teal-500 shadow-sm"
                     wire:model.live="start_time">
-                @error('start_time') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
+                @error('start_time')
+                    <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Hora
-                    finalización</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
+                    {{ __('Hora de finalización') }}
+                </label>
                 <input type="time"
                     class="w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:border-teal-500 focus:ring-teal-500 shadow-sm"
                     wire:model.live="end_time">
-                @error('end_time') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
+                @error('end_time')
+                    <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                @enderror
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Paciente</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
+                    {{ __('Paciente') }}
+                </label>
                 <input type="text"
                     class="w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:border-teal-500 focus:ring-teal-500 shadow-sm"
                     placeholder="Nombre completo del paciente" wire:model="patient_name">
-                @error('patient_name') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                @error('patient_name')
+                    <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Tipo de
-                    cirugía</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
+                    {{ __('Tipo de cirugía') }}
+                </label>
                 <input type="text"
                     class="w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:border-teal-500 focus:ring-teal-500 shadow-sm"
                     placeholder="Ej: Cesárea, Apendicectomía, Legrado..." wire:model="procedure_type">
-                @error('procedure_type') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                @error('procedure_type')
+                    <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                 @enderror
             </div>
         </div>
@@ -394,9 +409,10 @@ $selectCirculating = function (int $id) {
                 wire:model="is_videosurgery" id="is_videosurgery">
             <label for="is_videosurgery"
                 class="text-sm font-medium text-gray-700 dark:text-slate-300 select-none cursor-pointer">
-                Videocirugía
-                <span class="block text-xs font-normal text-gray-500 dark:text-slate-500">Marcar si el procedimiento fue
-                    por video.</span>
+                {{ __('Videocirugía') }}
+                <span class="block text-xs font-normal text-gray-500 dark:text-slate-500">
+                    {{ __('Marcar si el procedimiento fue por video.') }}
+                </span>
             </label>
         </div>
 
@@ -404,7 +420,9 @@ $selectCirculating = function (int $id) {
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Médico (Cirujano)</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">
+                    {{ __('Médico (Cirujano)') }}
+                </label>
 
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
