@@ -16,10 +16,21 @@
         <flux:navlist variant="outline">
             <flux:navlist.group :heading="__('Platform')" class="grid">
                 <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
-                    wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                    wire:navigate>
+                    {{ __('Dashboard') }}
+                </flux:navlist.item>
                 <flux:navlist.item icon="home" :href="route('procedures.create')"
                     :current="request()->routeIs('procedures.create')" wire:navigate>
-                    {{ __('Registro de Procedimientos') }}</flux:navlist.item>
+                    {{ __('Registro de Procedimientos') }}
+                </flux:navlist.item>
+                <flux:navlist.item icon="home" :href="route('payouts.create')"
+                    :current="request()->routeIs('payouts.create')" wire:navigate>
+                    {{ __('Registro de Pago') }}
+                </flux:navlist.item>
+                <flux:navlist.item icon="layout-grid" :href="route('payouts.index')"
+                    :current="request()->routeIs('payouts.index')" wire:navigate>
+                    {{ __('Historial de Pagos') }}
+                </flux:navlist.item>
             </flux:navlist.group>
         </flux:navlist>
 
@@ -30,11 +41,13 @@
                 target="_blank">
                 {{ __('Repository') }}
             </flux:navlist.item>
-
-            <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire"
-                target="_blank">
-                {{ __('Documentation') }}
-            </flux:navlist.item>
+            <form method="POST" action="{{ route('logout') }}" class="w-full">
+                @csrf
+                <flux:navlist.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full"
+                    data-test="logout-button">
+                    {{ __('Log Out') }}
+                </flux:navlist.item>
+            </form>
         </flux:navlist>
 
         <!-- Desktop User Menu -->
