@@ -15,7 +15,8 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        $this->call(QxLogInitialAdminsSeeder::class);
+        // $this->call(QxLogInitialAdminsSeeder::class);
+        $this->call(QxLogTestSeeder::class);
 
         // User::firstOrCreate(
         //     ['email' => 'test@example.com'],

@@ -29,7 +29,12 @@ Route::middleware(['auth'])->group(function () {
             ),
         )
         ->name('two-factor.show');
+});
 
+Route::middleware(['auth'])->group(function () {
     Volt::route('procedures/create', 'procedures.create')->name('procedures.create');
+    Volt::route('payouts/create', 'payouts.create')->name('payouts.create');
+    Volt::route('payouts', 'payouts.index')->name('payouts.index');
+    Volt::route('payouts/{batch}/voucher', 'payouts.voucher')->name('payouts.voucher');
 
 });

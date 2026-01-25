@@ -22,9 +22,6 @@ return new class extends Migration {
             $table->string('status')->default('active'); // active | void
             $table->string('void_reason')->nullable();
 
-            $table->json('payout_snapshot')->nullable();
-            $table->json('payout_details')->nullable();
-
             $table->index(['instrumentist_id', 'paid_at'], 'instrumentist_paid_at_idx');
             $table->index(['paid_by_id', 'paid_at'], 'paid_by_paid_at_idx');
             $table->index('status', 'payout_batches_status_idx');

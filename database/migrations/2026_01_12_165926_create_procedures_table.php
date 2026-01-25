@@ -31,6 +31,8 @@ return new class extends Migration {
             $table->string('doctor_name')->nullable();
             $table->string('circulating_name')->nullable();
 
+            $table->timestamp('paid_at')->nullable();
+
             //Calculo automatico (snapshot)
             $table->decimal('calculated_amount', 10, 2)->default(0);
             $table->json('pricing_snapshot')->nullable();
@@ -44,6 +46,7 @@ return new class extends Migration {
             $table->index(['doctor_id', 'status'], 'doctor_status_idx');
             $table->index(['circulating_id', 'status'], 'circulating_status_idx');
             $table->index('procedure_date', 'procedure_date_idx');
+            $table->index(['paid_at', 'status'], 'paid_at_status_idx');
 
             $table->timestamps();
             $table->softDeletes();
