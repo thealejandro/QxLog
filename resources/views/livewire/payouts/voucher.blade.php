@@ -58,11 +58,14 @@ mount(function (string|int $batch) {
     <div class="no-print mb-6 flex items-center justify-between gap-2">
         <a href="{{ route('payouts.index') }}"
             class="text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors flex items-center gap-1">
-            <flux:icon name="arrow-left" size="xs" /> Volver
+            <flux:icon.arrow-left size="xs" /> Volver
         </a>
 
         <div class="flex gap-2">
-            <flux:button icon="printer" onclick="window.print()">Imprimir</flux:button>
+            <flux:button onclick="window.print()">
+                <flux:icon.printer class="size-4 mr-2" />
+                Imprimir
+            </flux:button>
         </div>
     </div>
 

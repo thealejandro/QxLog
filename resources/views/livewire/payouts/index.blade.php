@@ -64,16 +64,28 @@ $batches = computed(function () {
 
     <div class="rounded-xl border bg-white p-6 dark:bg-zinc-900 dark:border-zinc-700 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <flux:select wire:model.live="instrumentist_id" label="Instrumentista" placeholder="Todos">
-                <flux:option value="">Todos</flux:option>
-                @foreach($instrumentists as $i)
-                    <flux:option value="{{ $i['id'] }}">{{ $i['name'] }}</flux:option>
-                @endforeach
-            </flux:select>
+            <div>
+                <flux:label>Instrumentista</flux:label>
+                <select wire:model.live="instrumentist_id"
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100">
+                    <option value="">Todos</option>
+                    @foreach($instrumentists as $i)
+                        <option value="{{ $i['id'] }}">{{ $i['name'] }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-            <flux:input type="date" wire:model.live="date_from" label="Desde" />
+            <div>
+                <flux:label>Desde</flux:label>
+                <input type="date" wire:model.live="date_from"
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100" />
+            </div>
 
-            <flux:input type="date" wire:model.live="date_to" label="Hasta" />
+            <div>
+                <flux:label>Hasta</flux:label>
+                <input type="date" wire:model.live="date_to"
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100" />
+            </div>
         </div>
 
         <div class="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-700">

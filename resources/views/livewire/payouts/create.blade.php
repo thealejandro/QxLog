@@ -192,12 +192,16 @@ $liquidate = function () {
     @endif
 
     <div class="rounded-xl border bg-white p-6 dark:bg-zinc-900 dark:border-zinc-700 space-y-6">
-        <flux:select wire:model.change="instrumentist_id" label="Instrumentista"
-            placeholder="Seleccionar instrumentista">
-            @foreach($this->instrumentists as $i)
-                <flux:option value="{{ $i['id'] }}">{{ $i['name'] }}</flux:option>
-            @endforeach
-        </flux:select>
+        <div>
+            <flux:label>Instrumentista</flux:label>
+            <select wire:model.change="instrumentist_id"
+                class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100">
+                <option value="">Seleccionar instrumentista</option>
+                @foreach($this->instrumentists as $i)
+                    <option value="{{ $i['id'] }}">{{ $i['name'] }}</option>
+                @endforeach
+            </select>
+        </div>
 
         @if($this->instrumentist_id)
             <div
@@ -221,7 +225,8 @@ $liquidate = function () {
 
             @error('selected')
                 <p class="text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-2 rounded">
-                    {{ $message }}</p>
+                    {{ $message }}
+                </p>
             @enderror
 
             <div class="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-700">
@@ -253,7 +258,7 @@ $liquidate = function () {
                                         <div class="flex items-center gap-2">
                                             <span>{{ $p->procedure_type }}</span>
                                             @if($p->is_videosurgery)
-                                                <flux:badge size="sm" variant="pill" color="zinc">Video</flux:badge>
+                                                <flux:badge size="sm" color="zinc">Video</flux:badge>
                                             @endif
                                         </div>
                                     </td>
@@ -294,7 +299,7 @@ $liquidate = function () {
                             <div class="flex items-center justify-between text-sm text-zinc-500 dark:text-zinc-400 pl-8">
                                 <div>Inicio: {{ $p->start_time }}</div>
                                 @if($p->is_videosurgery)
-                                    <flux:badge size="sm" variant="pill" color="zinc">Video</flux:badge>
+                                    <flux:badge size="sm" color="zinc">Video</flux:badge>
                                 @endif
                             </div>
                         </div>

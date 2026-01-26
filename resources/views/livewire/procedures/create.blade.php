@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
-use function Livewire\Volt\{state, computed, mount, rules};
+use function Livewire\Volt\{state, computed, mount, rules, updated};
 
 state([
     // Form
@@ -243,6 +243,10 @@ $pending_total = computed(function () {
         ->sum('calculated_amount');
 });
 
+use Illuminate\Support\Str;
+
+// ...
+
 $searchDoctor = function () {
     $q = trim((string) $this->doctor_query);
 
@@ -259,15 +263,23 @@ $searchDoctor = function () {
         return;
     }
 
-    $this->doctor_id = null; // si escribe, asumimos que puede cambiar selección
+    $this->doctor_id = null;
 
-    $this->doctor_suggestions = User::query()
+    // Búsqueda insensible a acentos en PHP (más robusto que depender de la collation de la DB)
+    $allDoctors = User::query()
         ->where('role', 'doctor')
-        ->where('name', 'like', "%{$q}%")
         ->orderBy('name')
-        ->limit(8)
-        ->get(['id', 'name'])
-        ->map(fn($u) => ['id' => $u->id, 'name' => $u->name])
+        ->get(['id', 'name']);
+
+    $normalizedQ = Str::ascii(Str::lower($q));
+
+    $this->doctor_suggestions = $allDoctors
+        ->filter(function ($u) use ($normalizedQ) {
+            $normalizedName = Str::ascii(Str::lower($u->name));
+            return str_contains($normalizedName, $normalizedQ);
+        })
+        ->take(8)
+        ->values() // Re-indexar array para JSON
         ->all();
 };
 
@@ -293,13 +305,20 @@ $searchCirculating = function () {
 
     $this->circulating_id = null;
 
-    $this->circulating_suggestions = User::query()
+    $allCirculatings = User::query()
         ->where('role', 'circulating')
-        ->where('name', 'like', "%{$q}%")
         ->orderBy('name')
-        ->limit(8)
-        ->get(['id', 'name'])
-        ->map(fn($u) => ['id' => $u->id, 'name' => $u->name])
+        ->get(['id', 'name']);
+
+    $normalizedQ = Str::ascii(Str::lower($q));
+
+    $this->circulating_suggestions = $allCirculatings
+        ->filter(function ($u) use ($normalizedQ) {
+            $normalizedName = Str::ascii(Str::lower($u->name));
+            return str_contains($normalizedName, $normalizedQ);
+        })
+        ->take(8)
+        ->values()
         ->all();
 };
 
@@ -314,135 +333,92 @@ $selectCirculating = function (int $id) {
     $this->circulating_suggestions = [];
 };
 
+updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculating]);
 
 ?>
 
-<div class="max-w-4xl mx-auto p-4 md:p-6 pb-20">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold dark:text-white">Registrar procedimiento</h1>
-        <p class="text-sm text-gray-600 dark:text-slate-400">QxLog • Registro quirúrgico (instrumentación)</p>
+<div class="max-w-4xl mx-auto p-4 space-y-6">
+    <div class="mb-4">
+        <flux:heading size="xl">Registrar procedimiento</flux:heading>
+        <flux:subheading>QxLog • Registro quirúrgico (instrumentación)</flux:subheading>
     </div>
 
     @if($success_message)
         <div
-            class="mb-6 rounded-lg border border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800 px-4 py-3 text-green-800 dark:text-green-300">
-            <div class="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
-                    <path fill-rule="evenodd"
-                        d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                        clip-rule="evenodd" />
-                </svg>
-                {{ $success_message }}
-            </div>
+            class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-800 dark:bg-green-900/30 dark:border-green-800 dark:text-green-300 flex items-center gap-2">
+            <flux:icon.check-circle class="size-5" />
+            {{ $success_message }}
         </div>
     @endif
 
-    <div
-        class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:bg-slate-800 dark:border-slate-700 space-y-6">
+    <div class="rounded-xl border bg-white p-6 dark:bg-zinc-900 dark:border-zinc-700 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                    {{ __('Fecha') }}
-                </label>
-                <input type="date"
-                    class="w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:border-teal-500 focus:ring-teal-500 shadow-sm"
-                    wire:model.live="procedure_date">
-                @error('procedure_date')
-                    <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                <flux:label>Fecha</flux:label>
+                <input type="date" wire:model.live="procedure_date"
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100" />
+                @error('procedure_date') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                    {{ __('Hora de inicio') }}
-                </label>
-                <input type="time"
-                    class="w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:border-teal-500 focus:ring-teal-500 shadow-sm"
-                    wire:model.live="start_time">
-                @error('start_time')
-                    <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
-                @enderror
+                <flux:label>Hora de inicio</flux:label>
+                <input type="time" wire:model.live="start_time"
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100" />
+                @error('start_time') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                    {{ __('Hora de finalización') }}
-                </label>
-                <input type="time"
-                    class="w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:border-teal-500 focus:ring-teal-500 shadow-sm"
-                    wire:model.live="end_time">
-                @error('end_time')
-                    <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
-                @enderror
+                <flux:label>Hora de finalización</flux:label>
+                <input type="time" wire:model.live="end_time"
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100" />
+                @error('end_time') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                    {{ __('Paciente') }}
-                </label>
-                <input type="text"
-                    class="w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:border-teal-500 focus:ring-teal-500 shadow-sm"
-                    placeholder="Nombre completo del paciente" wire:model="patient_name">
-                @error('patient_name')
-                    <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                <flux:label>Paciente</flux:label>
+                <input type="text" wire:model="patient_name" placeholder="Nombre completo del paciente"
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100 dark:placeholder-zinc-500" />
+                @error('patient_name') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                    {{ __('Tipo de cirugía') }}
-                </label>
-                <input type="text"
-                    class="w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:border-teal-500 focus:ring-teal-500 shadow-sm"
-                    placeholder="Ej: Cesárea, Apendicectomía, Legrado..." wire:model="procedure_type">
-                @error('procedure_type')
-                    <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                <flux:label>Tipo de cirugía</flux:label>
+                <input type="text" wire:model="procedure_type" placeholder="Ej: Cesárea, Apendicectomía..."
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100 dark:placeholder-zinc-500" />
+                @error('procedure_type') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                 @enderror
             </div>
         </div>
 
-        <div class="flex items-center gap-3 py-2">
-            <input type="checkbox"
-                class="h-5 w-5 rounded border-gray-300 text-teal-600 focus:ring-teal-500 dark:border-slate-600 dark:bg-slate-900 dark:checked:bg-teal-500"
-                wire:model="is_videosurgery" id="is_videosurgery">
-            <label for="is_videosurgery"
-                class="text-sm font-medium text-gray-700 dark:text-slate-300 select-none cursor-pointer">
-                {{ __('Videocirugía') }}
-                <span class="block text-xs font-normal text-gray-500 dark:text-slate-500">
-                    {{ __('Marcar si el procedimiento fue por video.') }}
-                </span>
-            </label>
+        <div>
+            <flux:checkbox wire:model="is_videosurgery" label="Videocirugía"
+                description="Marcar si el procedimiento fue por video." />
         </div>
 
-        <div class="border-t border-gray-200 dark:border-slate-700 my-6"></div>
+        <hr class="border-zinc-200 dark:border-zinc-700">
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">
-                    {{ __('Médico (Cirujano)') }}
-                </label>
+                <flux:label>Médico (Cirujano)</flux:label>
 
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
-                            <path fill-rule="evenodd"
-                                d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
-                                clip-rule="evenodd" />
-                        </svg>
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-zinc-400">
+                        <flux:icon.magnifying-glass class="size-5" />
                     </div>
                     <input type="text"
-                        class="w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:border-teal-500 focus:ring-teal-500 pl-10 shadow-sm"
-                        placeholder="Buscar o escribir nombre..." wire:model.live="doctor_query"
-                        wire:input="searchDoctor">
+                        class="block w-full rounded-lg border-zinc-200 bg-white py-2.5 pl-10 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100 dark:placeholder-zinc-500"
+                        placeholder="Buscar o escribir nombre..." wire:model.live.debounce.300ms="doctor_query">
 
                     @if(!empty($this->doctor_suggestions))
                         <div
-                            class="absolute z-20 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg dark:bg-slate-800 dark:border-slate-700 overflow-hidden">
+                            class="absolute z-20 mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-lg dark:bg-zinc-800 dark:border-zinc-700 overflow-hidden">
                             @foreach($this->doctor_suggestions as $s)
                                 <button type="button"
-                                    class="block w-full text-left px-4 py-2.5 hover:bg-teal-50 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-200 transition-colors border-b border-gray-100 dark:border-slate-700/50 last:border-0"
+                                    class="block w-full text-left px-4 py-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 transition-colors border-b border-zinc-100 dark:border-zinc-700/50 last:border-0"
                                     wire:click="selectDoctor({{ $s['id'] }})">
                                     {{ $s['name'] }}
                                 </button>
@@ -456,28 +432,22 @@ $selectCirculating = function (int $id) {
             </div>
 
             <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300">Circulante
-                    (Enfermería)</label>
+                <flux:label>Circulante (Enfermería)</flux:label>
 
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
-                            <path fill-rule="evenodd"
-                                d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
-                                clip-rule="evenodd" />
-                        </svg>
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-zinc-400">
+                        <flux:icon.magnifying-glass class="size-5" />
                     </div>
                     <input type="text"
-                        class="w-full rounded-lg border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:border-teal-500 focus:ring-teal-500 pl-10 shadow-sm"
-                        placeholder="Buscar o escribir nombre..." wire:model.live="circulating_query"
-                        wire:input="searchCirculating">
+                        class="block w-full rounded-lg border-zinc-200 bg-white py-2.5 pl-10 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100 dark:placeholder-zinc-500"
+                        placeholder="Buscar o escribir nombre..." wire:model.live.debounce.300ms="circulating_query">
 
                     @if(!empty($this->circulating_suggestions))
                         <div
-                            class="absolute z-20 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg dark:bg-slate-800 dark:border-slate-700 overflow-hidden">
+                            class="absolute z-20 mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-lg dark:bg-zinc-800 dark:border-zinc-700 overflow-hidden">
                             @foreach($this->circulating_suggestions as $s)
                                 <button type="button"
-                                    class="block w-full text-left px-4 py-2.5 hover:bg-teal-50 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-200 transition-colors border-b border-gray-100 dark:border-slate-700/50 last:border-0"
+                                    class="block w-full text-left px-4 py-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 transition-colors border-b border-zinc-100 dark:border-zinc-700/50 last:border-0"
                                     wire:click="selectCirculating({{ $s['id'] }})">
                                     {{ $s['name'] }}
                                 </button>
@@ -492,105 +462,89 @@ $selectCirculating = function (int $id) {
             </div>
         </div>
 
-        <div class="border-t border-gray-200 dark:border-slate-700 my-6"></div>
+        <hr class="border-zinc-200 dark:border-zinc-700">
 
         <div
-            class="flex flex-col sm:flex-row items-center justify-between gap-6 bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg border border-gray-100 dark:border-slate-700/50">
+            class="flex flex-col sm:flex-row items-center justify-between gap-6 bg-zinc-50 dark:bg-zinc-800/50 p-4 rounded-lg border border-zinc-100 dark:border-zinc-700/50">
             <div class="flex items-center gap-8 w-full sm:w-auto">
                 <div class="flex flex-col">
                     <span
-                        class="text-xs font-medium text-gray-500 dark:text-slate-500 uppercase tracking-wider">Duración</span>
-                    <span class="text-xl font-bold text-gray-900 dark:text-white">
+                        class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Duración</span>
+                    <span class="text-xl font-bold text-zinc-900 dark:text-zinc-100">
                         {{ is_int($this->duration_minutes) ? $this->duration_minutes . ' min' : '--' }}
                     </span>
                 </div>
 
-                <div class="flex flex-col border-l border-gray-200 dark:border-slate-700 pl-8">
-                    <span class="text-xs font-medium text-gray-500 dark:text-slate-500 uppercase tracking-wider">Monto
+                <div class="flex flex-col border-l border-zinc-200 dark:border-zinc-700 pl-8">
+                    <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Monto
                         Estimado</span>
-                    <span class="text-xl font-bold text-teal-600 dark:text-teal-400">
+                    <span class="text-xl font-bold text-zinc-900 dark:text-zinc-100">
                         {{ is_numeric($this->amount_preview) ? 'Q' . number_format($this->amount_preview, 2) : '--' }}
                     </span>
                 </div>
             </div>
 
-            <button type="button" wire:click="save" wire:loading.attr="disabled"
-                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-teal-600 px-6 py-2.5 text-white font-medium hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-teal-600/20">
-                <span wire:loading.remove>Guardar Procedimiento</span>
-                <span wire:loading class="flex items-center gap-2">
-                    <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                    </svg>
-                    Guardando...
-                </span>
-            </button>
+            <flux:button wire:click="save" variant="primary" loading="save" class="w-full sm:w-auto">
+                Guardar Procedimiento
+            </flux:button>
         </div>
     </div>
 
-    <div class="mt-8">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Procedimientos Pendientes</h2>
+    <div class="mt-8 space-y-4">
+        <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Procedimientos Pendientes</h2>
 
             <div
-                class="flex items-center gap-2 text-sm bg-white dark:bg-slate-800 px-3 py-1.5 rounded-full border border-gray-200 dark:border-slate-700 shadow-sm">
-                <span class="text-gray-500 dark:text-slate-400">Total:</span>
+                class="flex items-center gap-2 text-sm bg-white dark:bg-zinc-800 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 shadow-sm">
+                <span class="text-zinc-500 dark:text-zinc-400">Total:</span>
                 <span
-                    class="font-bold text-teal-600 dark:text-teal-400">Q{{ number_format($this->pending_total ?? 0, 2) }}</span>
+                    class="font-bold text-zinc-900 dark:text-zinc-100">Q{{ number_format($this->pending_total ?? 0, 2) }}</span>
             </div>
         </div>
 
         <div
-            class="rounded-xl border border-gray-200 bg-white shadow-sm dark:bg-slate-800 dark:border-slate-700 overflow-hidden">
-            <div class="overflow-x-auto">
+            class="rounded-xl border border-zinc-200 bg-white shadow-sm dark:bg-zinc-800 dark:border-zinc-700 overflow-hidden">
+            {{-- Desktop --}}
+            <div class="hidden md:block overflow-x-auto">
                 <table class="min-w-full text-left text-sm whitespace-nowrap">
-                    <thead class="bg-gray-50 dark:bg-slate-700/50 text-gray-600 dark:text-slate-300">
+                    <thead class="bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
                         <tr>
-                            <th class="px-6 py-3 font-semibold">Fecha</th>
-                            <th class="px-6 py-3 font-semibold">Horario</th>
-                            <th class="px-6 py-3 font-semibold">Paciente</th>
-                            <th class="px-6 py-3 font-semibold">Cirugía</th>
-                            <th class="px-6 py-3 font-semibold text-right">Monto</th>
+                            <th class="px-6 py-3 font-medium">Fecha</th>
+                            <th class="px-6 py-3 font-medium">Horario</th>
+                            <th class="px-6 py-3 font-medium">Paciente</th>
+                            <th class="px-6 py-3 font-medium">Cirugía</th>
+                            <th class="px-6 py-3 font-medium text-right">Monto</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
+                    <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
                         @forelse($this->pending_procedures as $p)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors">
-                                <td class="px-6 py-3 font-medium text-gray-900 dark:text-white">
+                            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors">
+                                <td class="px-6 py-3 font-medium text-zinc-900 dark:text-zinc-100">
                                     {{ $p->procedure_date->format('d/m/Y') }}
                                 </td>
-                                <td class="px-6 py-3 text-gray-600 dark:text-slate-400">
+                                <td class="px-6 py-3 text-zinc-500 dark:text-zinc-400">
                                     {{ $p->start_time }} - {{ $p->end_time }}
                                     <span
-                                        class="text-xs text-gray-400 dark:text-slate-500 ml-1">({{ $p->duration_minutes }}m)</span>
+                                        class="text-xs text-zinc-400 dark:text-zinc-500 ml-1">({{ $p->duration_minutes }}m)</span>
                                 </td>
-                                <td class="px-6 py-3 text-gray-700 dark:text-slate-300">{{ $p->patient_name }}</td>
-                                <td class="px-6 py-3 text-gray-700 dark:text-slate-300">
+                                <td class="px-6 py-3 text-zinc-700 dark:text-zinc-300">{{ $p->patient_name }}</td>
+                                <td class="px-6 py-3 text-zinc-700 dark:text-zinc-300">
                                     <div class="flex items-center gap-2">
                                         {{ $p->procedure_type }}
                                         @if($p->is_videosurgery)
-                                            <span
-                                                class="inline-flex items-center rounded-full bg-teal-50 dark:bg-teal-900/30 px-2 py-0.5 text-xs font-medium text-teal-700 dark:text-teal-300 ring-1 ring-inset ring-teal-600/20">Video</span>
+                                            <flux:badge size="sm" color="zinc">Video</flux:badge>
                                         @endif
                                     </div>
                                 </td>
-                                <td class="px-6 py-3 text-right font-bold text-teal-600 dark:text-teal-400">
+                                <td class="px-6 py-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
                                     Q{{ number_format((float) $p->calculated_amount, 2) }}
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-8 text-center text-gray-500 dark:text-slate-400">
+                                <td colspan="5" class="px-6 py-8 text-center text-zinc-500 dark:text-zinc-400">
                                     <div class="flex flex-col items-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="size-6 opacity-50">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                                        </svg>
+                                        <flux:icon.document-text class="size-6 opacity-50" />
                                         No tienes procedimientos pendientes todavía.
                                     </div>
                                 </td>
@@ -598,6 +552,40 @@ $selectCirculating = function (int $id) {
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            {{-- Mobile --}}
+            <div class="md:hidden divide-y divide-zinc-200 dark:divide-zinc-700">
+                @forelse($this->pending_procedures as $p)
+                    <div class="p-4 bg-white dark:bg-zinc-900 space-y-3">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div class="font-medium text-zinc-900 dark:text-zinc-100">{{ $p->patient_name }}</div>
+                                <div class="text-sm text-zinc-500 dark:text-zinc-400">{{ $p->procedure_type }}</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-mono font-medium text-zinc-900 dark:text-zinc-100">
+                                    Q{{ number_format((float) $p->calculated_amount, 2) }}</div>
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400">
+                                    {{ $p->procedure_date->format('d/m/Y') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-sm pt-2 text-zinc-500 dark:text-zinc-400">
+                            <div>
+                                {{ $p->start_time }} - {{ $p->end_time }} ({{ $p->duration_minutes }}m)
+                            </div>
+                            @if($p->is_videosurgery)
+                                <flux:badge size="sm" color="zinc">Video</flux:badge>
+                            @endif
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-8 text-center text-zinc-500 dark:text-zinc-400">
+                        No hay procedimientos pendientes todavía.
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>
