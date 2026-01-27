@@ -53,101 +53,42 @@ $save = function () {
 
 ?>
 
-<div class="max-w-3xl mx-auto p-4">
+<div class="max-w-3xl mx-auto p-4 space-y-6">
     <div class="mb-4">
-        <h1 class="text-xl font-semibold">Precios globales</h1>
-        <p class="text-sm text-gray-600">Aplican al instrumentista con esquema especial</p>
+        <flux:heading size="xl">{{ __('Precios globales') }}</flux:heading>
+        <flux:subheading>{{ __('Aplican al instrumentista con esquema especial') }}</flux:subheading>
     </div>
 
     @if($success)
-        <div class="mb-4 rounded border border-green-200 bg-green-50 px-3 py-2 text-green-800">
+        <div
+            class="rounded-lg border border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800 px-4 py-3 text-green-800 dark:text-green-300">
             {{ $success }}
         </div>
     @endif
 
-    <div class="rounded-lg border bg-white p-4 space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-                <label class="block text-sm font-medium">
-                    Tarifa base (Q)
-                </label>
-                <input type="number" step="0.01" class="mt-1 w-full rounded border px-3 py-2"
-                    wire:model.live="default_rate">
-                @error('default_rate')
-                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-6 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <flux:input label="Tarifa base (Q)" type="number" step="0.01" wire:model.live="default_rate" />
 
-            <div>
-                <label class="block text-sm font-medium">
-                    Video cirugía (Q)
-                </label>
-                <input type="number" step="0.01" class="mt-1 w-full rounded border px-3 py-2"
-                    wire:model.live="video_rate">
-                @error('video_rate')
-                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+            <flux:input label="Video cirugía (Q)" type="number" step="0.01" wire:model.live="video_rate" />
 
-            <div>
-                <label class="block text-sm font-medium">
-                    Madrugada (Q)
-                </label>
-                <input type="number" step="0.01" class="mt-1 w-full rounded border px-3 py-2"
-                    wire:model.live="night_rate">
-                @error('night_rate')
-                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+            <flux:input label="Madrugada (Q)" type="number" step="0.01" wire:model.live="night_rate" />
 
-            <div>
-                <label class="block text-sm font-medium">
-                    Procedimiento Largo (Q)
-                </label>
-                <input type="number" step="0.01" class="mt-1 w-full rounded border px-3 py-2"
-                    wire:model.live="long_case_rate">
-                @error('long_case_rate')
-                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+            <flux:input label="Procedimiento Largo (Q)" type="number" step="0.01" wire:model.live="long_case_rate" />
 
-            <div>
-                <label class="block text-sm font-medium">
-                    Umbral "Procedimiento Largo" (min)
-                </label>
-                <input type="number" class="mt-1 w-full rounded border px-3 py-2"
-                    wire:model.live="long_case_threshold_minutes">
-                @error('long_case_threshold_minutes')
-                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+            <flux:input label='Umbral "Procedimiento Largo" (min)' type="number"
+                wire:model.live="long_case_threshold_minutes" />
 
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-sm font-medium">
-                        Inicio Horario Inhabil
-                    </label>
-                    <input type="time" class="mt-1 w-full rounded border px-3 py-2" wire:model.live="night_start">
-                    @error('night_start')
-                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div>
-                    <label class="block text-sm font-medium">
-                        Fin Horario Inhabil
-                    </label>
-                    <input type="time" class="mt-1 w-full rounded border px-3 py-2" wire:model.live="night_end">
-                    @error('night_end')
-                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+            <div class="grid grid-cols-2 gap-4">
+                <flux:input label="Inicio Horario Inhabil" type="time" wire:model.live="night_start" />
+                <flux:input label="Fin Horario Inhabil" type="time" wire:model.live="night_end" />
             </div>
         </div>
 
-        <div class="pt-2">
-            <button class="rounded bg-black px-4 py-2 text-white" wire:click="save">
-                Guardar
-            </button>
+        <div class="pt-2 flex justify-end">
+            <flux:button variant="primary" wire:click="save">
+                {{ __('Guardar') }}
+            </flux:button>
         </div>
     </div>
 </div>

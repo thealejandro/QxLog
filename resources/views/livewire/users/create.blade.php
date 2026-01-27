@@ -14,6 +14,9 @@ state([
     'role' => '',
     'password' => '',
     'password_confirmation' => '',
+    'is_super_admin' => false,
+    'use_pay_scheme' => false,
+    'phone' => '',
     'success_message' => null,
 ]);
 
@@ -31,6 +34,9 @@ rules([
     'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
     'role' => ['required', 'string', 'max:50'],
     'password' => ['required', 'string', 'min:6', 'confirmed'],
+    'is_super_admin' => ['boolean'],
+    'use_pay_scheme' => ['boolean'],
+    'phone' => ['nullable', 'string', 'max:8'],
 ]);
 
 $save = function () {
@@ -46,88 +52,71 @@ $save = function () {
         'email' => $data['email'],
         'role' => $data['role'],
         'password' => Hash::make($data['password']),
+        'is_super_admin' => $data['is_super_admin'],
+        'use_pay_scheme' => $data['use_pay_scheme'],
+        'phone' => $data['phone'],
     ]);
 
     $this->success_message = 'Usuario creado.';
-    $this->reset(['name', 'username', 'email', 'role', 'password', 'password_confirmation']);
+    $this->reset([
+        'name',
+        'username',
+        'email',
+        'role',
+        'password',
+        'password_confirmation',
+        'is_super_admin',
+        'use_pay_scheme',
+        'phone'
+    ]);
 };
 
 ?>
 
-<div class="max-w-xl mx-auto p-4">
-    <div class="mb-4 flex items-center justify-between">
+<div class="max-w-xl mx-auto p-4 space-y-6">
+    <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-xl font-semibold">Nuevo usuario</h1>
-            <p class="text-sm text-gray-600">Solo Super Admin</p>
+            <flux:heading size="xl">{{ __('Nuevo usuario') }}</flux:heading>
+            <flux:subheading>{{ __('Solo Super Admin') }}</flux:subheading>
         </div>
-        <a href="{{ route('users.index') }}" class="underline text-sm">Volver</a>
+        <flux:link href="{{ route('users.index') }}" class="text-sm">Volver</flux:link>
     </div>
 
     @if($success_message)
-        <div class="mb-4 rounded border border-green-200 bg-green-50 px-3 py-2 text-green-800">
-            {{ $success_message }}
-        </div>
+        <flux:callout variant="success" icon="check-circle" heading="{{ $success_message }}" />
     @endif
 
-    <div class="rounded-lg border bg-white p-4 space-y-3">
-        <div>
-            <label class="block text-sm font-medium">
-                Nombre
-            </label>
-            <input class="mt-1 w-full rounded border px-3 py-2" wire:model.live="name">
-            @error('name') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
-        </div>
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-6 space-y-6">
+        <flux:input wire:model.live="name" label="Nombre" placeholder="Nombre completo" />
 
-        <div>
-            <label class="block text-sm font-medium">
-                Username
-            </label>
-            <input class="mt-1 w-full rounded border px-3 py-2" wire:model.live="username">
-            @error('username') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
-        </div>
+        <flux:input wire:model.live="username" label="Username" placeholder="usuario" />
 
-        <div>
-            <label class="block text-sm font-medium">
-                Email
-            </label>
-            <input type="email" class="mt-1 w-full rounded border px-3 py-2" wire:model.live="email">
-            @error('email') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
-        </div>
+        <flux:input wire:model.live="email" type="email" label="Email" placeholder="correo electrónico" />
 
-        <div>
-            <label class="block text-sm font-medium">
-                Rol
-            </label>
-            <select class="mt-1 w-full rounded border px-3 py-2" wire:model.live="role">
-                <option value="">-- Seleccionar --</option>
-                <option value="admin">Admin</option>
-                <option value="instrumentist">Instrumentista</option>
-                <option value="doctor">Médico</option>
-                <option value="circulating">Circulante</option>
-            </select>
-            @error('role') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
-        </div>
+        <flux:input wire:model.live="phone" label="Teléfono" placeholder="Teléfono" />
 
-        <div>
-            <label class="block text-sm font-medium">
-                Contraseña
-            </label>
-            <input type="password" class="mt-1 w-full rounded border px-3 py-2" wire:model.live="password">
-            @error('password') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
-        </div>
+        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Rol</label>
+        <select wire:model.live="role"
+            class="w-full rounded-lg border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500 p-2.5">
+            <option value="">-- Seleccionar --</option>
+            <option value="admin">Admin</option>
+            <option value="instrumentist">Instrumentista</option>
+            <option value="doctor">Médico</option>
+            <option value="circulating">Circulante</option>
+        </select>
 
-        <div>
-            <label class="block text-sm font-medium">
-                Confirmar contraseña
-            </label>
-            <input type="password" class="mt-1 w-full rounded border px-3 py-2" wire:model.live="password_confirmation">
-            @error('password_confirmation') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
-        </div>
+        <flux:input wire:model.live="password" type="password" label="Contraseña" />
 
-        <div class="pt-2">
-            <button class="rounded bg-black px-4 py-2 text-white" wire:click="save">
-                Guardar
-            </button>
+        <flux:input wire:model.live="password_confirmation" type="password" label="Confirmar contraseña" />
+
+        <flux:checkbox wire:model.live="is_super_admin" label="Super Admin" />
+
+        <flux:checkbox wire:model.live="use_pay_scheme" label="Usar esquema de pago" />
+
+        <div class="pt-2 flex justify-end">
+            <flux:button variant="primary" wire:click="save" class="w-full sm:w-auto">
+                {{ __('Guardar') }}
+            </flux:button>
         </div>
     </div>
 </div>

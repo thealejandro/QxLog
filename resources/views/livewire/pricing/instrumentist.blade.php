@@ -41,51 +41,84 @@ $toggle = function (int $id) {
 
 ?>
 
-<div class="max-w-4xl mx-auto p-4">
+<div class="max-w-4xl mx-auto p-4 space-y-6">
     <div class="mb-4">
-        <h1 class="text-xl font-semibold">Instrumentistas</h1>
-        <p class="text-sm text-gray-600">Marcar quién usa esquema especial de pago</p>
+        <flux:heading size="xl">{{ __('Instrumentistas') }}</flux:heading>
+        <flux:subheading>{{ __('Marcar quién usa esquema especial de pago') }}</flux:subheading>
     </div>
 
-    <div class="rounded-lg border bg-white p-4 space-y-4">
-        <div>
-            <label class="block text-sm font-medium">Buscar</label>
-            <input class="mt-1 w-full rounded border px-3 py-2" placeholder="Nombre o username..." wire:model.live="q">
+    <div class="space-y-4">
+        <flux:input icon="magnifying-glass" wire:model.live="q" placeholder="Buscar nombre o username..." />
+
+        <!-- Mobile View (Cards) -->
+        <div class="grid grid-cols-1 gap-4 sm:hidden">
+            @forelse($this->instrumentists as $u)
+                <div
+                    class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-sm space-y-3">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="font-medium text-zinc-900 dark:text-zinc-100">{{ $u->name }}</div>
+                            <div class="text-sm text-zinc-500">{{ $u->username }}</div>
+                        </div>
+                        <flux:badge size="sm" color="{{ $u->use_pay_scheme ? 'green' : 'zinc' }}">
+                            {{ $u->use_pay_scheme ? 'Especial' : 'Estándar' }}
+                        </flux:badge>
+                    </div>
+                    <div class="pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                        <flux:button size="sm" variant="subtle" class="w-full" wire:click="toggle({{ $u->id }})">
+                            {{ $u->use_pay_scheme ? 'Desactivar esquema' : 'Activar esquema' }}
+                        </flux:button>
+                    </div>
+                </div>
+            @empty
+                <div class="p-4 text-center text-zinc-500 dark:text-zinc-400 italic">
+                    {{ __('No hay instrumentistas.') }}
+                </div>
+            @endforelse
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="min-w-full text-sm">
-                <thead class="text-left text-gray-600">
-                    <tr class="border-b">
-                        <th class="py-2 pr-3">Nombre</th>
-                        <th class="py-2 pr-3">Username</th>
-                        <th class="py-2 pr-3">Especial</th>
-                        <th class="py-2 pr-3">Acción</th>
+        <!-- Desktop View (Table) -->
+        <div class="hidden sm:block overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700">
+            <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
+                <thead class="bg-zinc-50 dark:bg-zinc-800/50">
+                    <tr>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            {{ __('Nombre') }}</th>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            {{ __('Username') }}</th>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            {{ __('Esquema') }}</th>
+                        <th scope="col"
+                            class="px-6 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            {{ __('Acción') }}</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-700">
                     @forelse($this->instrumentists as $u)
-                        <tr class="border-b">
-                            <td class="py-2 pr-3 font-medium">{{ $u->name }}</td>
-                            <td class="py-2 pr-3">{{ $u->username }}</td>
-                            <td class="py-2 pr-3">
-                                @if($u->use_pay_scheme)
-                                    <span
-                                        class="inline-flex rounded bg-green-50 px-2 py-1 text-xs text-green-700 border border-green-200">Sí</span>
-                                @else
-                                    <span
-                                        class="inline-flex rounded bg-gray-50 px-2 py-1 text-xs text-gray-700 border">No</span>
-                                @endif
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                                {{ $u->name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
+                                {{ $u->username }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <flux:badge size="sm" color="{{ $u->use_pay_scheme ? 'green' : 'zinc' }}">
+                                    {{ $u->use_pay_scheme ? 'Especial' : 'Estándar' }}
+                                </flux:badge>
                             </td>
-                            <td class="py-2 pr-3">
-                                <button class="underline" wire:click="toggle({{ $u->id }})">
-                                    Cambiar
-                                </button>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                <flux:button size="sm" variant="subtle" wire:click="toggle({{ $u->id }})">
+                                    {{ __('Cambiar') }}
+                                </flux:button>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="py-4 text-gray-600">No hay instrumentistas.</td>
+                            <td colspan="4" class="px-6 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400 italic">
+                                {{ __('No hay instrumentistas.') }}
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -66,103 +66,160 @@ $restoreUser = function (int $id) {
 
 ?>
 
-<div class="max-w-5xl mx-auto p-4">
-    <div class="mb-4 flex items-center justify-between gap-3">
+<div class="max-w-5xl mx-auto p-4 space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-xl font-semibold">Usuarios</h1>
-            <p class="text-sm text-gray-600">Solo Super Admin</p>
+            <flux:heading size="xl">{{ __('Usuarios') }}</flux:heading>
+            <flux:subheading>{{ __('Solo Super Admin') }}</flux:subheading>
         </div>
 
-        <a href="{{ route('users.create') }}" class="rounded bg-black px-4 py-2 text-white text-sm">
-            Nuevo usuario
-        </a>
+        <flux:button href="{{ route('users.create') }}" variant="primary" icon="plus" class="w-full sm:w-auto">
+            {{ __('Nuevo usuario') }}
+        </flux:button>
     </div>
 
-    <div class="rounded-lg border bg-white p-4 space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+    <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="md:col-span-2">
-                <label class="block text-sm font-medium">Buscar</label>
-                <input class="mt-1 w-full rounded border px-3 py-2" placeholder="Nombre, username o email..."
-                    wire:model.live="q">
+                <flux:input icon="magnifying-glass" wire:model.live="q"
+                    placeholder="Buscar nombre, username o email..." />
             </div>
 
-            <div>
-                <label class="block text-sm font-medium">Rol</label>
-                <select class="mt-1 w-full rounded border px-3 py-2" wire:model.live="role">
-                    <option value="">-- Todos --</option>
-                    <option value="admin">Admin</option>
-                    <option value="instrumentist">Instrumentista</option>
-                    <option value="doctor">Médico</option>
-                    <option value="circulating">Circulante</option>
-                </select>
-            </div>
+            <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Rol</label>
+            <select wire:model.live="role"
+                class="w-full rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500 p-2.5">
+                <option value="">-- Todos --</option>
+                <option value="admin">Admin</option>
+                <option value="instrumentist">Instrumentista</option>
+                <option value="doctor">Médico</option>
+                <option value="circulating">Circulante</option>
+            </select>
 
-            <div class="flex items-end">
-                <label class="inline-flex items-center gap-2 text-sm">
-                    <input type="checkbox" wire:model.live="show_deleted">
-                    Ver eliminados
-                </label>
+            <div class="flex items-center">
+                <flux:checkbox wire:model.live="show_deleted" label="Ver eliminados" />
             </div>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="min-w-full text-sm">
-                <thead class="text-left text-gray-600">
-                    <tr class="border-b">
-                        <th class="py-2 pr-3">Nombre</th>
-                        <th class="py-2 pr-3">Username</th>
-                        <th class="py-2 pr-3">Email</th>
-                        <th class="py-2 pr-3">Rol</th>
-                        <th class="py-2 pr-3">Estado</th>
-                        <th class="py-2 pr-3">Acciones</th>
+        <!-- Mobile View (Cards) -->
+        <div class="grid grid-cols-1 gap-4 sm:hidden">
+            @forelse($this->users as $u)
+                <div
+                    class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-sm space-y-3">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="font-medium text-zinc-900 dark:text-zinc-100">{{ $u->name }}</div>
+                            <div class="text-sm text-zinc-500">{{ $u->email }}</div>
+                            <div class="text-xs text-zinc-400 font-mono mt-0.5">{{ $u->username }}</div>
+                        </div>
+                        <flux:badge size="sm" color="{{ $u->deleted_at ? 'red' : 'green' }}">
+                            {{ $u->deleted_at ? 'Eliminado' : 'Activo' }}
+                        </flux:badge>
+                    </div>
+
+                    <div class="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+                        <flux:badge size="sm" variant="pill">{{ $u->role }}</flux:badge>
+                    </div>
+
+                    <div class="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-end gap-2">
+                        @if(!$u->deleted_at)
+                            <flux:button href="{{ route('users.edit', $u->id) }}" size="sm" variant="subtle">
+                                {{ __('Editar') }}
+                            </flux:button>
+
+                            <flux:button wire:click="deleteUser({{ $u->id }})"
+                                wire:confirm="¿Eliminar este usuario? (se puede restaurar)" size="sm" variant="danger"
+                                icon="trash" />
+                        @else
+                            <flux:button wire:click="restoreUser({{ $u->id }})" size="sm" variant="filled"
+                                icon="arrow-uturn-left">
+                                {{ __('Restaurar') }}
+                            </flux:button>
+                        @endif
+                    </div>
+                </div>
+            @empty
+                <div class="p-4 text-center text-zinc-500 dark:text-zinc-400 italic">
+                    {{ __('No hay usuarios.') }}
+                </div>
+            @endforelse
+        </div>
+
+        <!-- Desktop View (Table) -->
+        <div class="hidden sm:block overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700">
+            <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
+                <thead class="bg-zinc-50 dark:bg-zinc-800/50">
+                    <tr>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            {{ __('Nombre') }}
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            {{ __('Username') }}
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            {{ __('Email') }}
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            {{ __('Rol') }}
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            {{ __('Estado') }}
+                        </th>
+                        <th scope="col"
+                            class="px-6 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            {{ __('Acciones') }}
+                        </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-700">
                     @forelse($this->users as $u)
-                        <tr class="border-b">
-                            <td class="py-2 pr-3 font-medium">{{ $u->name }}</td>
-                            <td class="py-2 pr-3">{{ $u->username }}</td>
-                            <td class="py-2 pr-3">{{ $u->email }}</td>
-                            <td class="py-2 pr-3">{{ $u->role }}</td>
-                            <td class="py-2 pr-3">
-                                @if($u->deleted_at)
-                                    <span
-                                        class="inline-flex rounded bg-red-50 px-2 py-1 text-xs text-red-700 border border-red-200">
-                                        Eliminado
-                                    </span>
-                                @else
-                                    <span
-                                        class="inline-flex rounded bg-green-50 px-2 py-1 text-xs text-green-700 border border-green-200">
-                                        Activo
-                                    </span>
-                                @endif
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                                {{ $u->name }}
                             </td>
-                            <td class="py-2 pr-3 space-x-3">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
+                                {{ $u->username }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">{{ $u->email }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">{{ $u->role }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <flux:badge size="sm" color="{{ $u->deleted_at ? 'red' : 'green' }}">
+                                    {{ $u->deleted_at ? 'Eliminado' : 'Activo' }}
+                                </flux:badge>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm space-x-2">
                                 @if(!$u->deleted_at)
-                                    <a class="text-gray-400" href="{{ route('users.edit', $u->id) }}">
-                                        Editar
-                                    </a>
-
-                                    <button type="button" class="text-red-600" wire:click="deleteUser({{ $u->id }})"
-                                        wire:confirm="¿Eliminar este usuario? (se puede restaurar)">
-                                        <flux:icon name="trash" variant="solid" />
-                                    </button>
+                                    <flux:button href="{{ route('users.edit', $u->id) }}" size="sm" variant="subtle">
+                                        {{ __('Editar') }}
+                                    </flux:button>
+                                    <flux:button wire:click="deleteUser({{ $u->id }})"
+                                        wire:confirm="¿Eliminar este usuario? (se puede restaurar)" size="sm" variant="danger"
+                                        icon="trash" class="!px-2.5" />
                                 @else
-                                    <button type="button" class="text-indigo-600" wire:click="restoreUser({{ $u->id }})">
-                                        <flux:icon name="arrow-left-start-on-rectangle" variant="solid" />
-                                    </button>
+                                    <flux:button wire:click="restoreUser({{ $u->id }})" size="sm" variant="filled"
+                                        icon="arrow-uturn-left" tooltip="Restaurar" />
                                 @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="py-4 text-gray-600">No hay usuarios.</td>
+                            <td colspan="6" class="px-6 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400 italic">
+                                {{ __('No hay usuarios.') }}
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
 
-        <p class="text-xs text-gray-500">Máximo 150 registros para mantenerlo ligero.</p>
+        <div class="px-4 text-xs text-zinc-500 dark:text-zinc-400 text-center sm:text-left">
+            {{ __('Máximo 150 registros.') }}
+        </div>
     </div>
 </div>
