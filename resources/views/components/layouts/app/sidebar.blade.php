@@ -23,14 +23,16 @@
                     :current="request()->routeIs('procedures.create')" wire:navigate>
                     {{ __('Registro de Procedimientos') }}
                 </flux:navlist.item>
-                <flux:navlist.item icon="home" :href="route('payouts.create')"
-                    :current="request()->routeIs('payouts.create')" wire:navigate>
-                    {{ __('Registro de Pago') }}
-                </flux:navlist.item>
-                <flux:navlist.item icon="layout-grid" :href="route('payouts.index')"
-                    :current="request()->routeIs('payouts.index')" wire:navigate>
-                    {{ __('Historial de Pagos') }}
-                </flux:navlist.item>
+                @if(auth()->user()->role === 'admin')
+                    <flux:navlist.item icon="home" :href="route('payouts.create')"
+                        :current="request()->routeIs('payouts.create')" wire:navigate>
+                        {{ __('Registro de Pago') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="layout-grid" :href="route('payouts.index')"
+                        :current="request()->routeIs('payouts.index')" wire:navigate>
+                        {{ __('Historial de Pagos') }}
+                    </flux:navlist.item>
+                @endif
             </flux:navlist.group>
         </flux:navlist>
 
@@ -41,6 +43,20 @@
                 target="_blank">
                 {{ __('Repository') }}
             </flux:navlist.item>
+            @if(auth()->user()->is_super_admin)
+                <flux:navlist.item icon="user" :href="route('users.index')" :current="request()->routeIs('users.index')"
+                    wire:navigate>
+                    {{ __('Usuarios') }}
+                </flux:navlist.item>
+                <flux:navlist.item icon="users" :href="route('pricing.instrumentists')"
+                    :current="request()->routeIs('pricing.instrumentists')" wire:navigate>
+                    {{ __('Instrumentistas') }}
+                </flux:navlist.item>
+                <flux:navlist.item icon="wrench" :href="route('pricing.settings')"
+                    :current="request()->routeIs('pricing.settings')" wire:navigate>
+                    {{ __('Configuración de precios') }}
+                </flux:navlist.item>
+            @endif
             <form method="POST" action="{{ route('logout') }}" class="w-full">
                 @csrf
                 <flux:navlist.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full"

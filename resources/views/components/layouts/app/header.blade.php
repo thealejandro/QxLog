@@ -23,14 +23,16 @@
                 :current="request()->routeIs('procedures.create')" wire:navigate>
                 {{ __('Registro de Procedimientos') }}
             </flux:navbar.item>
-            <flux:navbar.item icon="layout-grid" :href="route('payouts.create')"
-                :current="request()->routeIs('payouts.create')" wire:navigate>
-                {{ __('Registro de Pago') }}
-            </flux:navbar.item>
-            <flux:navbar.item icon="layout-grid" :href="route('payouts.index')"
-                :current="request()->routeIs('payouts.index')" wire:navigate>
-                {{ __('Historial de Pagos') }}
-            </flux:navbar.item>
+            @if(auth()->user()->role === 'admin')
+                <flux:navbar.item icon="layout-grid" :href="route('payouts.create')"
+                    :current="request()->routeIs('payouts.create')" wire:navigate>
+                    {{ __('Registro de Pago') }}
+                </flux:navbar.item>
+                <flux:navbar.item icon="layout-grid" :href="route('payouts.index')"
+                    :current="request()->routeIs('payouts.index')" wire:navigate>
+                    {{ __('Historial de Pagos') }}
+                </flux:navbar.item>
+            @endif
         </flux:navbar>
 
         <flux:spacer />
@@ -53,6 +55,26 @@
                     </flux:navbar.item>
                 </form>
             </flux:tooltip>
+            @if(auth()->user()->is_super_admin)
+                <flux:tooltip :content="__('Usuarios')" position="bottom">
+                    <flux:navbar.item icon="user" :href="route('users.index')" :current="request()->routeIs('users.index')"
+                        wire:navigate>
+                        {{ __('Usuarios') }}
+                    </flux:navbar.item>
+                </flux:tooltip>
+                <flux:tooltip :content="__('Instrumentistas')" position="bottom">
+                    <flux:navbar.item icon="users" :href="route('pricing.instrumentists')"
+                        :current="request()->routeIs('pricing.instrumentists')" wire:navigate>
+                        {{ __('Instrumentistas') }}
+                    </flux:navbar.item>
+                </flux:tooltip>
+                <flux:tooltip :content="__('Configuración de precios')" position="bottom">
+                    <flux:navbar.item icon="wrench" :href="route('pricing.settings')"
+                        :current="request()->routeIs('pricing.settings')" wire:navigate>
+                        {{ __('Configuración de precios') }}
+                    </flux:navbar.item>
+                </flux:tooltip>
+            @endif
         </flux:navbar>
 
         <!-- Desktop User Menu -->

@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Procedure;
 use App\Models\PayoutBatch;
 use App\Models\PayoutItem;
+use App\Models\PricingSetting;
 use Illuminate\Support\Facades\Hash;
 
 class QxLogTestSeeder extends Seeder
@@ -165,6 +166,16 @@ class QxLogTestSeeder extends Seeder
                 'payout_batch_id' => $batch->id,
             ]);
         }
+
+        PricingSetting::firstOrCreate(['id' => 1], [
+            'default_rate' => 200,
+            'video_rate' => 300,
+            'night_rate' => 350,
+            'long_case_rate' => 350,
+            'long_case_threshold_minutes' => 120,
+            'night_start' => '22:00',
+            'night_end' => '06:00',
+        ]);
 
     }
 }

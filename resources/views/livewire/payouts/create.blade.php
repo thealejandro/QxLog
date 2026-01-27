@@ -250,7 +250,9 @@ $liquidate = function () {
                                     <td class="px-4 py-3">
                                         <flux:checkbox wire:model.live="selected" value="{{ $p->id }}" />
                                     </td>
-                                    <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">{{ $p->procedure_date }}</td>
+                                    <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">
+                                        {{ $p->procedure_date->format('d/m/Y') }}
+                                    </td>
                                     <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">{{ $p->start_time }}</td>
                                     <td class="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">{{ $p->patient_name }}
                                     </td>
