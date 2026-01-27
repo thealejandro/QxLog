@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('payout_batches', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('instrumentist_id')->constrained('users')->nullOnDelete();
-            $table->foreignId('paid_by_id')->constrained('users')->nullOnDelete(); //Persona que liquida
+            $table->foreignId('instrumentist_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('paid_by_id')->nullable()->constrained('users')->nullOnDelete(); //Persona que liquida
 
             $table->dateTime('paid_at'); //automatico now()
             $table->decimal('total_amount', 10, 2)->default(0);
