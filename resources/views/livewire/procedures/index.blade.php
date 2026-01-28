@@ -17,9 +17,7 @@ state([
 mount(function () {
     abort_unless(Auth::check(), 401);
 
-    // Solo admin o superadmin
-    $u = Auth::user();
-    abort_unless($u->role === 'admin' || (bool) $u->is_super_admin, 403);
+    abort_unless((bool) Auth::user()->role !== 'admin', 403);
 
     // default dates: hoy - 30 días
     $this->date_to = now()->toDateString();
