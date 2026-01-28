@@ -6,8 +6,8 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
-
-class SuperAdminOnly
+use Illuminate\Support\Facades\Log;
+class AdminAuth
 {
     /**
      * Handle an incoming request.
@@ -17,7 +17,7 @@ class SuperAdminOnly
     public function handle(Request $request, Closure $next): Response
     {
         abort_unless((bool) Auth::check(), 401);
-        abort_unless((bool) Auth::user()->is_super_admin, 403);
+        abort_unless((bool) Auth::user()->role === 'admin', 403);
 
         return $next($request);
     }
