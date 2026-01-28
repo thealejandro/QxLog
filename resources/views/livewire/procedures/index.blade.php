@@ -203,7 +203,7 @@ $ruleColor = function (?string $rule) {
                         <div class="flex justify-between">
                             <span class="font-medium text-zinc-900 dark:text-zinc-200">Inicio - Fin:</span>
                             <span class="font-medium text-zinc-900 dark:text-zinc-200">
-                                {{ $p->start_time->format('H:i') }} - {{ $p->end_time->format('H:i') }}
+                                {{ $p->start_time }} - {{ $p->end_time }}
                             </span>
                         </div>
                         <div class="flex justify-between">
@@ -285,7 +285,7 @@ $ruleColor = function (?string $rule) {
                                 {{ $p->instrumentist->name ?? '—' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
-                                {{ $p->start_time->format('H:i') }} - {{ $p->end_time->format('H:i') }}
+                                {{ $p->start_time }} - {{ $p->end_time }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                                 {{ $p->duration_minutes ?? data_get($p->pricing_snapshot, 'duration_minutes', '—') }} min
