@@ -19,18 +19,24 @@
                 wire:navigate>
                 {{ __('Dashboard') }}
             </flux:navbar.item>
-            <flux:navbar.item icon="layout-grid" :href="route('procedures.create')"
-                :current="request()->routeIs('procedures.create')" wire:navigate>
-                {{ __('Registro de Procedimientos') }}
-            </flux:navbar.item>
+            @if (auth()->user()->role === 'instrumentist' || auth()->user()->role === 'doctor' || auth()->user()->role === 'circulating')
+                <flux:navbar.item icon="layout-grid" :href="route('procedures.create')"
+                    :current="request()->routeIs('procedures.create')" wire:navigate>
+                    {{ __('Registrar Procedimiento') }}
+                </flux:navbar.item>
+            @endif
             @if(auth()->user()->role === 'admin')
                 <flux:navbar.item icon="layout-grid" :href="route('payouts.create')"
                     :current="request()->routeIs('payouts.create')" wire:navigate>
-                    {{ __('Registro de Pago') }}
+                    {{ __('Realizar Pago') }}
                 </flux:navbar.item>
                 <flux:navbar.item icon="layout-grid" :href="route('payouts.index')"
                     :current="request()->routeIs('payouts.index')" wire:navigate>
                     {{ __('Historial de Pagos') }}
+                </flux:navbar.item>
+                <flux:navbar.item icon="layout-grid" :href="route('procedures.index')"
+                    :current="request()->routeIs('procedures.index')" wire:navigate>
+                    {{ __('Historial de Procedimientos') }}
                 </flux:navbar.item>
             @endif
         </flux:navbar>

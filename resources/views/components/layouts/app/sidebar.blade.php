@@ -15,22 +15,30 @@
 
         <flux:navlist variant="outline">
             <flux:navlist.group :heading="__('Platform')" class="grid">
-                <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
+                <!-- <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
                     wire:navigate>
                     {{ __('Dashboard') }}
-                </flux:navlist.item>
-                <flux:navlist.item icon="home" :href="route('procedures.create')"
-                    :current="request()->routeIs('procedures.create')" wire:navigate>
-                    {{ __('Registro de Procedimientos') }}
-                </flux:navlist.item>
+                </flux:navlist.item> -->
+
+                @if(auth()->user()->role !== "admin" && auth()->check())
+                    <flux:navlist.item icon="home" :href="route('procedures.create')"
+                        :current="request()->routeIs('procedures.create')" wire:navigate>
+                        {{ __('Registrar Procedimiento') }}
+                    </flux:navlist.item>
+                @endif
+
                 @if(auth()->user()->role === 'admin')
                     <flux:navlist.item icon="home" :href="route('payouts.create')"
                         :current="request()->routeIs('payouts.create')" wire:navigate>
-                        {{ __('Registro de Pago') }}
+                        {{ __('Realizar Pago') }}
                     </flux:navlist.item>
                     <flux:navlist.item icon="layout-grid" :href="route('payouts.index')"
                         :current="request()->routeIs('payouts.index')" wire:navigate>
                         {{ __('Historial de Pagos') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="layout-grid" :href="route('procedures.index')"
+                        :current="request()->routeIs('procedures.index')" wire:navigate>
+                        {{ __('Historial de Procedimientos') }}
                     </flux:navlist.item>
                 @endif
             </flux:navlist.group>
@@ -39,10 +47,6 @@
         <flux:spacer />
 
         <flux:navlist variant="outline">
-            <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit"
-                target="_blank">
-                {{ __('Repository') }}
-            </flux:navlist.item>
             @if(auth()->user()->is_super_admin)
                 <flux:navlist.item icon="user" :href="route('users.index')" :current="request()->routeIs('users.index')"
                     wire:navigate>

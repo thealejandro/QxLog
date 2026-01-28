@@ -38,6 +38,19 @@ class Procedure extends Model
         'calculated_amount' => 'decimal:2', // siempre 2 decimales
     ];
 
+    public function instrumentist()
+    {
+        return $this->belongsTo(User::class);
+    }
 
+    public function doctor()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function circulating()
+    {
+        return $this->belongsTo(User::class);
+    }
 
 }
