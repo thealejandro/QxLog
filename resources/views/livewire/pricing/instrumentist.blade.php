@@ -11,7 +11,7 @@ state([
 
 mount(function () {
     abort_unless(Auth::check(), 401);
-    abort_unless((bool) Auth::user()->is_super_admin, 403);
+    abort_unless((bool) Auth::user()->role === 'admin', 403);
 });
 
 $instrumentists = computed(function () {
@@ -29,7 +29,7 @@ $instrumentists = computed(function () {
 });
 
 $toggle = function (int $id) {
-    abort_unless((bool) Auth::user()->is_super_admin, 403);
+    abort_unless((bool) Auth::user()->role === 'admin', 403);
 
     $u = User::query()
         ->where('role', 'instrumentist')
