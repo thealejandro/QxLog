@@ -7,6 +7,7 @@ use App\Support\TimeHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Str;
 
 use function Livewire\Volt\{state, computed, mount, rules, updated};
 
@@ -57,15 +58,9 @@ rules([
 ]);
 
 mount(function () {
-    // Guard simple mientras no hay middleware
-    $user = Auth::user();
-    if (!$user)
-        abort(401);
+    abort_unless((bool) Auth::check(), 401, 'Unauthorized');
 
-    // Permitimos instrumentist y admin por ahora (para pruebas)
-    if (!in_array($user->role, ['instrumentist', 'admin'], true)) {
-        abort(403);
-    }
+    abort_unless(in_array(Auth::user()->role, ['instrumentist', 'admin'], true), 403, 'Unauthorized');
 
     // Cargar listas para selects (si existen)
     $this->doctors = User::query()
@@ -123,8 +118,7 @@ $save = function () {
     $this->success_message = null;
 
     $user = Auth::user();
-    if (!$user)
-        abort(401);
+    abort_unless((bool) Auth::check(), 401, 'Unauthorized');
 
     // Validación base (rules())
     $data = $this->validate();
@@ -242,10 +236,6 @@ $pending_total = computed(function () {
         ->where('status', 'pending')
         ->sum('calculated_amount');
 });
-
-use Illuminate\Support\Str;
-
-// ...
 
 $searchDoctor = function () {
     $q = trim((string) $this->doctor_query);
