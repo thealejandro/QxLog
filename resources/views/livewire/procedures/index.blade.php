@@ -98,10 +98,6 @@ $ruleColor = function (?string $rule) {
             <flux:heading size="xl">{{ __('Procedimientos') }}</flux:heading>
             <flux:subheading>{{ __('Vista de administración') }}</flux:subheading>
         </div>
-        <flux:button href="{{ route('procedures.create') }}" icon="plus"
-            class="w-full sm:w-auto !bg-indigo-500 hover:!bg-indigo-600 !border-indigo-500 !text-white dark:!bg-indigo-600 dark:hover:!bg-indigo-500">
-            {{ __('Registrar') }}
-        </flux:button>
     </div>
 
     <div class="space-y-4">
@@ -114,7 +110,7 @@ $ruleColor = function (?string $rule) {
             <div>
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Estado</label>
                 <select wire:model.change="status"
-                    class="w-full rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500 p-2.5">
+                    class="w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                     <option value="pending">Pendiente</option>
                     <option value="paid">Pagado</option>
                     <option value="all">Todos</option>
@@ -124,7 +120,7 @@ $ruleColor = function (?string $rule) {
             <div class="md:col-span-1">
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Instrumentista</label>
                 <select wire:model.change="instrumentist_id"
-                    class="w-full rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500 p-2.5">
+                    class="w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                     <option value="">-- Todos --</option>
                     @foreach($this->instrumentists as $i)
                         <option value="{{ $i->id }}">{{ $i->name }}</option>
@@ -135,13 +131,13 @@ $ruleColor = function (?string $rule) {
             <div>
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Desde</label>
                 <input type="date" wire:model.change="date_from"
-                    class="w-full rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500 p-2 text-sm">
+                    class="w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Hasta</label>
                 <input type="date" wire:model.change="date_to"
-                    class="w-full rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500 p-2 text-sm">
+                    class="w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
             </div>
         </div>
 
@@ -153,7 +149,7 @@ $ruleColor = function (?string $rule) {
                 </span>
                 (máx 300)
             </div>
-            <div class="font-semibold text-zinc-900 dark:text-zinc-100">
+            <div class="font-semibold text-emerald-600 dark:text-emerald-400">
                 Total: Q{{ number_format($this->total, 2) }}
             </div>
         </div>
@@ -196,9 +192,10 @@ $ruleColor = function (?string $rule) {
                     </div>
 
                     <div class="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex justify-between items-center">
-                        <flux:badge size="sm" color="{{ $ruleColor($rule) }}">{{ $ruleLabel($rule) }}</flux:badge>
+                        <flux:badge size="sm" color="{{ $this->ruleColor($rule) }}">{{ $this->ruleLabel($rule) }}
+                        </flux:badge>
                         <span
-                            class="font-bold text-zinc-900 dark:text-zinc-100">Q{{ number_format((float) $p->calculated_amount, 2) }}</span>
+                            class="font-bold text-emerald-600 dark:text-emerald-400">Q{{ number_format((float) $p->calculated_amount, 2) }}</span>
                     </div>
                 </div>
             @empty
@@ -268,10 +265,11 @@ $ruleColor = function (?string $rule) {
                                 {{ $p->duration_minutes ?? data_get($p->pricing_snapshot, 'duration_minutes', '—') }} min
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <flux:badge size="sm" color="{{ $ruleColor($rule) }}">{{ $ruleLabel($rule) }}</flux:badge>
+                                <flux:badge size="sm" color="{{ $this->ruleColor($rule) }}">{{ $this->ruleLabel($rule) }}
+                                </flux:badge>
                             </td>
                             <td
-                                class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                                class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-emerald-600 dark:text-emerald-400">
                                 Q{{ number_format((float) $p->calculated_amount, 2) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">

@@ -5,33 +5,44 @@
     @include('partials.head')
 </head>
 
-<body class="min-h-screen bg-white dark:bg-zinc-800">
-    <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+<body class="min-h-screen bg-white dark:bg-zinc-950">
+    <flux:sidebar sticky stashable
+        class="border-e border-zinc-200 bg-indigo-50/30 dark:border-zinc-800 dark:bg-zinc-900/50">
         <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-        <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
-            <x-app-logo />
-        </a>
+
+        <flux:brand href="{{ route('dashboard') }}" name="QxLog" class="me-5 flex items-center rtl:space-x-reverse"
+            wire:navigate>
+            <x-slot name="logo" class="bg-accent text-accent-foreground">
+                <i class="font-serif font-bold">A</i>
+            </x-slot>
+        </flux:brand>
 
         <flux:navlist variant="outline">
-            <flux:navlist.group :heading="__('Platform')" class="grid">
-                <!-- <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
-                    wire:navigate>
-                    {{ __('Dashboard') }}
-                </flux:navlist.item> -->
+            @if(auth()->user()->role !== "admin" && auth()->check())
+                <flux:navlist.group :heading="__('Procedimientos')" class="grid">
+                    @if(!auth()->check())
+                        <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
+                            wire:navigate>
+                            {{ __('Dashboard') }}
+                        </flux:navlist.item>
+                    @endif
 
-                @if(auth()->user()->role !== "admin" && auth()->check())
                     <flux:navlist.item icon="home" :href="route('procedures.create')"
                         :current="request()->routeIs('procedures.create')" wire:navigate>
                         {{ __('Registrar Procedimiento') }}
                     </flux:navlist.item>
-                @endif
+                </flux:navlist.group>
+            @endif
 
-                @if(auth()->user()->role === 'admin')
+            @if(auth()->user()->role === 'admin')
+                <flux:navlist.group :heading="__('Pagos')" class="grid">
                     <flux:navlist.item icon="home" :href="route('payouts.create')"
                         :current="request()->routeIs('payouts.create')" wire:navigate>
                         {{ __('Realizar Pago') }}
                     </flux:navlist.item>
+                </flux:navlist.group>
+                <flux:navlist.group :heading="__('Historial')" class="grid">
                     <flux:navlist.item icon="layout-grid" :href="route('payouts.index')"
                         :current="request()->routeIs('payouts.index')" wire:navigate>
                         {{ __('Historial de Pagos') }}
@@ -40,8 +51,18 @@
                         :current="request()->routeIs('procedures.index')" wire:navigate>
                         {{ __('Historial de Procedimientos') }}
                     </flux:navlist.item>
-                @endif
-            </flux:navlist.group>
+                </flux:navlist.group>
+                <flux:navlist.group :heading="__('Configuraciones')" class="grid">
+                    <flux:navlist.item icon="users" :href="route('pricing.instrumentists')"
+                        :current="request()->routeIs('pricing.instrumentists')" wire:navigate>
+                        {{ __('Configurar Instrumentistas') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="wrench" :href="route('pricing.settings')"
+                        :current="request()->routeIs('pricing.settings')" wire:navigate>
+                        {{ __('Precios de Instrumentistas') }}
+                    </flux:navlist.item>
+                </flux:navlist.group>
+            @endif
         </flux:navlist>
 
         <flux:spacer />
@@ -52,28 +73,28 @@
                     wire:navigate>
                     {{ __('Usuarios') }}
                 </flux:navlist.item>
-                <flux:navlist.item icon="users" :href="route('pricing.instrumentists')"
-                    :current="request()->routeIs('pricing.instrumentists')" wire:navigate>
-                    {{ __('Instrumentistas') }}
-                </flux:navlist.item>
-                <flux:navlist.item icon="wrench" :href="route('pricing.settings')"
-                    :current="request()->routeIs('pricing.settings')" wire:navigate>
-                    {{ __('Configuración de precios') }}
-                </flux:navlist.item>
             @endif
+        </flux:navlist>
+
+        <flux:sidebar.nav>
+            <flux:sidebar.item icon="cog" :href="route('profile.edit')" :current="request()->routeIs('profile.edit')"
+                wire:navigate>
+                {{ __('Settings') }}
+            </flux:sidebar.item>
+
             <form method="POST" action="{{ route('logout') }}" class="w-full">
                 @csrf
-                <flux:navlist.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full"
+                <flux:sidebar.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full"
                     data-test="logout-button">
                     {{ __('Log Out') }}
-                </flux:navlist.item>
+                </flux:sidebar.item>
             </form>
-        </flux:navlist>
+        </flux:sidebar.nav>
 
         <!-- Desktop User Menu -->
         <flux:dropdown class="hidden lg:block" position="bottom" align="start">
             <flux:profile :name="auth()->user()->name" :initials="auth()->user()->initials()"
-                icon:trailing="chevrons-up-down" data-test="sidebar-menu-button" />
+                icon:trailing="chevrons-up-down" data-test="sidebar-menu-button" circle color="auto" />
 
             <flux:menu class="w-[220px]">
                 <flux:menu.radio.group>

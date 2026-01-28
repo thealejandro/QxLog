@@ -65,7 +65,9 @@ $toggle = function (int $id) {
                         </flux:badge>
                     </div>
                     <div class="pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                        <flux:button size="sm" variant="subtle" class="w-full" wire:click="toggle({{ $u->id }})">
+                        <flux:button size="sm"
+                            class="w-full !bg-indigo-50 dark:!bg-indigo-900/30 !text-indigo-600 dark:!text-indigo-400 !border-indigo-100 dark:!border-indigo-800"
+                            wire:click="toggle({{ $u->id }})">
                             {{ $u->use_pay_scheme ? 'Desactivar esquema' : 'Activar esquema' }}
                         </flux:button>
                     </div>
@@ -84,32 +86,39 @@ $toggle = function (int $id) {
                     <tr>
                         <th scope="col"
                             class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Nombre') }}</th>
+                            {{ __('Nombre') }}
+                        </th>
                         <th scope="col"
                             class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Username') }}</th>
+                            {{ __('Username') }}
+                        </th>
                         <th scope="col"
                             class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Esquema') }}</th>
+                            {{ __('Esquema') }}
+                        </th>
                         <th scope="col"
                             class="px-6 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Acción') }}</th>
+                            {{ __('Acción') }}
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-700">
                     @forelse($this->instrumentists as $u)
                         <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                                {{ $u->name }}</td>
+                                {{ $u->name }}
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
-                                {{ $u->username }}</td>
+                                {{ $u->username }}
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <flux:badge size="sm" color="{{ $u->use_pay_scheme ? 'green' : 'zinc' }}">
                                     {{ $u->use_pay_scheme ? 'Especial' : 'Estándar' }}
                                 </flux:badge>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                <flux:button size="sm" variant="subtle" wire:click="toggle({{ $u->id }})">
+                                <flux:button size="sm" variant="subtle" class="!text-indigo-600 dark:!text-indigo-400"
+                                    wire:click="toggle({{ $u->id }})">
                                     {{ __('Cambiar') }}
                                 </flux:button>
                             </td>

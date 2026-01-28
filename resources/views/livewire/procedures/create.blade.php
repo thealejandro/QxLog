@@ -356,7 +356,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             <div>
                 <flux:label>Fecha</flux:label>
                 <input type="date" wire:model.live="procedure_date"
-                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100" />
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
                 @error('procedure_date') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -364,14 +364,14 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             <div>
                 <flux:label>Hora de inicio</flux:label>
                 <input type="time" wire:model.live="start_time"
-                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100" />
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
                 @error('start_time') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
             </div>
 
             <div>
                 <flux:label>Hora de finalización</flux:label>
                 <input type="time" wire:model.live="end_time"
-                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100" />
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
                 @error('end_time') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
             </div>
         </div>
@@ -380,7 +380,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             <div>
                 <flux:label>Paciente</flux:label>
                 <input type="text" wire:model="patient_name" placeholder="Nombre completo del paciente"
-                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100 dark:placeholder-zinc-500" />
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-500 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
                 @error('patient_name') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -388,7 +388,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             <div>
                 <flux:label>Tipo de cirugía</flux:label>
                 <input type="text" wire:model="procedure_type" placeholder="Ej: Cesárea, Apendicectomía..."
-                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100 dark:placeholder-zinc-500" />
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-500 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
                 @error('procedure_type') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -410,7 +410,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                         <flux:icon.magnifying-glass class="size-5" />
                     </div>
                     <input type="text"
-                        class="block w-full rounded-lg border-zinc-200 bg-white py-2.5 pl-10 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100 dark:placeholder-zinc-500"
+                        class="block w-full rounded-lg border-zinc-200 bg-indigo-50/20 py-2.5 pl-10 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-500 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors"
                         placeholder="Buscar o escribir nombre..." wire:model.live.debounce.300ms="doctor_query">
 
                     @if(!empty($this->doctor_suggestions))
@@ -427,8 +427,12 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                     @endif
                 </div>
 
-                @error('doctor_id') <p class="text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
-                @error('doctor_query') <p class="text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
+                @error('doctor_id')
+                    <p class="text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
+                @error('doctor_query')
+                    <p class="text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
             </div>
 
             <div class="space-y-2">
@@ -439,7 +443,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                         <flux:icon.magnifying-glass class="size-5" />
                     </div>
                     <input type="text"
-                        class="block w-full rounded-lg border-zinc-200 bg-white py-2.5 pl-10 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100 dark:placeholder-zinc-500"
+                        class="block w-full rounded-lg border-zinc-200 bg-indigo-50/20 py-2.5 pl-10 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-500 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors"
                         placeholder="Buscar o escribir nombre..." wire:model.live.debounce.300ms="circulating_query">
 
                     @if(!empty($this->circulating_suggestions))
@@ -456,8 +460,11 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                     @endif
                 </div>
 
-                @error('circulating_id') <p class="text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
-                @error('circulating_query') <p class="text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @error('circulating_id')
+                    <p class="text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
+                @error('circulating_query')
+                    <p class="text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                 @enderror
             </div>
         </div>
@@ -478,7 +485,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                 <div class="flex flex-col border-l border-zinc-200 dark:border-zinc-700 pl-8">
                     <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Monto
                         Estimado</span>
-                    <span class="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                    <span class="text-xl font-bold text-emerald-600 dark:text-emerald-400">
                         {{ is_numeric($this->amount_preview) ? 'Q' . number_format($this->amount_preview, 2) : '--' }}
                     </span>
                 </div>
@@ -498,7 +505,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                 class="flex items-center gap-2 text-sm bg-white dark:bg-zinc-800 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 shadow-sm">
                 <span class="text-zinc-500 dark:text-zinc-400">Total:</span>
                 <span
-                    class="font-bold text-zinc-900 dark:text-zinc-100">Q{{ number_format($this->pending_total ?? 0, 2) }}</span>
+                    class="font-bold text-emerald-600 dark:text-emerald-400">Q{{ number_format($this->pending_total ?? 0, 2) }}</span>
             </div>
         </div>
 
@@ -536,7 +543,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                                         @endif
                                     </div>
                                 </td>
-                                <td class="px-6 py-3 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                                <td class="px-6 py-3 text-right font-bold text-emerald-600 dark:text-emerald-400">
                                     Q{{ number_format((float) $p->calculated_amount, 2) }}
                                 </td>
                             </tr>
@@ -564,7 +571,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                                 <div class="text-sm text-zinc-500 dark:text-zinc-400">{{ $p->procedure_type }}</div>
                             </div>
                             <div class="text-right">
-                                <div class="font-mono font-medium text-zinc-900 dark:text-zinc-100">
+                                <div class="font-mono font-medium text-emerald-600 dark:text-emerald-400">
                                     Q{{ number_format((float) $p->calculated_amount, 2) }}</div>
                                 <div class="text-xs text-zinc-500 dark:text-zinc-400">
                                     {{ $p->procedure_date->format('d/m/Y') }}

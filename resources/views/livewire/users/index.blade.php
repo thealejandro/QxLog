@@ -64,6 +64,16 @@ $restoreUser = function (int $id) {
     $u->restore();
 };
 
+$roleColor = function (?string $role) {
+    return match ($role) {
+        'admin' => 'indigo',
+        'doctor' => 'emerald',
+        'instrumentist' => 'violet',
+        'circulating' => 'amber',
+        default => 'zinc',
+    };
+};
+
 ?>
 
 <div class="max-w-5xl mx-auto p-4 space-y-6">
@@ -73,7 +83,8 @@ $restoreUser = function (int $id) {
             <flux:subheading>{{ __('Solo Super Admin') }}</flux:subheading>
         </div>
 
-        <flux:button href="{{ route('users.create') }}" variant="primary" icon="plus" class="w-full sm:w-auto">
+        <flux:button href="{{ route('users.create') }}" icon="plus"
+            class="w-full sm:w-auto !bg-indigo-500 hover:!bg-indigo-600 !border-indigo-500 !text-white dark:!bg-indigo-600 dark:hover:!bg-indigo-500">
             {{ __('Nuevo usuario') }}
         </flux:button>
     </div>
@@ -87,7 +98,7 @@ $restoreUser = function (int $id) {
 
             <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Rol</label>
             <select wire:model.live="role"
-                class="w-full rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500 p-2.5">
+                class="w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                 <option value="">-- Todos --</option>
                 <option value="admin">Admin</option>
                 <option value="instrumentist">Instrumentista</option>
@@ -117,7 +128,7 @@ $restoreUser = function (int $id) {
                     </div>
 
                     <div class="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-                        <flux:badge size="sm" variant="pill">{{ $u->role }}</flux:badge>
+                        <flux:badge size="sm" color="{{ $this->roleColor($u->role) }}">{{ $u->role }}</flux:badge>
                     </div>
 
                     <div class="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-end gap-2">
@@ -186,7 +197,8 @@ $restoreUser = function (int $id) {
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">{{ $u->email }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">{{ $u->role }}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
+                                <flux:badge size="sm" color="{{ $this->roleColor($u->role) }}">{{ $u->role }}</flux:badge>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <flux:badge size="sm" color="{{ $u->deleted_at ? 'red' : 'green' }}">

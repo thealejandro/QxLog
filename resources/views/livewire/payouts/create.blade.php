@@ -195,7 +195,7 @@ $liquidate = function () {
         <div>
             <flux:label>Instrumentista</flux:label>
             <select wire:model.change="instrumentist_id"
-                class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100">
+                class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 py-2.5 px-3 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                 <option value="">Seleccionar instrumentista</option>
                 @foreach($this->instrumentists as $i)
                     <option value="{{ $i['id'] }}">{{ $i['name'] }}</option>
@@ -208,13 +208,13 @@ $liquidate = function () {
                 class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg border border-zinc-100 dark:border-zinc-700/50">
                 <div class="space-y-1">
                     <div class="text-sm text-zinc-500 dark:text-zinc-400">Total pendiente</div>
-                    <div class="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                    <div class="text-xl font-bold text-emerald-600 dark:text-emerald-400">
                         Q{{ number_format($this->pending_total ?? 0, 2) }}</div>
                 </div>
 
                 <div class="space-y-1">
                     <div class="text-sm text-zinc-500 dark:text-zinc-400">Total seleccionado</div>
-                    <div class="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                    <div class="text-xl font-bold text-emerald-600 dark:text-emerald-400">
                         Q{{ number_format($this->selected_total ?? 0, 2) }}</div>
                 </div>
 
@@ -264,7 +264,7 @@ $liquidate = function () {
                                             @endif
                                         </div>
                                     </td>
-                                    <td class="px-4 py-3 text-right font-mono font-medium text-zinc-900 dark:text-zinc-100">
+                                    <td class="px-4 py-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
                                         Q{{ number_format((float) $p->calculated_amount, 2) }}
                                     </td>
                                 </tr>
@@ -314,7 +314,8 @@ $liquidate = function () {
             </div>
 
             <div class="flex justify-end pt-2">
-                <flux:button wire:click="liquidate" variant="primary" loading="liquidate">
+                <flux:button wire:click="liquidate" loading="liquidate"
+                    class="w-full sm:w-auto !bg-indigo-500 hover:!bg-indigo-600 !border-indigo-500 !text-white dark:!bg-indigo-600 dark:hover:!bg-indigo-500">
                     Liquidar seleccionados
                 </flux:button>
             </div>

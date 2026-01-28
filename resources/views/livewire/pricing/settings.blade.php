@@ -86,7 +86,8 @@ $save = function () {
         </div>
 
         <div class="pt-2 flex justify-end">
-            <flux:button variant="primary" wire:click="save">
+            <flux:button wire:click="save"
+                class="!bg-indigo-500 hover:!bg-indigo-600 !border-indigo-500 !text-white dark:!bg-indigo-600 dark:hover:!bg-indigo-500">
                 {{ __('Guardar') }}
             </flux:button>
         </div>

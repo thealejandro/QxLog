@@ -67,7 +67,7 @@ $batches = computed(function () {
             <div>
                 <flux:label>Instrumentista</flux:label>
                 <select wire:model.live="instrumentist_id"
-                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100">
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:bg-zinc-800/50 py-2.5 px-3 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500">
                     <option value="">Todos</option>
                     @foreach($instrumentists as $i)
                         <option value="{{ $i['id'] }}">{{ $i['name'] }}</option>
@@ -78,13 +78,13 @@ $batches = computed(function () {
             <div>
                 <flux:label>Desde</flux:label>
                 <input type="date" wire:model.live="date_from"
-                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100" />
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
             </div>
 
             <div>
                 <flux:label>Hasta</flux:label>
                 <input type="date" wire:model.live="date_to"
-                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-white py-2.5 px-3 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100" />
+                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
             </div>
         </div>
 
@@ -110,7 +110,7 @@ $batches = computed(function () {
                                 <td class="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">
                                     {{ $b->instrumentist->name ?? ('#' . $b->instrumentist_id) }}
                                 </td>
-                                <td class="px-4 py-3 text-right font-mono font-medium text-zinc-900 dark:text-zinc-100">
+                                <td class="px-4 py-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
                                     Q{{ number_format((float) $b->total_amount, 2) }}
                                 </td>
                                 <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">
@@ -146,7 +146,7 @@ $batches = computed(function () {
                                     {{ optional($b->paid_at)->format('Y-m-d H:i') ?? $b->paid_at }}</div>
                             </div>
                             <div class="text-right">
-                                <div class="font-mono font-medium text-zinc-900 dark:text-zinc-100">
+                                <div class="font-mono font-bold text-emerald-600 dark:text-emerald-400">
                                     Q{{ number_format((float) $b->total_amount, 2) }}</div>
                             </div>
                         </div>
