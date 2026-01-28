@@ -390,7 +390,6 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             <div>
                 <flux:label>
                     Tipo de cirugía
-                    <flux:icon.surgery />
                 </flux:label>
                 <input type="text" wire:model="procedure_type" placeholder="Ej: Cesárea, Apendicectomía..."
                     class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-500 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
@@ -410,7 +409,6 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             <div class="space-y-2">
                 <flux:label>
                     Médico (Cirujano)
-                    <flux:icon.user-doctor />
                 </flux:label>
 
                 <div class="relative">
