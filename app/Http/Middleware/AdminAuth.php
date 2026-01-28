@@ -5,8 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+
 class AdminAuth
 {
     /**
@@ -16,8 +15,8 @@ class AdminAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        abort_unless((bool) Auth::check(), 401);
-        abort_unless((bool) Auth::user()->role === 'admin', 403);
+        $user = $request->user();
+        abort_unless((bool) $user && (bool) ($user->role === "admin" || $user->is_super_admin), 403);
 
         return $next($request);
     }
