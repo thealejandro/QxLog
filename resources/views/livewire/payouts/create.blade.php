@@ -193,12 +193,18 @@ $liquidate = function () {
 
     <div class="rounded-xl border bg-white p-6 dark:bg-zinc-900 dark:border-zinc-700 space-y-6">
         <div>
-            <flux:label>Instrumentista</flux:label>
+            <flux:label>
+                {{ __('Instrumentist') }}
+            </flux:label>
             <select wire:model.change="instrumentist_id"
                 class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 py-2.5 px-3 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
-                <option value="">Seleccionar instrumentista</option>
+                <option value="">
+                    {{ __('Select instrumentist') }}
+                </option>
                 @foreach($this->instrumentists as $i)
-                    <option value="{{ $i['id'] }}">{{ $i['name'] }}</option>
+                    <option value="{{ $i['id'] }}">
+                        {{ $i['name'] }}
+                    </option>
                 @endforeach
             </select>
         </div>
@@ -207,19 +213,25 @@ $liquidate = function () {
             <div
                 class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg border border-zinc-100 dark:border-zinc-700/50">
                 <div class="space-y-1">
-                    <div class="text-sm text-zinc-500 dark:text-zinc-400">Total pendiente</div>
+                    <div class="text-sm text-zinc-500 dark:text-zinc-400">
+                        {{ __('Total pending') }}
+                    </div>
                     <div class="text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                        Q{{ number_format($this->pending_total ?? 0, 2) }}</div>
+                        Q{{ number_format($this->pending_total ?? 0, 2) }}
+                    </div>
                 </div>
 
                 <div class="space-y-1">
-                    <div class="text-sm text-zinc-500 dark:text-zinc-400">Total seleccionado</div>
+                    <div class="text-sm text-zinc-500 dark:text-zinc-400">
+                        {{ __('Total selected') }}
+                    </div>
                     <div class="text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                        Q{{ number_format($this->selected_total ?? 0, 2) }}</div>
+                        Q{{ number_format($this->selected_total ?? 0, 2) }}
+                    </div>
                 </div>
 
                 <flux:button wire:click="toggleAll" variant="filled" size="sm">
-                    Seleccionar / Quitar todos
+                    {{ __('Select / Unselect all') }}
                 </flux:button>
             </div>
 
@@ -230,39 +242,84 @@ $liquidate = function () {
             @enderror
 
             <div class="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-700">
+
                 {{-- Desktop Table --}}
-                <div class="hidden md:block overflow-x-auto">
+                <div class="hidden md:block overflow-x-auto overflow-y-auto">
                     <table class="min-w-full text-sm divide-y divide-zinc-200 dark:divide-zinc-700">
-                        <thead class="bg-zinc-50 dark:bg-zinc-800 text-left text-zinc-500 dark:text-zinc-400">
+                        <thead class="bg-zinc-50 dark:bg-zinc-800 text-center text-zinc-500 dark:text-zinc-400">
                             <tr>
-                                <th class="px-4 py-3 font-medium">Pagar</th>
-                                <th class="px-4 py-3 font-medium">Fecha</th>
-                                <th class="px-4 py-3 font-medium">Inicio</th>
-                                <th class="px-4 py-3 font-medium">Paciente</th>
-                                <th class="px-4 py-3 font-medium">Cirugía</th>
-                                <th class="px-4 py-3 font-medium text-right">Monto</th>
+                                <th class="px-4 py-3 font-medium text-left">
+                                    <flux:checkbox wire:click="toggleAll" />
+                                </th>
+                                <th class="px-4 py-3 font-medium">
+                                    <flux:label>
+                                        {{ __('Date') }}
+                                    </flux:label>
+                                </th>
+                                <th class="px-4 py-3 font-medium">
+                                    <div class="flex items-center justify-between">
+                                        <flux:label>
+                                            {{ __('Duration') }}
+                                        </flux:label>
+                                        <flux:badge size="sm" color="indigo">
+                                            {{ __('Rules') }}
+                                        </flux:badge>
+                                    </div>
+                                </th>
+                                <th class="px-4 py-3 font-medium">
+                                    <flux:label>
+                                        {{ __('Patient') }}
+                                    </flux:label>
+                                </th>
+                                <th class="px-4 py-3 font-medium">
+                                    <flux:label>
+                                        {{ __('Surgery') }}
+                                    </flux:label>
+                                </th>
+                                <th class="px-4 py-3 font-medium text-right">
+                                    <flux:label>
+                                        {{ __('Amount') }}
+                                    </flux:label>
+                                </th>
                             </tr>
                         </thead>
 
                         <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700 bg-white dark:bg-zinc-900">
                             @forelse($this->pending_procedures as $p)
-                                <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                                <tr
+                                    class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors text-sm whitespace-nowrap">
                                     <td class="px-4 py-3">
                                         <flux:checkbox wire:model.live="selected" value="{{ $p->id }}" />
                                     </td>
                                     <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">
                                         {{ $p->procedure_date->format('d/m/Y') }}
                                     </td>
-                                    <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">{{ $p->start_time }}</td>
-                                    <td class="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">{{ $p->patient_name }}
+                                    <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300 whitespace-nowrap text-center">
+                                        <div class="flex flex-row justify-between items-center">
+                                            <div class="flex flex-col items-center">
+                                                <div>
+                                                    {{ $p->duration_minutes }}
+                                                    <span class="text-xs text-zinc-500 dark:text-zinc-400">
+                                                        {{ __('min') }}
+                                                    </span>
+                                                </div>
+                                                <span class="text-xs text-zinc-500 dark:text-zinc-400">
+                                                    {{ Carbon\Carbon::parse($p->start_time)->format('H:i') }}
+                                                    -
+                                                    {{ Carbon\Carbon::parse($p->end_time)->format('H:i') }}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <x-procedure-rule-badge :rule="data_get($p, 'pricing_snapshot.rule')"
+                                                    :videosurgery="$p->is_videosurgery" />
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">
+                                        {{ $p->patient_name }}
                                     </td>
                                     <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">
-                                        <div class="flex items-center gap-2">
-                                            <span>{{ $p->procedure_type }}</span>
-                                            @if($p->is_videosurgery)
-                                                <flux:badge size="sm" color="zinc">Video</flux:badge>
-                                            @endif
-                                        </div>
+                                        {{ $p->procedure_type }}
                                     </td>
                                     <td class="px-4 py-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
                                         Q{{ number_format((float) $p->calculated_amount, 2) }}
@@ -271,7 +328,7 @@ $liquidate = function () {
                             @empty
                                 <tr>
                                     <td colspan="6" class="px-4 py-8 text-center text-zinc-500 dark:text-zinc-400">
-                                        No hay procedimientos pendientes para este instrumentista.
+                                        {{ __('No hay procedimientos pendientes para este instrumentista.') }}
                                     </td>
                                 </tr>
                             @endforelse
@@ -287,27 +344,39 @@ $liquidate = function () {
                                 <div class="flex items-center gap-3">
                                     <flux:checkbox wire:model.live="selected" value="{{ $p->id }}" />
                                     <div>
-                                        <div class="font-medium text-zinc-900 dark:text-zinc-100">{{ $p->patient_name }}</div>
-                                        <div class="text-sm text-zinc-500 dark:text-zinc-400">{{ $p->procedure_type }}</div>
+                                        <div class="font-medium text-zinc-900 dark:text-zinc-100">
+                                            {{ $p->patient_name }}
+                                        </div>
+                                        <div class="text-sm text-zinc-500 dark:text-zinc-400">
+                                            {{ $p->procedure_type }}
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="font-mono font-medium text-zinc-900 dark:text-zinc-100">
-                                        Q{{ number_format((float) $p->calculated_amount, 2) }}</div>
-                                    <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $p->procedure_date }}</div>
+                                    <div class="font-mono font-medium text-emerald-600 dark:text-emerald-400">
+                                        Q{{ number_format((float) $p->calculated_amount, 2) }}
+                                    </div>
+                                    <div class="text-xs text-zinc-500 dark:text-zinc-400">
+                                        {{ $p->procedure_date->format('d/m/Y') }}
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="flex items-center justify-between text-sm text-zinc-500 dark:text-zinc-400 pl-8">
-                                <div>Inicio: {{ $p->start_time }}</div>
-                                @if($p->is_videosurgery)
-                                    <flux:badge size="sm" color="zinc">Video</flux:badge>
-                                @endif
+                                <div>
+                                    {{ __('Duración') }}: {{ $p->duration_minutes }} {{ __('min') }}
+                                    <div class="text-xs text-zinc-500 dark:text-zinc-400">
+                                        {{ Carbon\Carbon::parse($p->start_time)->format('H:i') }} -
+                                        {{ Carbon\Carbon::parse($p->end_time)->format('H:i') }}
+                                    </div>
+                                </div>
+                                <x-procedure-rule-badge :rule="data_get($p, 'pricing_snapshot.rule')"
+                                    :videosurgery="$p->is_videosurgery" />
                             </div>
                         </div>
                     @empty
                         <div class="p-8 text-center text-zinc-500 dark:text-zinc-400">
-                            No hay procedimientos pendientes.
+                            {{ __('No hay procedimientos pendientes.') }}
                         </div>
                     @endforelse
                 </div>
@@ -316,7 +385,7 @@ $liquidate = function () {
             <div class="flex justify-end pt-2">
                 <flux:button wire:click="liquidate" loading="liquidate"
                     class="w-full sm:w-auto !bg-indigo-500 hover:!bg-indigo-600 !border-indigo-500 !text-white dark:!bg-indigo-600 dark:hover:!bg-indigo-500">
-                    Liquidar seleccionados
+                    {{ __('Liquidar seleccionados') }}
                 </flux:button>
             </div>
         @endif

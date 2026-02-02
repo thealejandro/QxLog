@@ -156,32 +156,32 @@ $roleColor = function (?string $role) {
         </div>
 
         <!-- Desktop View (Table) -->
-        <div class="hidden sm:block overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700">
+        <div class="hidden sm:block overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-700">
             <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
                 <thead class="bg-zinc-50 dark:bg-zinc-800/50">
                     <tr>
                         <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                             {{ __('Nombre') }}
                         </th>
                         <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                             {{ __('Username') }}
                         </th>
                         <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                             {{ __('Email') }}
                         </th>
                         <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                             {{ __('Rol') }}
                         </th>
                         <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                             {{ __('Estado') }}
                         </th>
                         <th scope="col"
-                            class="px-6 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                            class="px-4 py-3 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                             {{ __('Acciones') }}
                         </th>
                     </tr>
@@ -189,23 +189,23 @@ $roleColor = function (?string $role) {
                 <tbody class="bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-700">
                     @forelse($this->users as $u)
                         <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-zinc-100">
                                 {{ $u->name }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                                 {{ $u->username }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">{{ $u->email }}
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">{{ $u->email }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                                 <flux:badge size="sm" color="{{ $this->roleColor($u->role) }}">{{ $u->role }}</flux:badge>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-4 py-3 whitespace-nowrap">
                                 <flux:badge size="sm" color="{{ $u->deleted_at ? 'red' : 'green' }}">
                                     {{ $u->deleted_at ? 'Eliminado' : 'Activo' }}
                                 </flux:badge>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm space-x-2">
+                            <td class="px-4 py-3 whitespace-nowrap text-right text-sm space-x-2">
                                 @if(!$u->deleted_at)
                                     <flux:button href="{{ route('users.edit', $u->id) }}" size="sm" variant="subtle">
                                         {{ __('Editar') }}

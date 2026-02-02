@@ -88,32 +88,32 @@ $batches = computed(function () {
             </div>
         </div>
 
-        <div class="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-700">
+        <div class="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
             {{-- Desktop Table --}}
             <div class="hidden md:block overflow-x-auto">
                 <table class="min-w-full text-sm divide-y divide-zinc-200 dark:divide-zinc-700">
                     <thead class="bg-zinc-50 dark:bg-zinc-800 text-left text-zinc-500 dark:text-zinc-400">
                         <tr>
-                            <th class="px-4 py-3 font-medium">Fecha</th>
-                            <th class="px-4 py-3 font-medium">Instrumentista</th>
-                            <th class="px-4 py-3 font-medium text-right">Total</th>
-                            <th class="px-4 py-3 font-medium">Pagado por</th>
-                            <th class="px-4 py-3 font-medium text-right">Acciones</th>
+                            <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider">Fecha</th>
+                            <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider">Instrumentista</th>
+                            <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-right">Total</th>
+                            <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider">Pagado por</th>
+                            <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-right">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700 bg-white dark:bg-zinc-900">
                         @forelse($this->batches as $b)
                             <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
-                                <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">
+                                <td class="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-300">
                                     {{ optional($b->paid_at)->format('Y-m-d H:i') ?? $b->paid_at }}
                                 </td>
-                                <td class="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">
+                                <td class="px-4 py-3 text-sm font-medium text-zinc-900 dark:text-zinc-100">
                                     {{ $b->instrumentist->name ?? ('#' . $b->instrumentist_id) }}
                                 </td>
-                                <td class="px-4 py-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                                <td class="px-4 py-3 text-sm text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
                                     Q{{ number_format((float) $b->total_amount, 2) }}
                                 </td>
-                                <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">
+                                <td class="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-300">
                                     {{ $b->paidByUser->name ?? ('#' . $b->paid_by_user_id) }}
                                 </td>
                                 <td class="px-4 py-3 text-right">

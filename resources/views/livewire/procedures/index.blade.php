@@ -90,7 +90,7 @@ $ruleColor = function (?string $rule) {
 
 ?>
 
-<div class="max-w-7xl mx-auto p-4 space-y-6">
+<div class="max-w-6xl mx-auto p-4 space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <flux:heading size="xl">
@@ -103,37 +103,40 @@ $ruleColor = function (?string $rule) {
     </div>
 
     <div class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
-            <div class="md:col-span-2 items-center">
-                <flux:input icon="magnifying-glass" wire:model.live="q"
-                    placeholder="Paciente, tipo, médico, circulante..." />
-            </div>
-
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
             <div class="md:col-span-2 items-center">
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    Estado
+                    {{ __('Buscar') }}
+                </label>
+                <flux:input icon="magnifying-glass" wire:model.live="q"
+                    placeholder="{{ __('Paciente, tipo, médico, circulante...') }}" />
+            </div>
+
+            <div class="md:col-span-1 items-center">
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                    {{ __('Estado') }}
                 </label>
                 <select wire:model.change="status"
-                    class="w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
+                    class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                     <option value="pending">
-                        Pendiente
+                        {{ __('Pendiente') }}
                     </option>
                     <option value="paid">
-                        Pagado
+                        {{ __('Pagado') }}
                     </option>
                     <option value="all">
-                        Todos
+                        {{ __('Todos') }}
                     </option>
                 </select>
             </div>
 
             <div class="md:col-span-1 items-center">
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    Instrumentista
+                    {{ __('Instrumentista') }}
                 </label>
                 <select wire:model.change="instrumentist_id"
-                    class="w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
-                    <option value="">-- Todos --</option>
+                    class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
+                    <option value="">-- {{ __('Todos') }} --</option>
                     @foreach($this->instrumentists as $i)
                         <option value="{{ $i->id }}">{{ $i->name }}</option>
                     @endforeach
@@ -142,31 +145,31 @@ $ruleColor = function (?string $rule) {
 
             <div class="md:col-span-1 items-center">
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    Desde
+                    {{ __('Desde') }}
                 </label>
                 <input type="date" wire:model.change="date_from"
-                    class="w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
+                    class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
             </div>
 
             <div class="md:col-span-1 items-center">
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    Hasta
+                    {{ __('Hasta') }}
                 </label>
                 <input type="date" wire:model.change="date_to"
-                    class="w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
+                    class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
             </div>
         </div>
 
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between text-sm gap-2">
             <div class="text-zinc-600 dark:text-zinc-400">
-                Mostrando
+                {{ __('Mostrando') }}
                 <span class="font-medium text-zinc-900 dark:text-zinc-100 mx-1">
                     {{ $this->procedures->count() }}
                 </span>
-                (máx 300)
+                {{ __('máx 300') }}
             </div>
             <div class="font-semibold text-emerald-600 dark:text-emerald-400">
-                Total: Q{{ number_format($this->total, 2) }}
+                {{ __('Total') }}: Q{{ number_format($this->total, 2) }}
             </div>
         </div>
 
@@ -177,46 +180,58 @@ $ruleColor = function (?string $rule) {
                     $rule = data_get($p->pricing_snapshot, 'rule', 'default_rate');
                 @endphp
                 <div
-                    class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-sm space-y-3">
+                    class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-900 shadow-sm space-y-3">
                     <div class="flex justify-between items-start">
                         <div>
+                            <div class="font-medium text-zinc-900 dark:text-zinc-100 text-lg">
+                                {{ $p->patient_name }}
+                            </div>
+                            <div class="text-xs text-zinc-400 font-mono">
+                                {{ $p->procedure_type }}
+                            </div>
                             <div class="text-xs text-zinc-500 dark:text-zinc-500">
                                 {{ $p->procedure_date?->format('d/m/Y') }}
                             </div>
-                            <div class="font-medium text-zinc-900 dark:text-zinc-100 text-lg">{{ $p->patient_name }}</div>
-                            <div class="text-xs text-zinc-400 font-mono">{{ $p->procedure_type }}</div>
                         </div>
-                        <flux:badge size="sm" color="{{ $p->status === 'paid' ? 'green' : 'zinc' }}">
-                            {{ $p->status === 'paid' ? 'Pagado' : 'Pendiente' }}
+                        <flux:badge size="sm" color="{{ $p->status === 'paid' ? 'green' : 'amber' }}">
+                            {{ $p->status }}
                         </flux:badge>
                     </div>
 
-                    <div class="space-y-1 text-sm text-zinc-600 dark:text-zinc-400">
+                    <div class="space-y-1 text-sm text-zinc-500 dark:text-zinc-400">
                         <div class="flex justify-between">
-                            <span class="font-medium text-zinc-900 dark:text-zinc-200">Instrumentista:</span>
-                            <span class="font-medium text-zinc-900 dark:text-zinc-200">
+                            <span class="font-medium">
+                                {{ __('Instrumentista') }}:
+                            </span>
+                            <span class="font-medium">
                                 {{ $p->instrumentist->name ?? '—' }}
                             </span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="font-medium text-zinc-900 dark:text-zinc-200">Inicio - Fin:</span>
-                            <span class="font-medium text-zinc-900 dark:text-zinc-200">
-                                {{ $p->start_time }} - {{ $p->end_time }}
+                            <span class="font-medium">
+                                {{ __('Inicio - Fin') }}:
+                            </span>
+                            <span class="font-medium">
+                                {{ \Carbon\Carbon::parse($p->start_time)->format('H:i') }}
+                                <span>-</span>
+                                {{ \Carbon\Carbon::parse($p->end_time)->format('H:i') }}
                             </span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="font-medium text-zinc-900 dark:text-zinc-200">Duración:</span>
-                            <span class="font-medium text-zinc-900 dark:text-zinc-200">
-                                {{ $p->duration_minutes ?? data_get($p->pricing_snapshot, 'duration_minutes', '—') }}
-                                min
+                            <span class="font-medium">
+                                {{ __('Duración') }}:
+                            </span>
+                            <span class="font-medium">
+                                {{ $p->duration_minutes ?? '-' }}
+                                <span>
+                                    {{ __('min') }}
+                                </span>
                             </span>
                         </div>
                     </div>
 
-                    <div class="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex justify-between items-center">
-                        <flux:badge size="sm" color="{{ $this->ruleColor($rule) }}">
-                            {{ $this->ruleLabel($rule) }}
-                        </flux:badge>
+                    <div class="pt-3 border-t border-zinc-200 dark:border-zinc-700 flex justify-between items-center">
+                        <x-procedure-rule-badge :rule="$rule" :videosurgery="$p->is_videosurgery" />
                         <span class="font-bold text-emerald-600 dark:text-emerald-400">
                             Q{{ number_format((float) $p->calculated_amount, 2) }}
                         </span>
@@ -231,36 +246,57 @@ $ruleColor = function (?string $rule) {
         </div>
 
         <!-- Desktop View (Table) -->
-        <div class="hidden sm:block overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700">
-            <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
-                <thead class="bg-zinc-50 dark:bg-zinc-800/50">
+        <div class="hidden sm:block overflow-auto rounded-xl border border-zinc-200 dark:border-zinc-700">
+            <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700 text-zinc-500 dark:text-zinc-400">
+                <thead class="bg-zinc-50 dark:bg-zinc-800 text-center">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Fecha') }}
+                        <th class="px-4 py-3 font-medium uppercase tracking-wider">
+                            <flux:label>
+                                {{ __('Fecha') }}
+                            </flux:label>
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Paciente') }}
+                        <th class="px-4 py-3 font-medium uppercase tracking-wider">
+                            <flux:label>
+                                {{ __('Paciente') }}
+                            </flux:label>
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Procedimiento') }}
+                        <th class="px-4 py-3 font-medium uppercase tracking-wider">
+                            <flux:label>
+                                {{ __('Procedimiento') }}
+                            </flux:label>
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Instrumentista') }}
+                        <th class="px-4 py-3 font-medium uppercase tracking-wider">
+                            <flux:label>
+                                {{ __('Instrumentista') }}
+                            </flux:label>
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Inicio - Fin') }}
+                        <th class="px-4 py-3 font-medium uppercase tracking-wider">
+                            <div class="flex flex-row justify-between gap-1  items-center">
+                                <div class="text-center">
+                                    <flux:label>
+                                        {{ __('Duración') }}
+                                    </flux:label>
+                                    <br>
+                                    <span class="text-xs text-zinc-500 dark:text-zinc-400">
+                                        {{ __('Inicio - Fin') }}
+                                    </span>
+                                </div>
+                                <div>
+                                    <flux:badge size="sm" color="indigo">
+                                        {{ __('Rules') }}
+                                    </flux:badge>
+                                </div>
+                            </div>
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Duración') }}
+                        <th class="px-4 py-3 font-medium uppercase tracking-wider">
+                            <flux:label>
+                                {{ __('Monto') }}
+                            </flux:label>
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Regla') }}
-                        </th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Monto') }}
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Estado') }}
+                        <th class="px-4 py-3 font-medium uppercase tracking-wider">
+                            <flux:label>
+                                {{ __('Estado') }}
+                            </flux:label>
                         </th>
                     </tr>
                 </thead>
@@ -269,35 +305,46 @@ $ruleColor = function (?string $rule) {
                         @php
                             $rule = data_get($p->pricing_snapshot, 'rule', 'default_rate');
                         @endphp
-                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
-                                {{ $p->procedure_date?->format('d-m-Y') ?? $p->procedure_date }}
+                        <tr
+                            class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors text-zinc-600 dark:text-zinc-300">
+                            <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                {{ $p->procedure_date->format('d/m/Y') }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-zinc-100">
                                 {{ $p->patient_name }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
+                            <td class="px-4 py-3 whitespace-nowrap text-sm">
                                 {{ $p->procedure_type }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
+                            <td class="px-4 py-3 whitespace-nowrap text-sm">
                                 {{ $p->instrumentist->name ?? '—' }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
-                                {{ $p->start_time }} - {{ $p->end_time }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
-                                {{ $p->duration_minutes ?? data_get($p->pricing_snapshot, 'duration_minutes', '—') }} min
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <flux:badge size="sm" color="{{ $this->ruleColor($rule) }}">
-                                    {{ $this->ruleLabel($rule) }}
-                                </flux:badge>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-center">
+                                <div class="flex flex-row justify-between items-center">
+                                    <div>
+                                        {{ $p->duration_minutes }}
+                                        <span class="text-xs text-zinc-500 dark:text-zinc-400">
+                                            {{ __('min') }}
+                                        </span>
+                                        <br>
+                                        <span class="text-xs text-zinc-500 dark:text-zinc-400">
+                                            {{ \Carbon\Carbon::parse($p->start_time)->format('H:i') }}
+                                            <span>
+                                                -
+                                            </span>
+                                            {{ \Carbon\Carbon::parse($p->end_time)->format('H:i') }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <x-procedure-rule-badge :rule="$rule" :videosurgery="$p->is_videosurgery" />
+                                    </div>
+                                </div>
                             </td>
                             <td
-                                class="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                                class="px-4 py-3 whitespace-nowrap text-right text-sm font-bold text-emerald-600 dark:text-emerald-400">
                                 Q{{ number_format((float) $p->calculated_amount, 2) }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-4 py-3 whitespace-nowrap">
                                 <flux:badge size="sm" color="{{ $p->status === 'paid' ? 'green' : 'zinc' }}">
                                     {{ $p->status === 'paid' ? 'Pagado' : 'Pendiente' }}
                                 </flux:badge>

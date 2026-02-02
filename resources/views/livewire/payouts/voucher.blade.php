@@ -8,14 +8,13 @@ use function Livewire\Volt\{state, mount};
 state([
     'batch' => null,
     'items' => [],
+    'year' => null,
+    'folio' => null,
 ]);
 
 mount(function (string|int $batch) {
-    $user = Auth::user();
-    if (!$user)
-        abort(401);
-    if ($user->role !== 'admin')
-        abort(403);
+    abort_unless((bool) Auth::check(), 401);
+    abort_unless((bool) Auth::user()->role === 'admin' || (bool) Auth::user()->is_super_admin, 403);
 
     $b = PayoutBatch::query()
         ->with([
@@ -27,11 +26,18 @@ mount(function (string|int $batch) {
 
     $this->batch = $b;
     $this->items = $b->items;
+    $this->year = optional($this->batch->paid_at)->format('Y') ?? now()->format('Y');
+    $this->folio = 'QX-' . $this->year . '-' . str_pad((string) $this->batch->id, 6, '0', STR_PAD_LEFT);
 });
 
 ?>
 
 <style>
+    @page {
+        size: letter portrait;
+        margin: 1.25cm;
+    }
+
     @media print {
         .no-print {
             display: none !important;
@@ -39,11 +45,47 @@ mount(function (string|int $batch) {
 
         .print-wrap {
             padding: 0 !important;
+            margin: 0 !important;
+            max-width: none !important;
+        }
+
+        html,
+        body {
+            height: auto !important;
+            overflow: visible !important;
+        }
+
+        .avoid-break {
+            break-inside: avoid;
         }
 
         body {
             background: #fff !important;
             color: #000 !important;
+            -webkit-print-color-adjust: exact;
+        }
+
+        body * {
+            visibility: hidden !important;
+        }
+
+        #print-content,
+        #print-content * {
+            visibility: visible !important;
+        }
+
+        #print-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+
+        * {
+            -webkit-print-color-adjust: economy;
+            print-color-adjust: economy;
+            background: transparent !important;
+            box-shadow: none !important;
         }
 
         .dark-mode-override {
@@ -54,52 +96,61 @@ mount(function (string|int $batch) {
     }
 </style>
 
-<div class="max-w-4xl mx-auto p-4 print-wrap">
+<div id="print-content" class="max-w-4xl mx-auto p-4 print-wrap">
     <div class="no-print mb-6 flex items-center justify-between gap-2">
         <a href="{{ route('payouts.index') }}"
-            class="text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors flex items-center gap-1">
-            <flux:icon.arrow-left size="xs" /> Volver
+            class="text-md text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors flex items-center gap-1">
+            <flux:icon.arrow-left size="sm" class="mr-2" />
+            {{ __('Volver') }}
         </a>
 
         <div class="flex gap-2">
             <flux:button onclick="window.print()">
                 <flux:icon.printer class="size-4 mr-2" />
-                Imprimir
+                {{ __('Imprimir') }}
             </flux:button>
         </div>
     </div>
 
     <div class="rounded-xl border bg-white p-8 dark:bg-zinc-900 dark:border-zinc-700 dark-mode-override">
-        <div class="flex items-start justify-between gap-6 pb-6 border-b border-zinc-200 dark:border-zinc-700">
-            <div>
-                <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Voucher de Pago</h1>
-                <p class="text-sm text-zinc-500 dark:text-zinc-400">QxLog • Registro de cirugías instrumentadas</p>
+        <div
+            class="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-zinc-200 dark:border-zinc-700">
+            <div class="items-center text-center md:text-left md:items-start">
+                <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+                    {{ __('Voucher de Pago') }}
+                </h1>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">
+                    {{ __('QxLog • Registro de cirugías instrumentadas') }}
+                </p>
             </div>
 
-            <div class="text-right text-sm">
-                <div><span class="text-zinc-500 dark:text-zinc-400">No.:</span> <span
-                        class="font-semibold text-zinc-900 dark:text-zinc-100">#{{ $this->batch->id }}</span>
-                </div>
-                <div><span class="text-zinc-500 dark:text-zinc-400">Fecha pago:</span>
+            <div
+                class="print:w-full flex flex-col print:flex-row print:justify-between justify-between items-center md:items-end">
+                <div>
+                    <span class="text-zinc-500 dark:text-zinc-400">
+                        {{ __('Folio') }}:
+                    </span>
                     <span class="font-semibold text-zinc-900 dark:text-zinc-100">
-                        {{ optional($this->batch->paid_at)->format('Y-m-d H:i') ?? $this->batch->paid_at }}
+                        {{ $this->folio }}
                     </span>
                 </div>
-            </div>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm py-6 border-b border-zinc-200 dark:border-zinc-700">
-            <div>
-                <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs tracking-wider mb-1">Instrumentista</div>
-                <div class="font-semibold text-lg text-zinc-900 dark:text-zinc-100">
-                    {{ $this->batch->instrumentist->name ?? ('#' . $this->batch->instrumentist_id) }}
+                <div>
+                    <span class="text-zinc-500 dark:text-zinc-400">
+                        {{ __('Fecha pago') }}:
+                    </span>
+                    <span class="font-semibold text-zinc-900 dark:text-zinc-100">
+                        {{ optional($this->batch->paid_at)->format('Y-m-d') ?? Carbon\Carbon::parse($this->batch->paid_at)->format('Y-m-d') }}
+                    </span>
                 </div>
-            </div>
 
-            <div class="md:text-right">
-                <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs tracking-wider mb-1">Pagado por</div>
-                <div class="font-semibold text-lg text-zinc-900 dark:text-zinc-100">
-                    {{ $this->batch->paidByUser->name ?? ('#' . $this->batch->paid_by_user_id) }}
+                <div class="no-print">
+                    <span class="text-zinc-500 dark:text-zinc-400">
+                        {{ __('Hora') }}:
+                    </span>
+                    <span class="font-semibold text-zinc-900 dark:text-zinc-100">
+                        {{ optional($this->batch->paid_at)->format('H:i') ?? Carbon\Carbon::parse($this->batch->paid_at)->format('H:i a') }}
+                    </span>
                 </div>
             </div>
         </div>
@@ -108,11 +159,21 @@ mount(function (string|int $batch) {
             <table class="min-w-full text-sm">
                 <thead class="text-left text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
                     <tr>
-                        <th class="py-2 pr-3 font-medium">Fecha</th>
-                        <th class="py-2 pr-3 font-medium">Inicio</th>
-                        <th class="py-2 pr-3 font-medium">Paciente</th>
-                        <th class="py-2 pr-3 font-medium">Cirugía</th>
-                        <th class="py-2 pr-3 font-medium text-right">Monto</th>
+                        <th class="py-2 pr-3 font-medium">
+                            {{ __('Fecha') }}
+                        </th>
+                        <th class="py-2 pr-3 font-medium no-print text-center">
+                            {{ __('Duración') }}
+                        </th>
+                        <th class="py-2 pr-3 font-medium text-center">
+                            {{ __('Paciente') }}
+                        </th>
+                        <th class="py-2 pr-3 font-medium text-center">
+                            {{ __('Cirugía') }}
+                        </th>
+                        <th class="py-2 font-medium text-right">
+                            {{ __('Monto') }}
+                        </th>
                     </tr>
                 </thead>
 
@@ -122,18 +183,25 @@ mount(function (string|int $batch) {
                             $p = $it->procedure;
                         @endphp
                         <tr>
-                            <td class="py-3 pr-3 text-zinc-600 dark:text-zinc-300">{{ $p->procedure_date ?? '-' }}</td>
-                            <td class="py-3 pr-3 text-zinc-600 dark:text-zinc-300">{{ $p->start_time ?? '-' }}</td>
-                            <td class="py-3 pr-3 text-zinc-900 dark:text-zinc-100 font-medium">{{ $p->patient_name ?? '-' }}
+                            <td class="py-3 pr-3 text-zinc-600 dark:text-zinc-300">
+                                {{ $p->procedure_date->format('d/m/Y') ?? '-' }}
+                            </td>
+                            <td class="py-3 pr-3 text-zinc-600 dark:text-zinc-300 no-print text-center">
+                                {{ $p->duration_minutes ?? '-' }} min
+                            </td>
+                            <td class="py-3 pr-3 text-zinc-900 dark:text-zinc-100 font-medium text-center">
+                                {{ $p->patient_name ?? '-' }}
                             </td>
                             <td class="py-3 pr-3 text-zinc-600 dark:text-zinc-300">
                                 {{ $p->procedure_type ?? '-' }}
                                 @if(($p->is_videosurgery ?? false) === true)
                                     <span
-                                        class="ml-2 inline-flex items-center rounded-full bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:text-zinc-200">Video</span>
+                                        class="ml-2 inline-flex items-center rounded-full bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 no-print">
+                                        {{ __('Video') }}
+                                    </span>
                                 @endif
                             </td>
-                            <td class="py-3 pr-3 text-right font-mono font-medium text-zinc-900 dark:text-zinc-100">
+                            <td class="py-3 text-right font-mono font-medium text-zinc-900 dark:text-zinc-100">
                                 Q{{ number_format((float) $it->amount, 2) }}
                             </td>
                         </tr>
@@ -142,9 +210,22 @@ mount(function (string|int $batch) {
 
                 <tfoot>
                     <tr>
-                        <td colspan="4" class="pt-6 text-right font-bold text-zinc-900 dark:text-zinc-100">Total:</td>
-                        <td
-                            class="pt-6 text-right font-bold text-xl text-zinc-900 dark:text-zinc-100 border-t border-zinc-200 dark:border-zinc-700 mt-6 block">
+                        <td colspan="4" class="print:hidden"></td>
+                        <td colspan="3" class="print:table-cell hidden"></td>
+                        <td colspan="1" class="pt-8 border-b border-zinc-200 dark:border-zinc-700 print:table-cell">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="pt-4 text-right font-bold text-zinc-900 dark:text-zinc-100 no-print">
+                            {{ __('Total') }}
+                        </td>
+                        <td colspan="4"
+                            class="pt-4 text-right font-bold text-zinc-900 dark:text-zinc-100 hidden print:table-cell">
+                            {{ __('Total') }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class=" text-right font-bold text-xl text-zinc-900 dark:text-zinc-100">
                             Q{{ number_format((float) $this->batch->total_amount, 2) }}
                         </td>
                     </tr>
@@ -152,26 +233,54 @@ mount(function (string|int $batch) {
             </table>
         </div>
 
+        <!-- Footer data pay by and instrumentist  -->
         <div
-            class="grid grid-cols-1 md:grid-cols-2 gap-12 text-sm mt-12 pt-6 border-t border-zinc-200 dark:border-zinc-700">
+            class="print:hidden grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-6 text-sm pt-6 mt-12 border-t border-zinc-200 dark:border-zinc-700">
             <div>
-                <div class="text-zinc-500 dark:text-zinc-400 mb-12">Firma instrumentista</div>
-                <div class="border-t border-zinc-300 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
-                    Nombre: {{ $this->batch->instrumentist->name ?? '' }}
+                <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs tracking-wider mb-1">
+                    {{ __('Instrumentista') }}
+                </div>
+                <div class="font-semibold text-lg text-zinc-900 dark:text-zinc-100">
+                    {{ $this->batch->instrumentist->name ?? ('#' . $this->batch->instrumentist_id) }}
                 </div>
             </div>
 
-            <div>
-                <div class="text-zinc-500 dark:text-zinc-400 mb-12 md:text-right">Firma administración</div>
-                <div
-                    class="border-t border-zinc-300 dark:border-zinc-600 pt-2 md:text-right text-zinc-900 dark:text-zinc-100">
-                    Nombre: {{ $this->batch->paidByUser->name ?? '' }}
+            <div class="md:text-right print:text-right">
+                <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs tracking-wider mb-1">
+                    {{ __('Pagado por') }}
+                </div>
+                <div class="font-semibold text-lg text-zinc-900 dark:text-zinc-100">
+                    {{ $this->batch->paidByUser->name ?? ('#' . $this->batch->paid_by_id) }}
                 </div>
             </div>
         </div>
 
-        <p class="mt-8 text-xs text-zinc-400 dark:text-zinc-500 text-center">
-            Documento generado por QxLog. Conservar para control interno.
+        <!-- Footer signature -->
+        <div
+            class="grid grid-cols-1 print:grid-cols-2 md:grid-cols-2 gap-12 text-sm mt-12 pt-2 border-t border-zinc-200 dark:border-zinc-700">
+            <div class="print:text-left">
+                <div class="text-zinc-500 dark:text-zinc-400 mb-12">
+                    {{ __('Firma instrumentista') }}
+                </div>
+                <div class="border-t border-zinc-300 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
+                    {{ __('Nombre') }}: {{ $this->batch->instrumentist->name ?? '' }}
+                </div>
+            </div>
+
+            <div class="print:text-right">
+                <div class="text-zinc-500 dark:text-zinc-400 mb-12 md:text-right">
+                    {{ __('Firma administración') }}
+                </div>
+                <div
+                    class="border-t border-zinc-300 dark:border-zinc-600 pt-2 md:text-right text-zinc-900 dark:text-zinc-100">
+                    {{ __('Nombre') }}: {{ $this->batch->paidByUser->name ?? '' }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer note -->
+        <p class="hidden print:block mt-8 text-xs text-zinc-400 dark:text-zinc-500 text-center">
+            {{ __('Documento generado por QxLog. Conservar para control interno.') }}
         </p>
     </div>
 </div>
