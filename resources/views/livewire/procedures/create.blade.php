@@ -344,7 +344,6 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             <div>
                 <flux:label>
                     {{ __('Fecha') }}
-                    <flux:icon.calendar />
                 </flux:label>
                 <input type="date" max="{{ now()->format('Y-m-d') }}" min="{{ now()->subWeeks(2)->format('Y-m-d') }}"
                     wire:model.live="procedure_date"
@@ -359,7 +358,6 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             <div>
                 <flux:label>
                     {{ __('Hora de inicio') }}
-                    <flux:icon.clock />
                 </flux:label>
                 <input type="time" wire:model.live="start_time"
                     class="mt-2 block w-full min-w-0 max-w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
@@ -372,7 +370,6 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             <div>
                 <flux:label>
                     {{ __('Hora de finalización') }}
-                    <flux:icon.clock />
                 </flux:label>
                 <input type="time" wire:model.live="end_time"
                     class="mt-2 block w-full min-w-0 max-w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
@@ -387,7 +384,6 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             <div>
                 <flux:label>
                     {{ __('Paciente') }}
-                    <flux:icon.user />
                 </flux:label>
                 <input type="text" wire:model="patient_name" placeholder="{{ __('Nombre del paciente') }}"
                     class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
@@ -415,7 +411,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                 description="{{ __('Marcar si el procedimiento fue por video.') }}" />
         </div>
 
-        <hr class="border-zinc-300 dark:border-zinc-600">
+        <hr class="border-indigo-300 dark:border-zinc-600">
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
@@ -428,7 +424,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                         <flux:icon.magnifying-glass class="size-5" />
                     </div>
                     <input type="text"
-                        class="block w-full rounded-lg border-zinc-200 bg-indigo-50/20 py-2.5 pl-10 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors"
+                        class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 pl-10 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors"
                         placeholder="{{ __('Buscar o escribir nombre...') }}"
                         wire:model.live.debounce.200ms="doctor_query">
 
@@ -469,7 +465,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                         <flux:icon.magnifying-glass class="size-5" />
                     </div>
                     <input type="text"
-                        class="block w-full rounded-lg border-zinc-200 bg-indigo-50/20 py-2.5 pl-10 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors"
+                        class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 pl-10 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors"
                         placeholder="{{ __('Buscar o escribir nombre...') }}"
                         wire:model.live.debounce.200ms="circulating_query">
 
@@ -500,48 +496,53 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             </div>
         </div>
 
-        <hr class="border-zinc-200 dark:border-zinc-700">
+        <hr class="border-indigo-300 dark:border-zinc-600">
 
         <div
-            class="flex flex-col sm:flex-row items-center justify-between gap-6 bg-zinc-50 dark:bg-zinc-800/50 p-4 rounded-lg border border-zinc-100 dark:border-zinc-700/50">
-            <div class="flex items-center gap-8 w-full sm:w-auto">
-                <div class="flex flex-col">
-                    <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                        {{ __('Duración') }}
-                    </span>
-                    <span class="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                        {{ is_int($this->duration_minutes) ? $this->duration_minutes . ' min' : '--' }}
-                    </span>
-                </div>
+            class="flex flex-col sm:flex-row items-center justify-between gap-6 bg-indigo-100 dark:bg-indigo-900/40 p-4 rounded-lg border border-indigo-100 dark:border-indigo-700/50">
+            <div class="flex flex-row items-center justify-center gap-8 w-full sm:w-auto">
+                @if (Auth::user()->use_pay_scheme)
+                    <div class="flex flex-col items-start">
+                        <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                            {{ __('Duración') }}
+                        </span>
+                        <span class="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                            {{ is_int($this->duration_minutes) ? $this->duration_minutes . ' min' : '--' }}
+                        </span>
+                    </div>
+                    <div class="w-px h-12 bg-indigo-300 dark:bg-indigo-600"></div>
+                @endif
 
-                <div class="flex flex-col border-l border-zinc-200 dark:border-zinc-700 pl-8">
+                <div class="flex flex-col items-center sm:items-start">
                     <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                         {{ __('Monto') }}
                     </span>
-                    <span class="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+                    <span class="text-xl font-bold text-indigo-600 dark:text-zinc-100">
                         {{ is_numeric($this->amount_preview) ? 'Q' . number_format($this->amount_preview, 2) : '--' }}
                     </span>
                 </div>
             </div>
 
             <flux:button wire:click="save" variant="primary" loading="save" class="w-full sm:w-auto">
-                {{ __('Registrar Procedimiento') }}
+                <span class="text-lg font-bold">
+                    {{ __('Registrar Procedimiento') }}
+                </span>
             </flux:button>
         </div>
     </div>
 
     <div class="mt-8 space-y-4">
-        <div class="flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+        <div class="flex flex-col md:flex-row gap-2 items-center justify-between">
+            <h2 class="text-lg font-semibold text-zinc-700 dark:text-zinc-200">
                 {{ __('Procedimientos Pendientes') }}
             </h2>
 
             <div
-                class="flex items-center gap-2 text-sm bg-white dark:bg-zinc-800 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 shadow-sm">
-                <span class="text-zinc-500 dark:text-zinc-400">
+                class="flex items-center gap-2 text-md bg-indigo-100 dark:bg-indigo-500/60 px-4 py-2 rounded-full border border-indigo-50 dark:border-indigo-800 shadow-sm">
+                <span class="text-indigo-500 dark:text-zinc-400">
                     {{ __('Total') }}:
                 </span>
-                <span class="text-lg font-bold text-zinc-600 dark:text-zinc-200">
+                <span class="text-xl font-bold text-indigo-600 dark:text-zinc-200">
                     Q{{ number_format($this->pending_total ?? 0, 2) }}
                 </span>
             </div>
@@ -551,72 +552,81 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             class="rounded-xl border border-zinc-200 bg-white shadow-sm dark:bg-zinc-800 dark:border-zinc-700 overflow-hidden">
             {{-- Desktop --}}
             <div class="hidden md:block overflow-x-auto">
-                <table class="min-w-full table-auto text-sm whitespace-nowrap">
-                    <thead class="bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 text-center">
+                <table class="min-w-full overflow-auto table-auto text-sm whitespace-nowrap">
+                    <thead
+                        class="bg-indigo-100 dark:bg-indigo-900/40 text-zinc-500 dark:text-zinc-300 transition-colors">
                         <tr>
-                            <th class="py-4 font-medium">
+                            <th class="px-6 py-4 font-medium text-left">
                                 <flux:label for="procedure_date">
                                     {{ __('Fecha') }}
                                 </flux:label>
                             </th>
-                            <th class="py-4 font-medium">
-                                <flux:label for="procedure_time">
-                                    {{ __('Horario') }}
-                                </flux:label>
-                            </th>
-                            <th class="py-4 font-medium">
+                            @if (Auth::user()->use_pay_scheme)
+                                <th class="px-6 py-4 font-medium text-center">
+                                    <flux:label for="procedure_time">
+                                        {{ __('Horario') }}
+                                    </flux:label>
+                                </th>
+                            @endif
+                            <th class="px-6 py-4 font-medium text-left">
                                 <flux:label for="patient_id">
                                     {{ __('Paciente') }}
                                 </flux:label>
                             </th>
-                            <th class="py-4 font-medium">
+                            <th class="px-6 py-4 font-medium text-left">
                                 <flux:label for="procedure_id">
                                     {{ __('Cirugía') }}
                                 </flux:label>
                             </th>
-                            <th class="py-4 font-medium text-right">
+                            <th class="px-6 py-4 font-medium text-right">
                                 <flux:label for="amount">
                                     {{ __('Monto') }}
                                 </flux:label>
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700 whitespace-nowrap">
+                    <tbody
+                        class="divide-y divide-indigo-200 dark:divide-zinc-700 whitespace-nowrap text-zinc-600 dark:text-zinc-300 transition-colors">
                         @forelse($this->pending_procedures as $p)
-                            <tr
-                                class=" hover:bg-indigo-50 dark:hover:bg-indigo-500/25 transition-colors text-center text-zinc-700 dark:text-zinc-300/80">
-                                <td class="py-2 font-medium">
+                            <tr class=" hover:bg-indigo-50 dark:hover:bg-indigo-800/30 transition-colors">
+                                <td class="px-6 py-3 font-medium text-left">
                                     {{ $p->procedure_date->format('d/m/Y') }}
                                 </td>
-                                <td class="py-2 whitespace-nowrap items-center text-center">
-                                    {{ Carbon\Carbon::parse($p->start_time)->format('H:i') }}
-                                    <span class="text-xs text-zinc-400 dark:text-zinc-500">-</span>
-                                    {{ Carbon\Carbon::parse($p->end_time)->format('H:i') }}
-                                    @if(Auth::user()->use_pay_scheme)
-                                        <br>
-                                        <span class="text-xs text-zinc-400 dark:text-zinc-500">
-                                            {{ $p->duration_minutes }} min
-                                        </span>
-                                        <x-procedure-rule-badge :rule="data_get($p, 'pricing_snapshot.rule')"
-                                            :videosurgery="$p->is_videosurgery" />
-                                    @endif
-                                </td>
-                                <td class="py-2">
+                                @if(Auth::user()->use_pay_scheme)
+                                    <td class="px-6 py-3 whitespace-nowrap items-center text-center">
+                                        <div class="flex flex-col items-center gap-0.5">
+                                            <div>
+                                                {{ Carbon\Carbon::parse($p->start_time)->format('H:i') }}
+                                                <span class="text-xs text-zinc-400 dark:text-zinc-500">-</span>
+                                                {{ Carbon\Carbon::parse($p->end_time)->format('H:i') }}
+                                            </div>
+                                            <div>
+                                                <span class="text-xs text-zinc-400 dark:text-zinc-500">
+                                                    {{ $p->duration_minutes }} min
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                @endif
+                                <td class="px-6 py-3 text-left">
                                     {{ $p->patient_name }}
                                 </td>
-                                <td class="py-2">
-                                    <div class="">
+                                <td class="px-6 py-3 whitespace-nowrap items-center text-left">
+                                    <div class="flex flex-row items-center justify-between">
                                         {{ $p->procedure_type }}
-
+                                        @if (Auth::user()->use_pay_scheme)
+                                            <x-procedure-rule-badge :rule="data_get($p, 'pricing_snapshot.rule')"
+                                                :videosurgery="$p->is_videosurgery" />
+                                        @endif
                                     </div>
                                 </td>
-                                <td class="py-2 text-right font-bold text-emerald-600 dark:text-emerald-400">
+                                <td class="px-6 py-3 text-right font-bold text-zinc-600 dark:text-zinc-200/90">
                                     Q{{ number_format((float) $p->calculated_amount, 2) }}
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center text-zinc-500 dark:text-zinc-400">
+                                <td colspan="5" class="text-center ">
                                     <div class="flex flex-col items-center gap-2">
                                         <flux:icon.document-text class="size-6 opacity-50" />
                                         No tienes procedimientos pendientes todavía.
@@ -642,7 +652,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                                 </div>
                             </div>
                             <div class="text-right">
-                                <div class="font-mono font-medium text-emerald-600 dark:text-emerald-400">
+                                <div class="font-mono font-medium text-zinc-600 dark:text-zinc-200/80">
                                     Q{{ number_format((float) $p->calculated_amount, 2) }}
                                 </div>
                                 <div class="text-xs text-zinc-500 dark:text-zinc-400">
@@ -651,33 +661,31 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between text-sm pt-2 text-zinc-500 dark:text-zinc-400">
-                            <div class="flex flex-col items-center">
-                                <div class="flex justify-between items-center">
-                                    <div class="flex items-center">
-                                        {{ Carbon\Carbon::parse($p->start_time)->format('H:i') }} <span
-                                            class="text-xs text-zinc-400 dark:text-zinc-500 ml-1">hrs</span>
+                        @if(Auth::user()->use_pay_scheme)
+                            <div class="flex items-center justify-between text-sm pt-2 text-zinc-500 dark:text-zinc-400">
+                                <div class="flex flex-col items-center">
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex items-center">
+                                            {{ Carbon\Carbon::parse($p->start_time)->format('H:i') }} <span
+                                                class="text-xs text-zinc-400 dark:text-zinc-500 ml-1">hrs</span>
+                                        </div>
+
+                                        <span class="text-xs text-zinc-400 dark:text-zinc-500 mx-1">-</span>
+
+                                        <div class="flex items-center">
+                                            {{ Carbon\Carbon::parse($p->end_time)->format('H:i') }} <span
+                                                class="text-xs text-zinc-400 dark:text-zinc-500 ml-1">hrs</span>
+                                        </div>
                                     </div>
 
-                                    <span class="text-xs text-zinc-400 dark:text-zinc-500 mx-1">-</span>
-
-                                    <div class="flex items-center">
-                                        {{ Carbon\Carbon::parse($p->end_time)->format('H:i') }} <span
-                                            class="text-xs text-zinc-400 dark:text-zinc-500 ml-1">hrs</span>
-                                    </div>
-                                </div>
-
-                                @if(Auth::user()->use_pay_scheme)
                                     <span class="text-xs text-zinc-400 dark:text-zinc-500 ml-1">
                                         {{ $p->duration_minutes }} min
                                     </span>
-                                @endif
-                            </div>
-                            @if (Auth::user()->use_pay_scheme)
+                                </div>
                                 <x-procedure-rule-badge :rule="data_get($p, 'pricing_snapshot.rule')"
                                     :videosurgery="$p->is_videosurgery" />
-                            @endif
-                        </div>
+                            </div>
+                        @endif
                     </div>
                 @empty
                     <div class="p-8 text-center text-zinc-500 dark:text-zinc-400">
