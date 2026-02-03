@@ -626,10 +626,12 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center ">
+                                <td colspan="{{ Auth::user()->use_pay_scheme ? 5 : 4 }}" class="text-center px-4 py-6">
                                     <div class="flex flex-col items-center gap-2">
                                         <flux:icon.document-text class="size-6 opacity-50" />
-                                        No tienes procedimientos pendientes todavía.
+                                        <p class="text-sm">
+                                            No tienes procedimientos pendientes todavía.
+                                        </p>
                                     </div>
                                 </td>
                             </tr>
@@ -689,7 +691,12 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                     </div>
                 @empty
                     <div class="p-8 text-center text-zinc-500 dark:text-zinc-400">
-                        No hay procedimientos pendientes todavía.
+                        <div class="flex flex-col items-center gap-2">
+                            <flux:icon.document-text class="size-6 opacity-50" />
+                            <p class="text-sm">
+                                No hay procedimientos pendientes todavía.
+                            </p>
+                        </div>
                     </div>
                 @endforelse
             </div>
