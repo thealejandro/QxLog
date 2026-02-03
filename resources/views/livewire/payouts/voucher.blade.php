@@ -10,11 +10,15 @@ state([
     'items' => [],
     'year' => null,
     'folio' => null,
+    'mode' => 'summary', // summary, detailed
+    'summaryRows' => [],
+    'longThreshold' => null
 ]);
 
 mount(function (string|int $batch) {
     abort_unless((bool) Auth::check(), 401);
     abort_unless((bool) Auth::user()->role === 'admin' || (bool) Auth::user()->is_super_admin, 403);
+
 
     $b = PayoutBatch::query()
         ->with([
@@ -23,6 +27,42 @@ mount(function (string|int $batch) {
             'items.procedure',
         ])
         ->findOrFail($batch);
+
+    $this->mode = request('mode', 'summary');
+
+    $rows = [
+        'default_rate' => [
+            'label' => __('Hábil'),
+            'count' => 0,
+            'amount' => 0.0,
+        ],
+        'video_rate' => [
+            'label' => __('Vídeo Cirugía'),
+            'count' => 0,
+            'amount' => 0.0,
+        ],
+        'long_case_rate' => [
+            'label' => __('Procedimiento largo') . ' (' . __('Mayor a') . ' ' . $this->longThreshold . ' min)',
+            'count' => 0,
+            'amount' => 0.0,
+        ],
+        'night_rate' => [
+            'label' => __('Inhábil'),
+            'count' => 0,
+            'amount' => 0.0,
+        ],
+    ];
+
+    foreach ($this->items as $item) {
+        $rule = data_get($item->snapshot, 'rule', 'default_rate');
+        if (!isset($rows[$rule]))
+            $rule = 'default_rate';
+
+        $rows[$rule]['count']++;
+        $rows[$rule]['amount'] += (float) $item->amount;
+    }
+
+    $this->longThreshold = data_get($this->items, '0.snapshot.thresholds.long_case_threshold_minutes');
 
     $this->batch = $b;
     $this->items = $b->items;

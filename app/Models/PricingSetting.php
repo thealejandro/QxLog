@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class PricingSetting extends Model
 {
@@ -28,4 +29,14 @@ class PricingSetting extends Model
         'night_start' => 'string',
         'night_end' => 'string',
     ];
+
+    public function getNightStartAttribute($value)
+    {
+        return Carbon::parse($value)->format('H:i');
+    }
+
+    public function getNightEndAttribute($value)
+    {
+        return Carbon::parse($value)->format('H:i');
+    }
 }

@@ -46,8 +46,8 @@ class PricingService
             ],
             'thresholds' => [
                 'long_case_threshold_minutes' => (int) $settings->long_case_threshold_minutes,
-                'night_start' => (int) $settings->night_start,
-                'night_end' => (int) $settings->night_end,
+                'night_start' => (string) $settings->night_start,
+                'night_end' => (string) $settings->night_end,
             ],
             'rule' => 'default_rate',
         ];
