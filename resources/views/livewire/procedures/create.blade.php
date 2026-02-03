@@ -551,61 +551,72 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             class="rounded-xl border border-zinc-200 bg-white shadow-sm dark:bg-zinc-800 dark:border-zinc-700 overflow-hidden">
             {{-- Desktop --}}
             <div class="hidden md:block overflow-x-auto">
-                <table class="min-w-full text-left text-sm whitespace-nowrap">
+                <table class="min-w-full table-auto text-sm whitespace-nowrap">
                     <thead class="bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 text-center">
                         <tr>
-                            <th class="px-6 py-3 font-medium">
-                                <flux:label for="procedure_date">{{ __('Fecha') }}</flux:label>
+                            <th class="py-4 font-medium">
+                                <flux:label for="procedure_date">
+                                    {{ __('Fecha') }}
+                                </flux:label>
                             </th>
-                            <th class="px-6 py-3 font-medium">
-                                <flux:label for="procedure_time">{{ __('Horario') }}</flux:label>
+                            <th class="py-4 font-medium">
+                                <flux:label for="procedure_time">
+                                    {{ __('Horario') }}
+                                </flux:label>
                             </th>
-                            <th class="px-6 py-3 font-medium">
-                                <flux:label for="patient_id">{{ __('Paciente') }}</flux:label>
+                            <th class="py-4 font-medium">
+                                <flux:label for="patient_id">
+                                    {{ __('Paciente') }}
+                                </flux:label>
                             </th>
-                            <th class="px-6 py-3 font-medium">
-                                <flux:label for="procedure_id">{{ __('Cirugía') }}</flux:label>
+                            <th class="py-4 font-medium">
+                                <flux:label for="procedure_id">
+                                    {{ __('Cirugía') }}
+                                </flux:label>
                             </th>
-                            <th class="px-6 py-3 font-medium text-right">
-                                <flux:label for="amount">{{ __('Monto') }}</flux:label>
+                            <th class="py-4 font-medium text-right">
+                                <flux:label for="amount">
+                                    {{ __('Monto') }}
+                                </flux:label>
                             </th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700 whitespace-nowrap">
                         @forelse($this->pending_procedures as $p)
-                            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors">
-                                <td class="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">
+                            <tr
+                                class=" hover:bg-indigo-50 dark:hover:bg-indigo-500/25 transition-colors text-center text-zinc-700 dark:text-zinc-300/80">
+                                <td class="py-2 font-medium">
                                     {{ $p->procedure_date->format('d/m/Y') }}
                                 </td>
-                                <td
-                                    class="px-4 py-3 text-zinc-700 dark:text-zinc-300 whitespace-nowrap items-center text-center">
+                                <td class="py-2 whitespace-nowrap items-center text-center">
                                     {{ Carbon\Carbon::parse($p->start_time)->format('H:i') }}
-                                    <span class="text-xs text-zinc-400 dark:text-zinc-500 ml-1">-</span>
+                                    <span class="text-xs text-zinc-400 dark:text-zinc-500">-</span>
                                     {{ Carbon\Carbon::parse($p->end_time)->format('H:i') }}
-                                    <br>
-                                    <span class="text-xs text-zinc-400 dark:text-zinc-500 ml-1">
-                                        {{ $p->duration_minutes }} min
-                                    </span>
+                                    @if(Auth::user()->use_pay_scheme)
+                                        <br>
+                                        <span class="text-xs text-zinc-400 dark:text-zinc-500">
+                                            {{ $p->duration_minutes }} min
+                                        </span>
+                                        <x-procedure-rule-badge :rule="data_get($p, 'pricing_snapshot.rule')"
+                                            :videosurgery="$p->is_videosurgery" />
+                                    @endif
                                 </td>
-                                <td class="px-4 py-3 text-zinc-700 dark:text-zinc-300">
+                                <td class="py-2">
                                     {{ $p->patient_name }}
                                 </td>
-                                <td class="px-4 py-3 text-zinc-700 dark:text-zinc-300">
-                                    <div class="flex flex-row justify-between items-center gap-2">
+                                <td class="py-2">
+                                    <div class="">
                                         {{ $p->procedure_type }}
-                                        @if(Auth::user()->use_pay_scheme)
-                                            <x-procedure-rule-badge :rule="data_get($p, 'pricing_snapshot.rule')"
-                                                :videosurgery="$p->is_videosurgery" />
-                                        @endif
+
                                     </div>
                                 </td>
-                                <td class="px-4 py-3 text-right font-bold text-emerald-600 dark:text-emerald-400">
+                                <td class="py-2 text-right font-bold text-emerald-600 dark:text-emerald-400">
                                     Q{{ number_format((float) $p->calculated_amount, 2) }}
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-8 text-center text-zinc-500 dark:text-zinc-400">
+                                <td colspan="5" class="text-center text-zinc-500 dark:text-zinc-400">
                                     <div class="flex flex-col items-center gap-2">
                                         <flux:icon.document-text class="size-6 opacity-50" />
                                         No tienes procedimientos pendientes todavía.
