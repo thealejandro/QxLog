@@ -7,12 +7,12 @@ use function Livewire\Volt\{state, mount};
 
 state([
     'batch' => null,
-    'items' => [],
     'year' => null,
     'folio' => null,
     'mode' => 'summary', // summary, detailed
     'summaryRows' => [],
-    'longThreshold' => null
+    'longThreshold' => null,
+    'items' => [],
 ]);
 
 mount(function (string|int $batch) {
@@ -30,45 +30,86 @@ mount(function (string|int $batch) {
 
     $this->mode = request('mode', 'summary');
 
+    $usePayScheme = (bool) data_get($b->items, '0.snapshot.pricing_snapshot.use_pay_scheme', false);
+
     $rows = [
         'default_rate' => [
             'label' => __('Hábil'),
             'count' => 0,
+            'unit' => 0,
             'amount' => 0.0,
         ],
         'video_rate' => [
             'label' => __('Vídeo Cirugía'),
             'count' => 0,
+            'unit' => 0,
             'amount' => 0.0,
         ],
         'long_case_rate' => [
-            'label' => __('Procedimiento largo') . ' (' . __('Mayor a') . ' ' . $this->longThreshold . ' min)',
+            'label' => __('Procedimiento largo') . ' (' . __('Mayor a') . 'X min)',
             'count' => 0,
+            'unit' => 0,
             'amount' => 0.0,
         ],
         'night_rate' => [
             'label' => __('Inhábil'),
             'count' => 0,
+            'unit' => 0,
             'amount' => 0.0,
         ],
     ];
-
-    foreach ($this->items as $item) {
-        $rule = data_get($item->snapshot, 'rule', 'default_rate');
-        if (!isset($rows[$rule]))
-            $rule = 'default_rate';
-
-        $rows[$rule]['count']++;
-        $rows[$rule]['amount'] += (float) $item->amount;
-    }
-
-    $this->longThreshold = data_get($this->items, '0.snapshot.thresholds.long_case_threshold_minutes');
 
     $this->batch = $b;
     $this->items = $b->items;
     $this->year = optional($this->batch->paid_at)->format('Y') ?? now()->format('Y');
     $this->folio = 'QX-' . $this->year . '-' . str_pad((string) $this->batch->id, 6, '0', STR_PAD_LEFT);
+
+    $rates = data_get($this->items, '0.snapshot.pricing_snapshot.rates');
+
+    $unit = [
+        'default_rate' => (float) $rates['default_rate'] ?? 200,
+        'video_rate' => (float) $rates['video_rate'] ?? 0,
+        'long_case_rate' => (float) $rates['long_case_rate'] ?? 0,
+        'night_rate' => (float) $rates['night_rate'] ?? 0,
+    ];
+
+    if (!$usePayScheme) {
+        $count = $this->items->count();
+        $amount = $this->batch->total_amount;
+
+        $rows = [
+            'per_call' => [
+                'label' => __('Por llamado'),
+                'count' => $count,
+                'unit' => $unit['default_rate'],
+                'amount' => $amount,
+            ],
+        ];
+
+    } else {
+
+        foreach ($this->items as $item) {
+            $rule = data_get($item->snapshot, 'pricing_snapshot.rule', 'default_rate');
+
+            if (!isset($rows[$rule]))
+                $rule = 'default_rate';
+
+            $rows[$rule]['count']++;
+            $rows[$rule]['unit'] += (float) $unit[$rule];
+            $rows[$rule]['amount'] += (float) $item->amount;
+        }
+
+        $this->longThreshold = data_get($this->items, '0.snapshot.pricing_snapshot.thresholds.long_case_threshold_minutes');
+
+        if ($this->longThreshold) {
+            $rows['long_case_rate']['label'] = __('Procedimiento largo') . ' (' . __('Mayor a') . ' ' . (int) $this->longThreshold . ' min)';
+        }
+    }
+
+
+    $this->summaryRows = $rows;
 });
+
 
 ?>
 
@@ -145,6 +186,18 @@ mount(function (string|int $batch) {
         </a>
 
         <div class="flex gap-2">
+            <a href="{{ route('payouts.voucher', ['batch' => $this->batch->id, 'mode' => 'summary']) }}">
+                <flux:button variant="{{ $this->mode === 'summary' ? 'primary' : 'outline' }}">
+                    {{ __('Resumen') }}
+                </flux:button>
+            </a>
+
+            <a href="{{ route('payouts.voucher', ['batch' => $this->batch->id, 'mode' => 'detailed']) }}">
+                <flux:button variant="{{ $this->mode === 'detailed' ? 'primary' : 'outline' }}">
+                    {{ __('Detallado') }}
+                </flux:button>
+            </a>
+
             <flux:button onclick="window.print()">
                 <flux:icon.printer class="size-4 mr-2" />
                 {{ __('Imprimir') }}
@@ -159,7 +212,10 @@ mount(function (string|int $batch) {
                 <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
                     {{ __('Voucher de Pago') }}
                 </h1>
-                <p class="text-sm text-zinc-500 dark:text-zinc-400">
+                <h2 class="text-lg font-semibold text-zinc-500 print:text-zinc-700 dark:text-zinc-400">
+                    {{ config('qxlog.org_name') }}
+                </h2>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400 no-print">
                     {{ __('QxLog • Registro de cirugías instrumentadas') }}
                 </p>
             </div>
@@ -195,83 +251,172 @@ mount(function (string|int $batch) {
             </div>
         </div>
 
-        <div class="mt-6 overflow-x-auto">
-            <table class="min-w-full text-sm">
-                <thead class="text-left text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
-                    <tr>
-                        <th class="py-2 pr-3 font-medium">
-                            {{ __('Fecha') }}
-                        </th>
-                        <th class="py-2 pr-3 font-medium no-print text-center">
-                            {{ __('Duración') }}
-                        </th>
-                        <th class="py-2 pr-3 font-medium text-center">
-                            {{ __('Paciente') }}
-                        </th>
-                        <th class="py-2 pr-3 font-medium text-center">
-                            {{ __('Cirugía') }}
-                        </th>
-                        <th class="py-2 font-medium text-right">
-                            {{ __('Monto') }}
-                        </th>
-                    </tr>
-                </thead>
-
-                <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
-                    @foreach($this->items as $it)
-                        @php
-                            $p = $it->procedure;
-                        @endphp
+        @if($this->mode === 'summary')
+            <div class="mt-6">
+                <table class="min-w-full text-sm">
+                    <thead class="text-left text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
                         <tr>
-                            <td class="py-3 pr-3 text-zinc-600 dark:text-zinc-300">
-                                {{ $p->procedure_date->format('d/m/Y') ?? '-' }}
-                            </td>
-                            <td class="py-3 pr-3 text-zinc-600 dark:text-zinc-300 no-print text-center">
-                                {{ $p->duration_minutes ?? '-' }} min
-                            </td>
-                            <td class="py-3 pr-3 text-zinc-900 dark:text-zinc-100 font-medium text-center">
-                                {{ $p->patient_name ?? '-' }}
-                            </td>
-                            <td class="py-3 pr-3 text-zinc-600 dark:text-zinc-300">
-                                {{ $p->procedure_type ?? '-' }}
-                                @if(($p->is_videosurgery ?? false) === true)
-                                    <span
-                                        class="ml-2 inline-flex items-center rounded-full bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 no-print">
-                                        {{ __('Video') }}
-                                    </span>
-                                @endif
-                            </td>
-                            <td class="py-3 text-right font-mono font-medium text-zinc-900 dark:text-zinc-100">
-                                Q{{ number_format((float) $it->amount, 2) }}
+                            <th class="py-2 pr-6 font-medium text-center">
+                                <flux:label>
+                                    {{ __('Cantidad') }}
+                                </flux:label>
+                            </th>
+                            <th class="py-2 pr-6 font-medium">
+                                <flux:label>
+                                    {{ __('Concepto') }}
+                                </flux:label>
+                            </th>
+                            <th class="py-2 pr-6 font-medium text-center">
+                                <flux:label>
+                                    {{ __('Unitario') }}
+                                </flux:label>
+                            </th>
+                            <th class="py-2 font-medium text-center">
+                                <flux:label>
+                                    {{ __('Subtotal') }}
+                                </flux:label>
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+                        <tr>
+                            <td colspan="1"></td>
+                            <td colspan="1" class="py-3 font-mono text-zinc-800 dark:text-zinc-300">
+                                {{ config('qxlog.voucher_legend') }}
                             </td>
                         </tr>
-                    @endforeach
-                </tbody>
 
-                <tfoot>
-                    <tr>
-                        <td colspan="4" class="print:hidden"></td>
-                        <td colspan="3" class="print:table-cell hidden"></td>
-                        <td colspan="1" class="pt-8 border-b border-zinc-200 dark:border-zinc-700 print:table-cell">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="5" class="pt-4 text-right font-bold text-zinc-900 dark:text-zinc-100 no-print">
-                            {{ __('Total') }}
-                        </td>
-                        <td colspan="4"
-                            class="pt-4 text-right font-bold text-zinc-900 dark:text-zinc-100 hidden print:table-cell">
-                            {{ __('Total') }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="5" class=" text-right font-bold text-xl text-zinc-900 dark:text-zinc-100">
-                            Q{{ number_format((float) $this->batch->total_amount, 2) }}
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
+                        @foreach($this->summaryRows as $key => $row)
+                            <tr>
+                                <td class="py-3 pr-6 text-center font-mono text-zinc-800 dark:text-zinc-300">
+                                    {{ $row['count'] }}
+                                </td>
+                                <td class="py-3 pr-6 text-zinc-800 dark:text-zinc-300">
+                                    {{ $row['label'] }}
+                                </td>
+                                <td class="py-3 pr-6 text-center font-mono text-zinc-800 dark:text-zinc-300">
+                                    Q{{ number_format((float) $row['unit'], 2) }}
+                                </td>
+                                <td class="py-3 text-center font-mono text-zinc-800 dark:text-zinc-300">
+                                    Q{{ number_format((float) $row['amount'], 2) }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <td colspan="3"></td>
+                            <td colspan="1" class="pt-8 border-b border-zinc-200 dark:border-zinc-700 print:table-cell">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"></td>
+                            <td colspan="1" class="pt-4 text-right font-bold text-zinc-900 dark:text-zinc-200">
+                                {{ __('Total') }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3"></td>
+                            <td colspan="1" class="text-right font-bold text-xl text-zinc-900 dark:text-zinc-200">
+                                Q{{ number_format((float) $this->batch->total_amount, 2) }}
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        @else
+
+            <div class="mt-6 overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="text-left text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
+                        <tr>
+                            <th class="py-2 pr-3 font-medium">
+                                <flux:label>
+                                    {{ __('Fecha') }}
+                                </flux:label>
+                            </th>
+                            <th class="py-2 pr-3 font-medium no-print text-center">
+                                <flux:label>
+                                    {{ __('Duración') }}
+                                </flux:label>
+                            </th>
+                            <th class="py-2 pr-3 font-medium text-center">
+                                <flux:label>
+                                    {{ __('Paciente') }}
+                                </flux:label>
+                            </th>
+                            <th class="py-2 pr-3 font-medium text-center">
+                                <flux:label>
+                                    {{ __('Cirugía') }}
+                                </flux:label>
+                            </th>
+                            <th class="py-2 font-medium text-right">
+                                <flux:label>
+                                    {{ __('Subtotal') }}
+                                </flux:label>
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+                        @foreach($this->items as $it)
+                            @php
+                                $p = $it->procedure;
+                            @endphp
+                            <tr>
+                                <td class="py-3 pr-3 text-zinc-600 dark:text-zinc-300">
+                                    {{ $p->procedure_date->format('d/m/Y') ?? '-' }}
+                                </td>
+                                <td class="py-3 pr-3 text-zinc-600 dark:text-zinc-300 no-print text-center">
+                                    {{ $p->duration_minutes ?? '-' }} min
+                                </td>
+                                <td class="py-3 pr-3 text-zinc-900 dark:text-zinc-100 font-medium text-center">
+                                    {{ $p->patient_name ?? '-' }}
+                                </td>
+                                <td class="py-3 pr-3 text-zinc-600 dark:text-zinc-300">
+                                    {{ $p->procedure_type ?? '-' }}
+                                    @if(($p->is_videosurgery ?? false) === true)
+                                        <span
+                                            class="ml-2 inline-flex items-center rounded-full bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 no-print">
+                                            {{ __('Video') }}
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="py-3 text-right font-mono font-medium text-zinc-900 dark:text-zinc-100">
+                                    Q{{ number_format((float) $it->amount, 2) }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" class="print:hidden"></td>
+                            <td colspan="3" class="print:table-cell hidden"></td>
+                            <td colspan="1" class="pt-8 border-b border-zinc-200 dark:border-zinc-700 print:table-cell">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="pt-4 text-right font-bold text-zinc-900 dark:text-zinc-100 no-print">
+                                {{ __('Total') }}
+                            </td>
+                            <td colspan="4"
+                                class="pt-4 text-right font-bold text-zinc-900 dark:text-zinc-100 hidden print:table-cell">
+                                {{ __('Total') }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="text-right font-bold text-xl text-zinc-900 dark:text-zinc-100">
+                                Q{{ number_format((float) $this->batch->total_amount, 2) }}
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+        @endif
 
         <!-- Footer data pay by and instrumentist  -->
         <div

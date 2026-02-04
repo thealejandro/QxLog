@@ -13,13 +13,9 @@ class PayoutBatch extends Model
         'total_amount',
         'status',
         'void_reason',
-        'payout_snapshot',
-        'payout_details',
     ];
 
     protected $casts = [
-        'payout_snapshot' => 'array',
-        'payout_details' => 'array',
         'total_amount' => 'decimal:2',
     ];
 

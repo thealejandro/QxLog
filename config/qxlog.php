@@ -3,6 +3,9 @@
 return [
     'version' => '1.0.0',
 
+    'voucher_legend' => 'Por servicios de instrumentación prestados, se realiza el pago correspondiente.',
+    'org_name' => 'Hospital Nuestra Señora del Carmen',
+
     'default_rate' => 200.00,
 
     //Condiciones de pago "Schema"

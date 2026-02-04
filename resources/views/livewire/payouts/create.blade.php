@@ -106,7 +106,7 @@ $liquidate = function () {
     $admin = Auth::user();
     if (!$admin)
         abort(401);
-    if ($admin->role !== 'admin')
+    if ($admin->role !== 'admin' || $admin->is_super_admin !== true)
         abort(403);
 
     $data = $this->validate();
@@ -173,6 +173,7 @@ $liquidate = function () {
 
     $this->selected = [];
     $this->success_message = 'Liquidación generada correctamente.';
+
     $this->dispatch('$refresh');
 };
 
@@ -383,8 +384,7 @@ $liquidate = function () {
             </div>
 
             <div class="flex justify-end pt-2">
-                <flux:button wire:click="liquidate" loading="liquidate"
-                    class="w-full sm:w-auto !bg-indigo-500 hover:!bg-indigo-600 !border-indigo-500 !text-white dark:!bg-indigo-600 dark:hover:!bg-indigo-500">
+                <flux:button wire:click="liquidate" loading="liquidate" variant="primary">
                     {{ __('Liquidar seleccionados') }}
                 </flux:button>
             </div>
