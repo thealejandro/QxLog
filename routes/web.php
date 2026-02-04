@@ -52,6 +52,4 @@ Route::middleware(['auth', 'superadmin'])->group(function () {
     Volt::route('users/{user}/edit', 'users.edit')->name('users.edit');
 
 });
-// Volt::route('pricing/create', 'pricing.create')->name('pricing.create');
-// Volt::route('pricing/{setting}/edit', 'pricing.edit')->name('pricing.edit');
 
