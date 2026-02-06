@@ -197,7 +197,7 @@ $liquidate = function () {
             <flux:label>
                 {{ __('Instrumentist') }}
             </flux:label>
-            <select wire:model.change="instrumentist_id"
+            <select wire:model.live.change="instrumentist_id"
                 class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 py-2.5 px-3 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                 <option value="">
                     {{ __('Select instrumentist') }}

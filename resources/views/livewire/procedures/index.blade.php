@@ -116,7 +116,7 @@ $ruleColor = function (?string $rule) {
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
                     {{ __('Estado') }}
                 </label>
-                <select wire:model.change="status"
+                <select wire:model.live.change="status"
                     class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                     <option value="pending">
                         {{ __('Pendiente') }}
@@ -134,7 +134,7 @@ $ruleColor = function (?string $rule) {
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
                     {{ __('Instrumentista') }}
                 </label>
-                <select wire:model.change="instrumentist_id"
+                <select wire:model.live.change="instrumentist_id"
                     class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                     <option value="">-- {{ __('Todos') }} --</option>
                     @foreach($this->instrumentists as $i)
@@ -147,7 +147,7 @@ $ruleColor = function (?string $rule) {
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
                     {{ __('Desde') }}
                 </label>
-                <input type="date" wire:model.change="date_from"
+                <input type="date" wire:model.live.change="date_from"
                     class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
             </div>
 
@@ -155,7 +155,7 @@ $ruleColor = function (?string $rule) {
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
                     {{ __('Hasta') }}
                 </label>
-                <input type="date" wire:model.change="date_to"
+                <input type="date" wire:model.live.change="date_to"
                     class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
             </div>
         </div>
