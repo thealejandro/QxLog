@@ -3,7 +3,7 @@
 return [
     'version' => '1.0.0',
 
-    'voucher_legend' => 'Por servicios de instrumentación prestados, se realiza el pago correspondiente.',
+    'voucher_legend' => 'Por honorarios correspondientes a servicios de instrumentación prestados en procedimientos quirúrgicos.',
     'org_name' => 'Hospital Nuestra Señora del Carmen',
 
     'default_rate' => 200.00,

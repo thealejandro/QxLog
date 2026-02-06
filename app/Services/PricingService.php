@@ -23,6 +23,8 @@ class PricingService
         string $endTimeHHMM, // HH:MM
     ): array {
 
+        $usePayScheme = (bool) $instrumentist->use_pay_scheme;
+
         $settings = PricingSetting::firstOrCreate([
             'id' => 1,
         ]);
@@ -31,7 +33,7 @@ class PricingService
 
         $snapshot = [
             'version' => 2,
-            'use_pay_scheme' => (bool) $instrumentist->use_pay_scheme,
+            'use_pay_scheme' => $usePayScheme,
             'is_videosurgery' => $isVideosurgery,
             'duration_minutes' => $durationMinutes,
             'start_time' => $startTimeHHMM,

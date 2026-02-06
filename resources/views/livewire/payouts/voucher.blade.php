@@ -67,7 +67,7 @@ mount(function (string|int $batch) {
     $rates = data_get($this->items, '0.snapshot.pricing_snapshot.rates');
 
     $unit = [
-        'default_rate' => (float) $rates['default_rate'] ?? 200,
+        'default_rate' => (float) $rates['default_rate'] ?? 0,
         'video_rate' => (float) $rates['video_rate'] ?? 0,
         'long_case_rate' => (float) $rates['long_case_rate'] ?? 0,
         'night_rate' => (float) $rates['night_rate'] ?? 0,
@@ -206,8 +206,7 @@ mount(function (string|int $batch) {
     </div>
 
     <div class="rounded-xl border bg-white p-8 dark:bg-zinc-900 dark:border-zinc-700 dark-mode-override">
-        <div
-            class="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-zinc-200 dark:border-zinc-700">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-6">
             <div class="items-center text-center md:text-left md:items-start">
                 <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
                     {{ __('Voucher de Pago') }}
@@ -248,6 +247,34 @@ mount(function (string|int $batch) {
                         {{ optional($this->batch->paid_at)->format('H:i') ?? Carbon\Carbon::parse($this->batch->paid_at)->format('H:i a') }}
                     </span>
                 </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-2 justify-between py-6 px-6 border border-zinc-200 dark:border-zinc-700">
+            <div class="flex gap-2">
+                <flux:label class="w-2/6">
+                    {{ __('Paguese a') }}:
+                </flux:label>
+                <flux:label class="w-4/6 text-zinc-900 dark:text-zinc-300">
+                    {{ $this->batch->instrumentist->name }}
+                </flux:label>
+            </div>
+            <div class="flex gap-2">
+                <flux:label class="w-2/6">
+                    {{ __('La cantidad de') }} {{ __('(en letras)') }}:
+                </flux:label>
+                <flux:label class="w-4/6 text-zinc-900 dark:text-zinc-300 capitalize">
+                    {{ Illuminate\Support\Number::spell($this->batch->total_amount, 'es') }}
+                </flux:label>
+            </div>
+            <div class="flex gap-2">
+                <flux:label class="w-2/6">
+                    {{ __('Metodo de pago') }}:
+                </flux:label>
+                <flux:label
+                    class="w-2/6 text-zinc-900 dark:text-zinc-300 border-b border-zinc-900 dark:border-zinc-300">
+                    {{ $this->batch->payment_method }}
+                </flux:label>
             </div>
         </div>
 
@@ -305,22 +332,23 @@ mount(function (string|int $batch) {
                         @endforeach
                     </tbody>
 
-                    <tfoot>
+                    <tfoot class="items-center">
                         <tr>
-                            <td colspan="3"></td>
-                            <td colspan="1" class="pt-8 border-b border-zinc-200 dark:border-zinc-700 print:table-cell">
-                            </td>
+                            <td colspan="4" class="pt-6"></td>
                         </tr>
                         <tr>
-                            <td colspan="3"></td>
-                            <td colspan="1" class="pt-4 text-right font-bold text-zinc-900 dark:text-zinc-200">
-                                {{ __('Total') }}
+                            <td colspan="2" class="pt-4"></td>
+                            <td colspan="1"
+                                class="pt-4 text-center items-center font-bold text-zinc-900 dark:text-zinc-200">
+                                <flux:label>
+                                    {{ __('Total') }}
+                                </flux:label>
                             </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3"></td>
-                            <td colspan="1" class="text-right font-bold text-xl text-zinc-900 dark:text-zinc-200">
-                                Q{{ number_format((float) $this->batch->total_amount, 2) }}
+                            <td colspan="1"
+                                class="pt-4 text-right font-bold border-t border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-200">
+                                <flux:label>
+                                    Q{{ number_format((float) $this->batch->total_amount, 2) }}
+                                </flux:label>
                             </td>
                         </tr>
                     </tfoot>
@@ -418,53 +446,39 @@ mount(function (string|int $batch) {
 
         @endif
 
-        <!-- Footer data pay by and instrumentist  -->
-        <div
-            class="print:hidden grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-6 text-sm pt-6 mt-12 border-t border-zinc-200 dark:border-zinc-700">
-            <div>
-                <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs tracking-wider mb-1">
-                    {{ __('Instrumentista') }}
-                </div>
-                <div class="font-semibold text-lg text-zinc-900 dark:text-zinc-100">
-                    {{ $this->batch->instrumentist->name ?? ('#' . $this->batch->instrumentist_id) }}
-                </div>
-            </div>
-
-            <div class="md:text-right print:text-right">
-                <div class="text-zinc-500 dark:text-zinc-400 uppercase text-xs tracking-wider mb-1">
-                    {{ __('Pagado por') }}
-                </div>
-                <div class="font-semibold text-lg text-zinc-900 dark:text-zinc-100">
-                    {{ $this->batch->paidByUser->name ?? ('#' . $this->batch->paid_by_id) }}
-                </div>
-            </div>
-        </div>
-
         <!-- Footer signature -->
         <div
-            class="grid grid-cols-1 print:grid-cols-2 md:grid-cols-2 gap-12 text-sm mt-12 pt-2 border-t border-zinc-200 dark:border-zinc-700">
-            <div class="print:text-left">
+            class="grid grid-cols-3 gap-12 text-center items-center text-xs mt-12 pt-12 border-t border-zinc-200 dark:border-zinc-700">
+            <div>
                 <div class="text-zinc-500 dark:text-zinc-400 mb-12">
-                    {{ __('Firma instrumentista') }}
+                    {{ __('Recibo conforme') }}
                 </div>
                 <div class="border-t border-zinc-300 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
-                    {{ __('Nombre') }}: {{ $this->batch->instrumentist->name ?? '' }}
+                    {{ $this->batch->instrumentist->name ?? '' }}
                 </div>
             </div>
 
-            <div class="print:text-right">
-                <div class="text-zinc-500 dark:text-zinc-400 mb-12 md:text-right">
-                    {{ __('Firma administración') }}
+            <div>
+                <div class="text-zinc-500 dark:text-zinc-400 mb-12">
+                    {{ __('Pagado por') }} {{ __('(Administracion)') }}
                 </div>
-                <div
-                    class="border-t border-zinc-300 dark:border-zinc-600 pt-2 md:text-right text-zinc-900 dark:text-zinc-100">
-                    {{ __('Nombre') }}: {{ $this->batch->paidByUser->name ?? '' }}
+                <div class="border-t border-zinc-300 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
+                    {{ $this->batch->paidByUser->name ?? '' }}
+                </div>
+            </div>
+
+            <div>
+                <div class="text-zinc-500 dark:text-zinc-400 mb-12">
+                    {{ __('Firma de autorización') }}
+                </div>
+                <div class="border-t border-zinc-300 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
+                    {{ __('Medico Director') }}
                 </div>
             </div>
         </div>
 
         <!-- Footer note -->
-        <p class="hidden print:block mt-8 text-xs text-zinc-400 dark:text-zinc-500 text-center">
+        <p class="hidden print:block mt-12 text-xs text-zinc-400 dark:text-zinc-500 text-center">
             {{ __('Documento generado por QxLog. Conservar para control interno.') }}
         </p>
     </div>
