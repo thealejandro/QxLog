@@ -250,7 +250,8 @@ mount(function (string|int $batch) {
             </div>
         </div>
 
-        <div class="flex flex-col gap-2 justify-between py-6 px-6 border border-zinc-200 dark:border-zinc-700">
+        <div
+            class="flex flex-col gap-2 justify-between py-6 px-6 border border-zinc-200 dark:border-zinc-700 capitalize">
             <div class="flex gap-2">
                 <flux:label class="w-2/6">
                     {{ __('Paguese a') }}:
@@ -293,12 +294,12 @@ mount(function (string|int $batch) {
                                     {{ __('Concepto') }}
                                 </flux:label>
                             </th>
-                            <th class="py-2 pr-6 font-medium text-center">
+                            <th class="py-2 pr-6 font-medium text-right">
                                 <flux:label>
                                     {{ __('Unitario') }}
                                 </flux:label>
                             </th>
-                            <th class="py-2 font-medium text-center">
+                            <th class="py-2 font-medium text-right">
                                 <flux:label>
                                     {{ __('Subtotal') }}
                                 </flux:label>
@@ -322,10 +323,10 @@ mount(function (string|int $batch) {
                                 <td class="py-3 pr-6 text-zinc-800 dark:text-zinc-300">
                                     {{ $row['label'] }}
                                 </td>
-                                <td class="py-3 pr-6 text-center font-mono text-zinc-800 dark:text-zinc-300">
+                                <td class="py-3 pr-6 text-right font-mono text-zinc-800 dark:text-zinc-300">
                                     Q{{ number_format((float) $row['unit'], 2) }}
                                 </td>
-                                <td class="py-3 text-center font-mono text-zinc-800 dark:text-zinc-300">
+                                <td class="py-3 text-right font-mono text-zinc-800 dark:text-zinc-300">
                                     Q{{ number_format((float) $row['amount'], 2) }}
                                 </td>
                             </tr>
@@ -460,7 +461,7 @@ mount(function (string|int $batch) {
 
             <div>
                 <div class="text-zinc-500 dark:text-zinc-400 mb-12">
-                    {{ __('Pagado por') }} {{ __('(Administracion)') }}
+                    {{ __('Pagado por') }} ({{ __('Administración') }})
                 </div>
                 <div class="border-t border-zinc-300 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
                     {{ $this->batch->paidByUser->name ?? '' }}

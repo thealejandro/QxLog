@@ -31,46 +31,48 @@ class PricingService
 
         $base = (float) $settings->default_rate;
 
-        $snapshot = [
-            'version' => 2,
-            'use_pay_scheme' => $usePayScheme,
-            'is_videosurgery' => $isVideosurgery,
-            'duration_minutes' => $durationMinutes,
-            'start_time' => $startTimeHHMM,
-            'end_time' => $endTimeHHMM,
+        $amount = $base;
 
-            //Settings usados (auditoria)
-            'rates' => [
-                'default_rate' => (float) $settings->default_rate,
-                'video_rate' => (float) $settings->video_rate,
-                'night_rate' => (float) $settings->night_rate,
-                'long_case_rate' => (float) $settings->long_case_rate,
-            ],
-            'thresholds' => [
-                'long_case_threshold_minutes' => (int) $settings->long_case_threshold_minutes,
-                'night_start' => (string) $settings->night_start,
-                'night_end' => (string) $settings->night_end,
-            ],
-            'rule' => 'default_rate',
+        $rule = 'default_rate';
+
+        //Settings usados (auditoria)
+        $rates = [
+            'default_rate' => (float) $base,
+            'video_rate' => (float) $settings->video_rate,
+            'night_rate' => (float) $settings->night_rate,
+            'long_case_rate' => (float) $settings->long_case_rate,
+        ];
+
+        $thresholds = [
+            'long_case_threshold_minutes' => (int) $settings->long_case_threshold_minutes,
+            'night_start' => (string) $settings->night_start,
+            'night_end' => (string) $settings->night_end,
+        ];
+
+        $candidates = [
+            'default_rate' => $base
         ];
 
         // Si NO es especial: siempre base
-        if (!$snapshot['use_pay_scheme']) {
-            return ['amount' => $base, 'snapshot' => $snapshot];
+        if (!$usePayScheme) {
+            $amount = $base;
+            $rule = 'default_rate';
         }
 
         // Regla 1: Video
         if ($isVideosurgery) {
             $amount = (float) $settings->video_rate;
-            $snapshot['rule'] = 'video_rate';
-            return ['amount' => $amount, 'snapshot' => $snapshot];
+            $rule = 'video_rate';
+            $candidates['video_rate'] = $amount;
         }
 
         // Regla 2: largo
-        if ($durationMinutes >= (int) $settings->long_case_threshold_minutes) {
+        $isLong = $durationMinutes >= (int) $settings->long_case_threshold_minutes;
+
+        if ($isLong) {
             $amount = (float) $settings->long_case_rate;
-            $snapshot['rule'] = 'long_case_rate';
-            return ['amount' => $amount, 'snapshot' => $snapshot];
+            $rule = 'long_case_rate';
+            $candidates['long_case_rate'] = $amount;
         }
 
         // Regla 3: madrugada
@@ -82,12 +84,42 @@ class PricingService
 
         if ($isNight) {
             $amount = (float) $settings->night_rate;
-            $snapshot['rule'] = 'night_rate';
-            return ['amount' => $amount, 'snapshot' => $snapshot];
+            $rule = 'night_rate';
+            $candidates['night_rate'] = $amount;
         }
 
+        foreach ($candidates as $candidateRule => $candidateAmount) {
+            if ($candidateAmount > $amount) {
+                $amount = $candidateAmount;
+                $rule = $candidateRule;
+            }
+        }
+
+        $snapshot = [
+            'version' => 3,
+            'rule' => $rule,
+            'amount' => $amount,
+            'use_pay_scheme' => $usePayScheme,
+            'rates' => $rates,
+            'thresholds' => $thresholds,
+            'is_videosurgery' => $isVideosurgery,
+            'duration_minutes' => $durationMinutes,
+            'start_time' => $startTimeHHMM,
+            'end_time' => $endTimeHHMM,
+            'candidates' => $candidates,
+            'flags' => [
+                'is_night' => $isNight,
+                'is_long' => $isLong,
+            ],
+            'user_data' => [
+                'name' => $instrumentist->name,
+                'phone' => $instrumentist->phone,
+                'role' => $instrumentist->role,
+            ],
+        ];
+
         // Default (especial pero no cae en reglas)
-        return ['amount' => $base, 'snapshot' => $snapshot];
+        return compact('amount', 'snapshot');
     }
 
 
