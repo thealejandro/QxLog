@@ -193,9 +193,24 @@ $ruleColor = function (?string $rule) {
                                 {{ $p->procedure_date?->format('d/m/Y') }}
                             </div>
                         </div>
-                        <flux:badge size="sm" color="{{ $p->status === 'paid' ? 'green' : 'amber' }}">
-                            {{ $p->status }}
-                        </flux:badge>
+                        <div class="flex items-center gap-2">
+                            <flux:badge size="sm" color="{{ $p->status === 'paid' ? 'green' : 'amber' }}">
+                                {{ $p->status }}
+                            </flux:badge>
+
+                            <flux:dropdown>
+                                <flux:button size="sm" icon="ellipsis-vertical" />
+                                <flux:menu>
+                                    <flux:menu.item wire:click="edit({{ $p->id }})" icon="pencil">
+                                        {{ __('Editar') }}
+                                    </flux:menu.item>
+                                    <flux:menu.separator />
+                                    <flux:menu.item wire:click="delete({{ $p->id }})" icon="trash" variant="danger">
+                                        {{ __('Eliminar') }}
+                                    </flux:menu.item>
+                                </flux:menu>
+                            </flux:dropdown>
+                        </div>
                     </div>
 
                     <div class="space-y-1 text-sm text-zinc-500 dark:text-zinc-400">
@@ -232,10 +247,12 @@ $ruleColor = function (?string $rule) {
 
                     <div class="pt-3 border-t border-zinc-200 dark:border-zinc-700 flex justify-between items-center">
                         <x-procedure-rule-badge :rule="$rule" :videosurgery="$p->is_videosurgery" />
-                        <span class="font-bold text-emerald-600 dark:text-emerald-400">
+                        <span class="font-bold">
                             Q{{ number_format((float) $p->calculated_amount, 2) }}
                         </span>
                     </div>
+
+
                 </div>
             @empty
                 <div
@@ -298,6 +315,13 @@ $ruleColor = function (?string $rule) {
                                 {{ __('Estado') }}
                             </flux:label>
                         </th>
+                        @if ($p->status !== 'paid' || $p->status !== 'cancelled' || $status == 'all')
+                            <th class="px-4 py-3 font-medium uppercase tracking-wider">
+                                <flux:label>
+                                    {{ __('Acciones') }}
+                                </flux:label>
+                            </th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-700">
@@ -349,6 +373,20 @@ $ruleColor = function (?string $rule) {
                                     {{ $p->status === 'paid' ? 'Pagado' : 'Pendiente' }}
                                 </flux:badge>
                             </td>
+                            @if ($p->status !== 'paid')
+                                <td class="px-4 py-3 whitespace-nowrap text-center">
+                                    <div class="flex flex-row justify-center items-center gap-2">
+                                        <a href="{{ route('procedures.edit', $p->id) }}"
+                                            class="inline-flex items-center gap-1.5 text-sm text-indigo-500 dark:text-indigo-500 hover:text-indigo-900 dark:hover:text-indigo-900 transition-colors">
+                                            <flux:icon name="pencil" size="sm" />
+                                        </a>
+                                        <a
+                                            class="inline-flex items-center gap-1.5 text-sm text-red-500 dark:text-red-500 hover:text-red-900 dark:hover:text-red-900 transition-colors">
+                                            <flux:icon name="trash" size="sm" />
+                                        </a>
+                                    </div>
+                                </td>
+                            @endif
                         </tr>
                     @empty
                         <tr>

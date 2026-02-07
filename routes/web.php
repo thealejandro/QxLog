@@ -41,6 +41,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Volt::route('payouts', 'payouts.index')->name('payouts.index');
 
     Volt::route('procedures', 'procedures.index')->name('procedures.index');
+    Volt::route('procedures/{procedure}/edit', 'procedures.edit')->name('procedures.edit');
 
     Volt::route('pricing/settings', 'pricing.settings')->name('pricing.settings');
     Volt::route('pricing/instrumentists', 'pricing.instrumentist')->name('pricing.instrumentists');
@@ -50,6 +51,5 @@ Route::middleware(['auth', 'superadmin'])->group(function () {
     Volt::route('users', 'users.index')->name('users.index');
     Volt::route('users/create', 'users.create')->name('users.create');
     Volt::route('users/{user}/edit', 'users.edit')->name('users.edit');
-
 });
 
