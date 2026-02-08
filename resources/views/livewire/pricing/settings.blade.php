@@ -48,15 +48,15 @@ $save = function () {
 
     PricingSetting::updateOrCreate(['id' => 1], $data);
 
-    $this->success = 'Precios guardados.';
+    $this->success = __('Prices saved.');
 };
 
 ?>
 
 <div class="max-w-3xl mx-auto p-4 space-y-6">
     <div class="mb-4">
-        <flux:heading size="xl">{{ __('Precios globales') }}</flux:heading>
-        <flux:subheading>{{ __('Aplican al instrumentista con esquema especial') }}</flux:subheading>
+        <flux:heading size="xl">{{ __('Global Pricing') }}</flux:heading>
+        <flux:subheading>{{ __('Applies to special scheme instrumentists') }}</flux:subheading>
     </div>
 
     @if($success)
@@ -68,27 +68,28 @@ $save = function () {
 
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-6 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <flux:input label="Tarifa base (Q)" type="number" step="0.01" wire:model.live="default_rate" />
+            <flux:input label="{{ __('Base Rate (Q)') }}" type="number" step="0.01" wire:model.live="default_rate" />
 
-            <flux:input label="Video cirugía (Q)" type="number" step="0.01" wire:model.live="video_rate" />
+            <flux:input label="{{ __('Video Surgery (Q)') }}" type="number" step="0.01" wire:model.live="video_rate" />
 
-            <flux:input label="Madrugada (Q)" type="number" step="0.01" wire:model.live="night_rate" />
+            <flux:input label="{{ __('Night Rate (Q)') }}" type="number" step="0.01" wire:model.live="night_rate" />
 
-            <flux:input label="Procedimiento Largo (Q)" type="number" step="0.01" wire:model.live="long_case_rate" />
+            <flux:input label="{{ __('Long Procedure (Q)') }}" type="number" step="0.01"
+                wire:model.live="long_case_rate" />
 
-            <flux:input label='Umbral "Procedimiento Largo" (min)' type="number"
+            <flux:input label='{{ __('Long Procedure Threshold (min)') }}' type="number"
                 wire:model.live="long_case_threshold_minutes" />
 
             <div class="grid grid-cols-2 gap-4">
-                <flux:input label="Inicio Horario Inhabil" type="time" wire:model.live="night_start" />
-                <flux:input label="Fin Horario Inhabil" type="time" wire:model.live="night_end" />
+                <flux:input label="{{ __('Night Start Time') }}" type="time" wire:model.live="night_start" />
+                <flux:input label="{{ __('Night End Time') }}" type="time" wire:model.live="night_end" />
             </div>
         </div>
 
         <div class="pt-2 flex justify-end">
             <flux:button wire:click="save"
                 class="!bg-indigo-500 hover:!bg-indigo-600 !border-indigo-500 !text-white dark:!bg-indigo-600 dark:hover:!bg-indigo-500">
-                {{ __('Guardar') }}
+                {{ __('Save') }}
             </flux:button>
         </div>
     </div>

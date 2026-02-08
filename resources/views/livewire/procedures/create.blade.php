@@ -343,7 +343,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
                 <flux:label>
-                    {{ __('Fecha') }}
+                    {{ __('Date') }}
                 </flux:label>
                 <input type="date" max="{{ now()->format('Y-m-d') }}" min="{{ now()->subWeeks(2)->format('Y-m-d') }}"
                     wire:model.live="procedure_date"
@@ -383,7 +383,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <flux:label>
-                    {{ __('Paciente') }}
+                    {{ __('Patient') }}
                 </flux:label>
                 <input type="text" wire:model="patient_name" placeholder="{{ __('Patient Name') }}"
                     class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
@@ -397,7 +397,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                 <flux:label>
                     {{ __('Procedure') }}
                 </flux:label>
-                <input type="text" wire:model="procedure_type" placeholder="{{ __('Cesárea, Apendicectomía...') }}"
+                <input type="text" wire:model="procedure_type" placeholder="{{ __('C-Section, Appendectomy...') }}"
                     class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
                 @error('procedure_type') <p class="text-sm text-red-600 dark:text-red-400 mt-1">
                         {{ $message }}

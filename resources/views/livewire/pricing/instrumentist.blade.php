@@ -61,7 +61,7 @@ $toggle = function (int $id) {
                             <div class="text-sm text-zinc-500">{{ $u->username }}</div>
                         </div>
                         <flux:badge size="sm" color="{{ $u->use_pay_scheme ? 'green' : 'zinc' }}">
-                            {{ $u->use_pay_scheme ? 'Especial' : 'Estándar' }}
+                            {{ $u->use_pay_scheme ? __('Special') : __('Standard') }}
                         </flux:badge>
                     </div>
                     <div class="pt-2 border-t border-zinc-100 dark:border-zinc-800">
@@ -74,7 +74,7 @@ $toggle = function (int $id) {
                 </div>
             @empty
                 <div class="p-4 text-center text-zinc-500 dark:text-zinc-400 italic">
-                    {{ __('No hay instrumentistas.') }}
+                    {{ __('No instrumentists.') }}
                 </div>
             @endforelse
         </div>

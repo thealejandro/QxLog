@@ -34,25 +34,25 @@ mount(function (string|int $batch) {
 
     $rows = [
         'default_rate' => [
-            'label' => __('Hábil'),
+            'label' => __('Working Day'),
             'count' => 0,
             'unit' => 0,
             'amount' => 0.0,
         ],
         'video_rate' => [
-            'label' => __('Vídeo Cirugía'),
+            'label' => __('Video Surgery'),
             'count' => 0,
             'unit' => 0,
             'amount' => 0.0,
         ],
         'long_case_rate' => [
-            'label' => __('Procedimiento largo') . ' (' . __('Mayor a') . 'X min)',
+            'label' => __('Long Procedure') . ' (' . __('Greater than') . 'X min)',
             'count' => 0,
             'unit' => 0,
             'amount' => 0.0,
         ],
         'night_rate' => [
-            'label' => __('Inhábil'),
+            'label' => __('Non-working Day'),
             'count' => 0,
             'unit' => 0,
             'amount' => 0.0,
@@ -79,7 +79,7 @@ mount(function (string|int $batch) {
 
         $rows = [
             'per_call' => [
-                'label' => __('Por llamado'),
+                'label' => __('Per Call'),
                 'count' => $count,
                 'unit' => $unit['default_rate'],
                 'amount' => $amount,
@@ -102,7 +102,7 @@ mount(function (string|int $batch) {
         $this->longThreshold = data_get($this->items, '0.snapshot.pricing_snapshot.thresholds.long_case_threshold_minutes');
 
         if ($this->longThreshold) {
-            $rows['long_case_rate']['label'] = __('Procedimiento largo') . ' (' . __('Mayor a') . ' ' . (int) $this->longThreshold . ' min)';
+            $rows['long_case_rate']['label'] = __('Long Procedure') . ' (' . __('Greater than') . ' ' . (int) $this->longThreshold . ' min)';
         }
     }
 
@@ -182,25 +182,25 @@ mount(function (string|int $batch) {
         <a href="{{ route('payouts.index') }}"
             class="text-md text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors flex items-center gap-1">
             <flux:icon.arrow-left size="sm" class="mr-2" />
-            {{ __('Volver') }}
+            {{ __('Back') }}
         </a>
 
         <div class="flex gap-2">
             <a href="{{ route('payouts.voucher', ['batch' => $this->batch->id, 'mode' => 'summary']) }}">
                 <flux:button variant="{{ $this->mode === 'summary' ? 'primary' : 'outline' }}">
-                    {{ __('Resumen') }}
+                    {{ __('Summary') }}
                 </flux:button>
             </a>
 
             <a href="{{ route('payouts.voucher', ['batch' => $this->batch->id, 'mode' => 'detailed']) }}">
                 <flux:button variant="{{ $this->mode === 'detailed' ? 'primary' : 'outline' }}">
-                    {{ __('Detallado') }}
+                    {{ __('Detailed') }}
                 </flux:button>
             </a>
 
             <flux:button onclick="window.print()">
                 <flux:icon.printer class="size-4 mr-2" />
-                {{ __('Imprimir') }}
+                {{ __('Print') }}
             </flux:button>
         </div>
     </div>
@@ -209,13 +209,13 @@ mount(function (string|int $batch) {
         <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-6">
             <div class="items-center text-center md:text-left md:items-start">
                 <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-                    {{ __('Voucher de Pago') }}
+                    {{ __('Payment Voucher') }}
                 </h1>
                 <h2 class="text-lg font-semibold text-zinc-500 print:text-zinc-700 dark:text-zinc-400">
                     {{ config('qxlog.org_name') }}
                 </h2>
                 <p class="text-sm text-zinc-500 dark:text-zinc-400 no-print">
-                    {{ __('QxLog • Registro de cirugías instrumentadas') }}
+                    {{ __('Surgery Registry') }}
                 </p>
             </div>
 
@@ -232,7 +232,7 @@ mount(function (string|int $batch) {
 
                 <div>
                     <span class="text-zinc-500 dark:text-zinc-400">
-                        {{ __('Fecha pago') }}:
+                        {{ __('Payment Date') }}:
                     </span>
                     <span class="font-semibold text-zinc-900 dark:text-zinc-100">
                         {{ optional($this->batch->paid_at)->format('Y-m-d') ?? Carbon\Carbon::parse($this->batch->paid_at)->format('Y-m-d') }}
@@ -241,7 +241,7 @@ mount(function (string|int $batch) {
 
                 <div class="no-print">
                     <span class="text-zinc-500 dark:text-zinc-400">
-                        {{ __('Hora') }}:
+                        {{ __('Time') }}:
                     </span>
                     <span class="font-semibold text-zinc-900 dark:text-zinc-100">
                         {{ optional($this->batch->paid_at)->format('H:i') ?? Carbon\Carbon::parse($this->batch->paid_at)->format('H:i a') }}
@@ -254,7 +254,7 @@ mount(function (string|int $batch) {
             class="flex flex-col gap-2 justify-between py-6 px-6 border border-zinc-200 dark:border-zinc-700 capitalize">
             <div class="flex gap-2">
                 <flux:label class="w-2/6">
-                    {{ __('Paguese a') }}:
+                    {{ __('Pay to') }}:
                 </flux:label>
                 <flux:label class="w-4/6 text-zinc-900 dark:text-zinc-300">
                     {{ $this->batch->instrumentist->name }}
@@ -262,7 +262,7 @@ mount(function (string|int $batch) {
             </div>
             <div class="flex gap-2">
                 <flux:label class="w-2/6">
-                    {{ __('La cantidad de') }} {{ __('(en letras)') }}:
+                    {{ __('The amount of') }} {{ __('(in letters)') }}:
                 </flux:label>
                 <flux:label class="w-4/6 text-zinc-900 dark:text-zinc-300 capitalize">
                     {{ Illuminate\Support\Number::spell($this->batch->total_amount, 'es') }}
@@ -270,7 +270,7 @@ mount(function (string|int $batch) {
             </div>
             <div class="flex gap-2">
                 <flux:label class="w-2/6">
-                    {{ __('Metodo de pago') }}:
+                    {{ __('Payment Method') }}:
                 </flux:label>
                 <flux:label
                     class="w-2/6 text-zinc-900 dark:text-zinc-300 border-b border-zinc-900 dark:border-zinc-300">
@@ -286,17 +286,17 @@ mount(function (string|int $batch) {
                         <tr>
                             <th class="py-2 pr-6 font-medium text-center">
                                 <flux:label>
-                                    {{ __('Cantidad') }}
+                                    {{ __('Quantity') }}
                                 </flux:label>
                             </th>
                             <th class="py-2 pr-6 font-medium">
                                 <flux:label>
-                                    {{ __('Concepto') }}
+                                    {{ __('Concept') }}
                                 </flux:label>
                             </th>
                             <th class="py-2 pr-6 font-medium text-right">
                                 <flux:label>
-                                    {{ __('Unitario') }}
+                                    {{ __('Unit Price') }}
                                 </flux:label>
                             </th>
                             <th class="py-2 font-medium text-right">
@@ -363,22 +363,22 @@ mount(function (string|int $batch) {
                         <tr>
                             <th class="py-2 pr-3 font-medium">
                                 <flux:label>
-                                    {{ __('Fecha') }}
+                                    {{ __('Date') }}
                                 </flux:label>
                             </th>
                             <th class="py-2 pr-3 font-medium no-print text-center">
                                 <flux:label>
-                                    {{ __('Duración') }}
+                                    {{ __('Duration') }}
                                 </flux:label>
                             </th>
                             <th class="py-2 pr-3 font-medium text-center">
                                 <flux:label>
-                                    {{ __('Paciente') }}
+                                    {{ __('Patient') }}
                                 </flux:label>
                             </th>
                             <th class="py-2 pr-3 font-medium text-center">
                                 <flux:label>
-                                    {{ __('Cirugía') }}
+                                    {{ __('Surgery') }}
                                 </flux:label>
                             </th>
                             <th class="py-2 font-medium text-right">
@@ -452,7 +452,7 @@ mount(function (string|int $batch) {
             class="grid grid-cols-3 gap-12 text-center items-center text-xs mt-12 pt-12 border-t border-zinc-200 dark:border-zinc-700">
             <div>
                 <div class="text-zinc-500 dark:text-zinc-400 mb-12">
-                    {{ __('Recibo conforme') }}
+                    {{ __('Received by') }}
                 </div>
                 <div class="border-t border-zinc-300 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
                     {{ $this->batch->instrumentist->name ?? '' }}
@@ -461,7 +461,7 @@ mount(function (string|int $batch) {
 
             <div>
                 <div class="text-zinc-500 dark:text-zinc-400 mb-12">
-                    {{ __('Pagado por') }} ({{ __('Administración') }})
+                    {{ __('Paid by') }} ({{ __('Administration') }})
                 </div>
                 <div class="border-t border-zinc-300 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
                     {{ $this->batch->paidByUser->name ?? '' }}
@@ -470,17 +470,17 @@ mount(function (string|int $batch) {
 
             <div>
                 <div class="text-zinc-500 dark:text-zinc-400 mb-12">
-                    {{ __('Firma de autorización') }}
+                    {{ __('Authorized Signature') }}
                 </div>
                 <div class="border-t border-zinc-300 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
-                    {{ __('Medico Director') }}
+                    {{ __('Medical Director') }}
                 </div>
             </div>
         </div>
 
         <!-- Footer note -->
         <p class="hidden print:block mt-12 text-xs text-zinc-400 dark:text-zinc-500 text-center">
-            {{ __('Documento generado por QxLog. Conservar para control interno.') }}
+            {{ __('Generated by QxLog. Keep for internal control.') }}
         </p>
     </div>
 </div>

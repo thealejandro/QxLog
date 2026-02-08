@@ -114,7 +114,7 @@ $liquidate = function () {
     $selectedIds = array_values(array_unique(array_map('intval', (array) $data['selected'])));
     if (empty($selectedIds)) {
         throw ValidationException::withMessages([
-            'selected' => 'Selecciona al menos un procedimiento para liquidar.',
+            'selected' => __('Select a procedure to liquidate.'),
         ]);
     }
 
@@ -128,7 +128,7 @@ $liquidate = function () {
 
     if ($procedures->count() !== count($selectedIds)) {
         throw ValidationException::withMessages([
-            'selected' => 'Tu selección cambió (alguien actualizó registros o algunos ya no están pendientes). Recarga e intenta de nuevo.',
+            'selected' => __('Selection changed. Reload and try again.'),
         ]);
     }
 
@@ -172,7 +172,7 @@ $liquidate = function () {
     });
 
     $this->selected = [];
-    $this->success_message = 'Liquidación generada correctamente.';
+    $this->success_message = __('Liquidated successfully.');
 
     $this->dispatch('$refresh');
 };
@@ -181,8 +181,8 @@ $liquidate = function () {
 
 <div class="max-w-4xl mx-auto p-4 space-y-6">
     <div class="mb-4">
-        <flux:heading size="xl">Liquidar procedimientos</flux:heading>
-        <flux:subheading>Admin • Generar bloque de pago</flux:subheading>
+        <flux:heading size="xl">{{ __('Liquidate Procedures') }}</flux:heading>
+        <flux:subheading>{{ __('Generate payout batch') }}</flux:subheading>
     </div>
 
     @if($success_message)
@@ -329,7 +329,7 @@ $liquidate = function () {
                             @empty
                                 <tr>
                                     <td colspan="6" class="px-4 py-8 text-center text-zinc-500 dark:text-zinc-400">
-                                        {{ __('No hay procedimientos pendientes para este instrumentista.') }}
+                                        {{ __('No pending procedures.') }}
                                     </td>
                                 </tr>
                             @endforelse
@@ -365,7 +365,7 @@ $liquidate = function () {
 
                             <div class="flex items-center justify-between text-sm text-zinc-500 dark:text-zinc-400 pl-8">
                                 <div>
-                                    {{ __('Duración') }}: {{ $p->duration_minutes }} {{ __('min') }}
+                                    {{ __('Duration') }}: {{ $p->duration_minutes }} {{ __('min') }}
                                     <div class="text-xs text-zinc-500 dark:text-zinc-400">
                                         {{ Carbon\Carbon::parse($p->start_time)->format('H:i') }} -
                                         {{ Carbon\Carbon::parse($p->end_time)->format('H:i') }}
@@ -377,7 +377,7 @@ $liquidate = function () {
                         </div>
                     @empty
                         <div class="p-8 text-center text-zinc-500 dark:text-zinc-400">
-                            {{ __('No hay procedimientos pendientes.') }}
+                            {{ __('No pending procedures.') }}
                         </div>
                     @endforelse
                 </div>
@@ -385,7 +385,7 @@ $liquidate = function () {
 
             <div class="flex justify-end pt-2">
                 <flux:button wire:click="liquidate" loading="liquidate" variant="primary">
-                    {{ __('Liquidar seleccionados') }}
+                    {{ __('Liquidate selected') }}
                 </flux:button>
             </div>
         @endif

@@ -68,7 +68,7 @@ $batches = computed(function () {
                 <flux:label>{{ __('Instrumentist') }}</flux:label>
                 <select wire:model.live="instrumentist_id"
                     class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:bg-zinc-800/50 py-2.5 px-3 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500">
-                    <option value="">Todos</option>
+                    <option value="">{{ __('All') }}</option>
                     @foreach($instrumentists as $i)
                         <option value="{{ $i['id'] }}">{{ $i['name'] }}</option>
                     @endforeach
@@ -96,13 +96,16 @@ $batches = computed(function () {
                         <tr>
                             <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider">{{ __('Date') }}</th>
                             <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider">
-                                {{ __('Instrumentist') }}</th>
+                                {{ __('Instrumentist') }}
+                            </th>
                             <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-right">
-                                {{ __('Total') }}</th>
+                                {{ __('Total') }}
+                            </th>
                             <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider">{{ __('Paid by') }}
                             </th>
                             <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-right">
-                                {{ __('Actions') }}</th>
+                                {{ __('Actions') }}
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700 bg-white dark:bg-zinc-900">
@@ -124,7 +127,7 @@ $batches = computed(function () {
                                 <td class="px-4 py-3 text-right">
                                     <flux:button href="{{ route('payouts.voucher', $b->id) }}" variant="ghost" size="sm"
                                         icon="document-text">
-                                        Voucher
+                                        {{ __('Voucher') }}
                                     </flux:button>
                                 </td>
                             </tr>
@@ -164,13 +167,13 @@ $batches = computed(function () {
                                 {{ $b->paidByUser->name ?? ('#' . $b->paid_by_user_id) }}
                             </div>
                             <flux:button href="{{ route('payouts.voucher', $b->id) }}" variant="filled" size="sm">
-                                Voucher
+                                {{ __('Voucher') }}
                             </flux:button>
                         </div>
                     </div>
                 @empty
                     <div class="p-8 text-center text-zinc-500 dark:text-zinc-400">
-                        No hay pagos registrados todavía.
+                        {{ __('No payments registered yet.') }}
                     </div>
                 @endforelse
             </div>

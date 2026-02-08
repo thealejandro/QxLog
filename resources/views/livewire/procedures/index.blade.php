@@ -94,10 +94,10 @@ $ruleColor = function (?string $rule) {
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <flux:heading size="xl">
-                {{ __('Procedimientos') }}
+                {{ __('Procedures') }}
             </flux:heading>
             <flux:subheading>
-                {{ __('Vista de administración') }}
+                {{ __('Admin View') }}
             </flux:subheading>
         </div>
     </div>
@@ -106,10 +106,10 @@ $ruleColor = function (?string $rule) {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
             <div class="md:col-span-2 items-center">
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    {{ __('Buscar') }}
+                    {{ __('Search') }}
                 </label>
                 <flux:input icon="magnifying-glass" wire:model.live="q"
-                    placeholder="{{ __('Paciente, tipo, médico, circulante...') }}" />
+                    placeholder="{{ __('Patient, type, doctor, circulating...') }}" />
             </div>
 
             <div class="md:col-span-1 items-center">
@@ -119,13 +119,13 @@ $ruleColor = function (?string $rule) {
                 <select wire:model.change="status"
                     class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                     <option value="pending">
-                        {{ __('Pendiente') }}
+                        {{ __('Pending') }}
                     </option>
                     <option value="paid">
-                        {{ __('Pagado') }}
+                        {{ __('Paid') }}
                     </option>
                     <option value="all">
-                        {{ __('Todos') }}
+                        {{ __('All') }}
                     </option>
                 </select>
             </div>
@@ -136,7 +136,7 @@ $ruleColor = function (?string $rule) {
                 </label>
                 <select wire:model.change="instrumentist_id"
                     class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
-                    <option value="">-- {{ __('Todos') }} --</option>
+                    <option value="">-- {{ __('All') }} --</option>
                     @foreach($this->instrumentists as $i)
                         <option value="{{ $i->id }}">{{ $i->name }}</option>
                     @endforeach
@@ -145,7 +145,7 @@ $ruleColor = function (?string $rule) {
 
             <div class="md:col-span-1 items-center">
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    {{ __('Desde') }}
+                    {{ __('From') }}
                 </label>
                 <input type="date" wire:model.change="date_from"
                     class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
@@ -153,7 +153,7 @@ $ruleColor = function (?string $rule) {
 
             <div class="md:col-span-1 items-center">
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    {{ __('Hasta') }}
+                    {{ __('To') }}
                 </label>
                 <input type="date" wire:model.change="date_to"
                     class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2 text-sm hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
@@ -162,11 +162,11 @@ $ruleColor = function (?string $rule) {
 
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between text-sm gap-2">
             <div class="text-zinc-600 dark:text-zinc-400">
-                {{ __('Mostrando') }}
+                {{ __('Showing') }}
                 <span class="font-medium text-zinc-900 dark:text-zinc-100 mx-1">
                     {{ $this->procedures->count() }}
                 </span>
-                {{ __('máx 300') }}
+                {{ __('max 300') }}
             </div>
             <div class="font-semibold text-emerald-600 dark:text-emerald-400">
                 {{ __('Total') }}: Q{{ number_format($this->total, 2) }}
@@ -202,11 +202,11 @@ $ruleColor = function (?string $rule) {
                                 <flux:button size="sm" icon="ellipsis-vertical" />
                                 <flux:menu>
                                     <flux:menu.item wire:click="edit({{ $p->id }})" icon="pencil">
-                                        {{ __('Editar') }}
+                                        {{ __('Edit') }}
                                     </flux:menu.item>
                                     <flux:menu.separator />
                                     <flux:menu.item wire:click="delete({{ $p->id }})" icon="trash" variant="danger">
-                                        {{ __('Eliminar') }}
+                                        {{ __('Delete') }}
                                     </flux:menu.item>
                                 </flux:menu>
                             </flux:dropdown>
@@ -216,7 +216,7 @@ $ruleColor = function (?string $rule) {
                     <div class="space-y-1 text-sm text-zinc-500 dark:text-zinc-400">
                         <div class="flex justify-between">
                             <span class="font-medium">
-                                {{ __('Instrumentista') }}:
+                                {{ __('Instrumentist') }}:
                             </span>
                             <span class="font-medium">
                                 {{ $p->instrumentist->name ?? '—' }}
@@ -224,7 +224,7 @@ $ruleColor = function (?string $rule) {
                         </div>
                         <div class="flex justify-between">
                             <span class="font-medium">
-                                {{ __('Inicio - Fin') }}:
+                                {{ __('Start - End') }}:
                             </span>
                             <span class="font-medium">
                                 {{ \Carbon\Carbon::parse($p->start_time)->format('H:i') }}
@@ -234,7 +234,7 @@ $ruleColor = function (?string $rule) {
                         </div>
                         <div class="flex justify-between">
                             <span class="font-medium">
-                                {{ __('Duración') }}:
+                                {{ __('Duration') }}:
                             </span>
                             <span class="font-medium">
                                 {{ $p->duration_minutes ?? '-' }}
@@ -269,33 +269,33 @@ $ruleColor = function (?string $rule) {
                     <tr>
                         <th class="px-4 py-3 font-medium uppercase tracking-wider">
                             <flux:label>
-                                {{ __('Fecha') }}
+                                {{ __('Date') }}
                             </flux:label>
                         </th>
                         <th class="px-4 py-3 font-medium uppercase tracking-wider">
                             <flux:label>
-                                {{ __('Paciente') }}
+                                {{ __('Patient') }}
                             </flux:label>
                         </th>
                         <th class="px-4 py-3 font-medium uppercase tracking-wider">
                             <flux:label>
-                                {{ __('Procedimiento') }}
+                                {{ __('Procedure') }}
                             </flux:label>
                         </th>
                         <th class="px-4 py-3 font-medium uppercase tracking-wider">
                             <flux:label>
-                                {{ __('Instrumentista') }}
+                                {{ __('Instrumentist') }}
                             </flux:label>
                         </th>
                         <th class="px-4 py-3 font-medium uppercase tracking-wider">
                             <div class="flex flex-row justify-between gap-1  items-center">
                                 <div class="text-center">
                                     <flux:label>
-                                        {{ __('Duración') }}
+                                        {{ __('Duration') }}
                                     </flux:label>
                                     <br>
                                     <span class="text-xs text-zinc-500 dark:text-zinc-400">
-                                        {{ __('Inicio - Fin') }}
+                                        {{ __('Start - End') }}
                                     </span>
                                 </div>
                                 <div>
@@ -307,18 +307,18 @@ $ruleColor = function (?string $rule) {
                         </th>
                         <th class="px-4 py-3 font-medium uppercase tracking-wider">
                             <flux:label>
-                                {{ __('Monto') }}
+                                {{ __('Amount') }}
                             </flux:label>
                         </th>
                         <th class="px-4 py-3 font-medium uppercase tracking-wider">
                             <flux:label>
-                                {{ __('Estado') }}
+                                {{ __('State') }}
                             </flux:label>
                         </th>
                         @if ($p->status !== 'paid' || $p->status !== 'cancelled' || $status == 'all')
                             <th class="px-4 py-3 font-medium uppercase tracking-wider">
                                 <flux:label>
-                                    {{ __('Acciones') }}
+                                    {{ __('Actions') }}
                                 </flux:label>
                             </th>
                         @endif
@@ -370,7 +370,7 @@ $ruleColor = function (?string $rule) {
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <flux:badge size="sm" color="{{ $p->status === 'paid' ? 'green' : 'zinc' }}">
-                                    {{ $p->status === 'paid' ? 'Pagado' : 'Pendiente' }}
+                                    {{ $p->status === 'paid' ? __('Paid') : __('Pending') }}
                                 </flux:badge>
                             </td>
                             @if ($p->status !== 'paid')
@@ -391,7 +391,7 @@ $ruleColor = function (?string $rule) {
                     @empty
                         <tr>
                             <td colspan="9" class="px-6 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400 italic">
-                                {{ __('Sin resultados.') }}
+                                {{ __('No results.') }}
                             </td>
                         </tr>
                     @endforelse

@@ -271,7 +271,8 @@ $save = function () {
 ?>
 
 <div class="max-w-4xl mx-auto p-4 space-y-6">
-    <flux:button href="{{ route('procedures.index') }}" icon="arrow-left" variant="subtle">Atrás</flux:button>
+    <flux:button href="{{ route('procedures.index') }}" icon="arrow-left" variant="subtle">{{ __('Back') }}
+    </flux:button>
     <div>
         <flux:heading size="xl">{{ __('Edit Procedure') }}</flux:heading>
         <flux:subheading>{{ __('Modify the details of the surgical procedure.') }}</flux:subheading>
@@ -343,7 +344,7 @@ $save = function () {
                 <flux:label>
                     {{ __('Procedure') }}
                 </flux:label>
-                <input type="text" wire:model="procedure_type" placeholder="{{ __('Cesárea, Apendicectomía...') }}"
+                <input type="text" wire:model="procedure_type" placeholder="{{ __('C-Section, Appendectomy...') }}"
                     class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
                 @error('procedure_type') <p class="text-sm text-red-600 dark:text-red-400 mt-1">
                         {{ $message }}
@@ -371,8 +372,7 @@ $save = function () {
                     </div>
                     <input type="text"
                         class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 pl-10 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors"
-                        placeholder="{{ __('Buscar o escribir nombre...') }}"
-                        wire:model.live.debounce.200ms="doctor_query">
+                        placeholder="{{ __('Search or type name...') }}" wire:model.live.debounce.200ms="doctor_query">
 
                     @if(!empty($this->doctor_suggestions))
                         <div
@@ -412,7 +412,7 @@ $save = function () {
                     </div>
                     <input type="text"
                         class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 pl-10 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors"
-                        placeholder="{{ __('Buscar o escribir nombre...') }}"
+                        placeholder="{{ __('Search or type name...') }}"
                         wire:model.live.debounce.200ms="circulating_query">
 
                     @if(!empty($this->circulating_suggestions))
@@ -469,11 +469,11 @@ $save = function () {
 
             <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                 <flux:button href="{{ route('procedures.index') }}" variant="subtle" class="w-full sm:w-auto">
-                    {{ __('Cancelar') }}
+                    {{ __('Cancel') }}
                 </flux:button>
                 <flux:button wire:click="save" variant="primary" loading="save" class="w-full sm:w-auto">
                     <span class="text-lg font-bold">
-                        {{ __('Actualizar') }}
+                        {{ __('Update') }}
                     </span>
                 </flux:button>
             </div>
