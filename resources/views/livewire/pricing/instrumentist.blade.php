@@ -65,11 +65,11 @@ $toggle = function (int $id) {
                         </flux:badge>
                     </div>
                     <div class="pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                        <flux:button size="sm"
-                            class="w-full !bg-indigo-50 dark:!bg-indigo-900/30 !text-indigo-600 dark:!text-indigo-400 !border-indigo-100 dark:!border-indigo-800"
+                        <button
+                            class="w-full h-8 text-sm rounded-lg cursor-pointer hover:bg-indigo-100 dark:hover:bg-indigo-800/30 transition-colors border-2 hover:border-indigo-200 dark:hover:border-indigo-700 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-indigo-100 dark:border-indigo-800"
                             wire:click="toggle({{ $u->id }})">
                             {{ $u->use_pay_scheme ? __('Deactivate scheme') : __('Activate scheme') }}
-                        </flux:button>
+                        </button>
                     </div>
                 </div>
             @empty
@@ -98,7 +98,7 @@ $toggle = function (int $id) {
                         </th>
                         <th scope="col"
                             class="px-6 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Action') }}
+                            {{ __('Actions') }}
                         </th>
                     </tr>
                 </thead>
@@ -117,10 +117,11 @@ $toggle = function (int $id) {
                                 </flux:badge>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                <flux:button size="sm" variant="subtle" class="!text-indigo-600 dark:!text-indigo-400"
+                                <button
+                                    class="cursor-pointer transition-colors font-medium h-8 px-2 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-100 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/30 hover:border-indigo-200 dark:hover:border-indigo-700 hover:text-indigo-700 dark:hover:text-indigo-300 text-indigo-600 dark:text-indigo-400"
                                     wire:click="toggle({{ $u->id }})">
-                                    {{ __('Change') }}
-                                </flux:button>
+                                    {{ $u->use_pay_scheme ? __('Deactivate') : __('Activate') }}
+                                </button>
                             </td>
                         </tr>
                     @empty

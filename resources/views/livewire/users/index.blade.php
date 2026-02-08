@@ -83,8 +83,7 @@ $roleColor = function (?string $role) {
             <flux:subheading>{{ __('Only Super Admin') }}</flux:subheading>
         </div>
 
-        <flux:button href="{{ route('users.create') }}" icon="plus"
-            class="w-full sm:w-auto !bg-indigo-500 hover:!bg-indigo-600 !border-indigo-500 !text-white dark:!bg-indigo-600 dark:hover:!bg-indigo-500">
+        <flux:button href="{{ route('users.create') }}" icon="plus" class="w-full sm:w-auto" variant="primary">
             {{ __('New User') }}
         </flux:button>
     </div>
@@ -99,11 +98,11 @@ $roleColor = function (?string $role) {
             <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{{ __('Role') }}</label>
             <select wire:model.live="role"
                 class="w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
-                <option value="">-- Todos --</option>
-                <option value="admin">Admin</option>
-                <option value="instrumentist">Instrumentista</option>
-                <option value="doctor">Médico</option>
-                <option value="circulating">Circulante</option>
+                <option value="">-- {{ __('All') }} --</option>
+                <option value="admin">{{ __('Admin') }}</option>
+                <option value="instrumentist">{{ __('Instrumentist') }}</option>
+                <option value="doctor">{{ __('Doctor (Surgeon)') }}</option>
+                <option value="circulating">{{ __('Circulating (Nurse)') }}</option>
             </select>
 
             <div class="flex items-center">
@@ -118,39 +117,48 @@ $roleColor = function (?string $role) {
                     class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-sm space-y-3">
                     <div class="flex justify-between items-start">
                         <div>
-                            <div class="font-medium text-zinc-900 dark:text-zinc-100">{{ $u->name }}</div>
+                            <div class="font-medium text-zinc-900 dark:text-zinc-100 capitalize">{{ $u->name }}</div>
                             <div class="text-sm text-zinc-500">{{ $u->email }}</div>
                             <div class="text-xs text-zinc-400 font-mono mt-0.5">{{ $u->username }}</div>
                         </div>
-                        <flux:badge size="sm" color="{{ $u->deleted_at ? 'red' : 'green' }}">
+                        <div class="flex items-center gap-2">
+                            <flux:dropdown>
+                                <flux:button size="sm" variant="primary" icon="ellipsis-vertical" />
+                                <flux:menu>
+                                    @if (!$u->deleted_at)
+                                        <flux:menu.item href="{{ route('users.edit', $u->id) }}" icon="pencil">
+                                            {{ __('Edit') }}
+                                        </flux:menu.item>
+                                        <flux:menu.separator />
+                                        <flux:menu.item wire:click="deleteUser({{ $u->id }})"
+                                            wire:confirm="{{ __('Delete this user? (can be restored)') }}" variant="danger"
+                                            icon="trash">
+                                            {{ __('Delete') }}
+                                        </flux:menu.item>
+                                    @endif
+                                    @if ($u->deleted_at)
+                                        <flux:menu.item wire:click="restoreUser({{ $u->id }})"
+                                            wire:confirm="{{ __('Restore this user?') }}" icon="arrow-uturn-left">
+                                            {{ __('Restore') }}
+                                        </flux:menu.item>
+                                    @endif
+                                </flux:menu>
+                            </flux:dropdown>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+                        <flux:badge size="sm" color="{{ $this->roleColor($u->role) }}" class="capitalize">
+                            {{ $u->role }}
+                        </flux:badge>
+                        <flux:badge size="sm" color="{{ $u->deleted_at ? 'red' : 'green' }}" class="capitalize">
                             {{ $u->deleted_at ? __('Deleted') : __('Active') }}
                         </flux:badge>
-                    </div>
-
-                    <div class="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-                        <flux:badge size="sm" color="{{ $this->roleColor($u->role) }}">{{ $u->role }}</flux:badge>
-                    </div>
-
-                    <div class="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-end gap-2">
-                        @if(!$u->deleted_at)
-                            <flux:button href="{{ route('users.edit', $u->id) }}" size="sm" variant="subtle">
-                                {{ __('Edit') }}
-                            </flux:button>
-
-                            <flux:button wire:click="deleteUser({{ $u->id }})"
-                                wire:confirm="{{ __('Delete this user? (can be restored)') }}" size="sm" variant="danger"
-                                icon="trash" />
-                        @else
-                            <flux:button wire:click="restoreUser({{ $u->id }})" size="sm" variant="filled"
-                                icon="arrow-uturn-left">
-                                {{ __('Restore') }}
-                            </flux:button>
-                        @endif
                     </div>
                 </div>
             @empty
                 <div class="p-4 text-center text-zinc-500 dark:text-zinc-400 italic">
-                    {{ __('No hay usuarios.') }}
+                    {{ __('No users.') }}
                 </div>
             @endforelse
         </div>
@@ -160,36 +168,32 @@ $roleColor = function (?string $role) {
             <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
                 <thead class="bg-zinc-50 dark:bg-zinc-800/50">
                     <tr>
-                        <th scope="col"
-                            class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                            {{ __('Name') }}
+                        <th scope="col" class="px-4 py-4 text-left text-xs font-semibold text-zinc-500 tracking-wider">
+                            <flux:label> {{ __('Name') }} </flux:label>
+                        </th>
+                        <th scope="col" class="px-4 py-4 text-left text-xs font-semibold text-zinc-500 tracking-wider">
+                            <flux:label> {{ __('Username') }} </flux:label>
+                        </th>
+                        <th scope="col" class="px-4 py-4 text-left text-xs font-semibold text-zinc-500 tracking-wider">
+                            <flux:label> {{ __('Email') }} </flux:label>
+                        </th>
+                        <th scope="col" class="px-4 py-4 text-left text-xs font-semibold text-zinc-500 tracking-wider">
+                            <flux:label> {{ __('Role') }} </flux:label>
                         </th>
                         <th scope="col"
-                            class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                            {{ __('Username') }}
+                            class="px-4 py-4 text-center text-xs font-semibold text-zinc-500 tracking-wider">
+                            <flux:label> {{ __('Status') }} </flux:label>
                         </th>
                         <th scope="col"
-                            class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                            {{ __('Email') }}
-                        </th>
-                        <th scope="col"
-                            class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                            {{ __('Role') }}
-                        </th>
-                        <th scope="col"
-                            class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                            {{ __('State') }}
-                        </th>
-                        <th scope="col"
-                            class="px-4 py-3 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                            {{ __('Actions') }}
+                            class="px-4 py-4 text-center text-xs font-semibold text-zinc-500 tracking-wider">
+                            <flux:label> {{ __('Actions') }} </flux:label>
                         </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-700">
                     @forelse($this->users as $u)
                         <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-zinc-900 dark:text-zinc-100">
                                 {{ $u->name }}
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
@@ -200,22 +204,22 @@ $roleColor = function (?string $role) {
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                                 <flux:badge size="sm" color="{{ $this->roleColor($u->role) }}">{{ $u->role }}</flux:badge>
                             </td>
-                            <td class="px-4 py-3 whitespace-nowrap">
+                            <td class="px-4 py-3 whitespace-nowrap text-center">
                                 <flux:badge size="sm" color="{{ $u->deleted_at ? 'red' : 'green' }}">
                                     {{ $u->deleted_at ? __('Deleted') : __('Active') }}
                                 </flux:badge>
                             </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-right text-sm space-x-2">
+                            <td class="px-4 py-3 whitespace-nowrap text-center text-sm space-x-2">
                                 @if(!$u->deleted_at)
-                                    <flux:button href="{{ route('users.edit', $u->id) }}" size="sm" variant="subtle">
-                                        {{ __('Edit') }}
-                                    </flux:button>
+                                    <flux:button href="{{ route('users.edit', $u->id) }}" size="sm" variant="primary"
+                                        icon="pencil" color="indigo" />
                                     <flux:button wire:click="deleteUser({{ $u->id }})"
                                         wire:confirm="{{ __('Delete this user? (can be restored)') }}" size="sm"
-                                        variant="danger" icon="trash" class="!px-2.5" />
+                                        variant="danger" icon="trash" class="cursor-pointer" />
                                 @else
-                                    <flux:button wire:click="restoreUser({{ $u->id }})" size="sm" variant="filled"
-                                        icon="arrow-uturn-left" tooltip="{{ __('Restore') }}" />
+                                    <flux:button wire:click="restoreUser({{ $u->id }})" size="sm" variant="primary"
+                                        icon="arrow-uturn-left" tooltip="{{ __('Restore') }}" color="green"
+                                        class="cursor-pointer" />
                                 @endif
                             </td>
                         </tr>

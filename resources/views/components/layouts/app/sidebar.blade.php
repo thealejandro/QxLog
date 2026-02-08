@@ -70,7 +70,7 @@
             @if(auth()->user()->is_super_admin)
                 <flux:navlist.item icon="user" :href="route('users.index')" :current="request()->routeIs('users.index')"
                     wire:navigate>
-                    {{ __('Usuarios') }}
+                    {{ __('Users') }}
                 </flux:navlist.item>
             @endif
         </flux:navlist>

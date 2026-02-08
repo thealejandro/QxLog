@@ -72,10 +72,10 @@ $total = computed(function () {
 
 $ruleLabel = function (?string $rule) {
     return match ($rule) {
-        'video_rate' => 'Video',
-        'night_rate' => 'Madrugada',
-        'long_case_rate' => 'Largo',
-        default => 'Base',
+        'video_rate' => __('Video'),
+        'night_rate' => __('Night'),
+        'long_case_rate' => __('Long'),
+        default => __('Base Rate'),
     };
 };
 
@@ -114,7 +114,7 @@ $ruleColor = function (?string $rule) {
 
             <div class="md:col-span-1 items-center">
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    {{ __('Estado') }}
+                    {{ __('State') }}
                 </label>
                 <select wire:model.change="status"
                     class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
@@ -132,7 +132,7 @@ $ruleColor = function (?string $rule) {
 
             <div class="md:col-span-1 items-center">
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    {{ __('Instrumentista') }}
+                    {{ __('Instrumentist') }}
                 </label>
                 <select wire:model.change="instrumentist_id"
                     class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
@@ -224,7 +224,7 @@ $ruleColor = function (?string $rule) {
                         </div>
                         <div class="flex justify-between">
                             <span class="font-medium">
-                                {{ __('Start - End') }}:
+                                {{ __('Start') }} - {{ __('End') }}:
                             </span>
                             <span class="font-medium">
                                 {{ \Carbon\Carbon::parse($p->start_time)->format('H:i') }}
@@ -257,7 +257,7 @@ $ruleColor = function (?string $rule) {
             @empty
                 <div
                     class="p-8 text-center text-zinc-500 dark:text-zinc-400 italic bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
-                    {{ __('Sin resultados.') }}
+                    {{ __('No results found') }}
                 </div>
             @endforelse
         </div>
@@ -295,7 +295,7 @@ $ruleColor = function (?string $rule) {
                                     </flux:label>
                                     <br>
                                     <span class="text-xs text-zinc-500 dark:text-zinc-400">
-                                        {{ __('Start - End') }}
+                                        {{ __('Start') }} - {{ __('End') }}
                                     </span>
                                 </div>
                                 <div>
@@ -391,7 +391,7 @@ $ruleColor = function (?string $rule) {
                     @empty
                         <tr>
                             <td colspan="9" class="px-6 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400 italic">
-                                {{ __('No results.') }}
+                                {{ __('No results found') }}
                             </td>
                         </tr>
                     @endforelse

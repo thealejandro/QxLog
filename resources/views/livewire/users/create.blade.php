@@ -57,7 +57,7 @@ $save = function () {
         'phone' => $data['phone'],
     ]);
 
-    $this->success_message = 'Usuario creado.';
+    $this->success_message = __('User created.');
     $this->reset([
         'name',
         'username',
@@ -100,16 +100,16 @@ $save = function () {
             class="w-full rounded-lg border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500 p-2.5">
             <option value="">-- {{ __('Select') }} --</option>
             <option value="admin">Admin</option>
-            <option value="instrumentist">Instrumentista</option>
-            <option value="doctor">Médico</option>
-            <option value="circulating">Circulante</option>
+            <option value="instrumentist">{{ __('Instrumentist') }}</option>
+            <option value="doctor">{{ __('Doctor (Surgeon)') }}</option>
+            <option value="circulating">{{ __('Circulating (Nurse)') }}</option>
         </select>
 
         <flux:input wire:model.live="password" type="password" label="{{ __('Password') }}" />
 
         <flux:input wire:model.live="password_confirmation" type="password" label="{{ __('Confirm Password') }}" />
 
-        <flux:checkbox wire:model.live="is_super_admin" label="Super Admin" />
+        <flux:checkbox wire:model.live="is_super_admin" label="{{ __('Super Admin') }}" />
 
         <flux:checkbox wire:model.live="use_pay_scheme" label="{{ __('Use Pay Scheme') }}" />
 
