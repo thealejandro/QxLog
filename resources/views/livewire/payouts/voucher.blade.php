@@ -250,19 +250,18 @@ mount(function (string|int $batch) {
             </div>
         </div>
 
-        <div
-            class="flex flex-col gap-2 justify-between py-6 px-6 border border-zinc-200 dark:border-zinc-700 capitalize">
+        <div class="flex flex-col gap-2 justify-between py-6 px-6 border border-zinc-200 dark:border-zinc-700">
             <div class="flex gap-2">
                 <flux:label class="w-2/6">
                     {{ __('Pay to') }}:
                 </flux:label>
-                <flux:label class="w-4/6 text-zinc-900 dark:text-zinc-300">
+                <flux:label class="w-4/6 text-zinc-900 dark:text-zinc-300 capitalize">
                     {{ $this->batch->instrumentist->name }}
                 </flux:label>
             </div>
             <div class="flex gap-2">
                 <flux:label class="w-2/6">
-                    {{ __('The amount of') }} {{ __('(in letters)') }}:
+                    {{ __('The amount of') }} ({{ __('In letters') }}):
                 </flux:label>
                 <flux:label class="w-4/6 text-zinc-900 dark:text-zinc-300 capitalize">
                     {{ Illuminate\Support\Number::spell($this->batch->total_amount, 'es') }}
@@ -273,7 +272,7 @@ mount(function (string|int $batch) {
                     {{ __('Payment Method') }}:
                 </flux:label>
                 <flux:label
-                    class="w-2/6 text-zinc-900 dark:text-zinc-300 border-b border-zinc-900 dark:border-zinc-300">
+                    class="w-2/6 text-zinc-900 dark:text-zinc-300 border-b border-zinc-900 dark:border-zinc-300 capitalize">
                     {{ $this->batch->payment_method }}
                 </flux:label>
             </div>

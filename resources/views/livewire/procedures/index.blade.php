@@ -10,18 +10,14 @@ state([
     'q' => '',
     'status' => 'pending', // pending|paid|all
     'instrumentist_id' => '',
-    'date_from' => null,
-    'date_to' => null,
+    'date_from' => '',
+    'date_to' => '',
 ]);
 
 mount(function () {
     abort_unless(Auth::check(), 401);
 
-    abort_unless((bool) Auth::user()->role !== 'admin', 403);
-
-    // default dates: hoy - 30 días
-    $this->date_to = now()->toDateString();
-    $this->date_from = now()->subDays(30)->toDateString();
+    abort_unless((bool) (Auth::user()->role !== 'admin' || Auth::user()->is_super_admin), 403);
 });
 
 $instrumentists = computed(function () {
@@ -114,9 +110,9 @@ $ruleColor = function (?string $rule) {
 
             <div class="md:col-span-1 items-center">
                 <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    {{ __('State') }}
+                    {{ __('Status') }}
                 </label>
-                <select wire:model.change="status"
+                <select wire:model.live="status"
                     class="w-full rounded-lg border-zinc-200 bg-indigo-50 dark:border-zinc-600 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                     <option value="pending">
                         {{ __('Pending') }}
@@ -195,7 +191,7 @@ $ruleColor = function (?string $rule) {
                         </div>
                         <div class="flex items-center gap-2">
                             <flux:badge size="sm" color="{{ $p->status === 'paid' ? 'green' : 'amber' }}">
-                                {{ $p->status }}
+                                {{ __($p->status) }}
                             </flux:badge>
 
                             <flux:dropdown>
@@ -315,7 +311,9 @@ $ruleColor = function (?string $rule) {
                                 {{ __('State') }}
                             </flux:label>
                         </th>
-                        @if ($p->status !== 'paid' || $p->status !== 'cancelled' || $status == 'all')
+
+                        {{ $this->status }}
+                        @if ($this->status !== 'paid')
                             <th class="px-4 py-3 font-medium uppercase tracking-wider">
                                 <flux:label>
                                     {{ __('Actions') }}
@@ -325,76 +323,87 @@ $ruleColor = function (?string $rule) {
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-700">
-                    @forelse($this->procedures as $p)
-                        @php
-                            $rule = data_get($p->pricing_snapshot, 'rule', 'default_rate');
-                        @endphp
-                        <tr
-                            class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors text-zinc-600 dark:text-zinc-300">
-                            <td class="px-4 py-3 whitespace-nowrap text-sm">
-                                {{ $p->procedure_date->format('d/m/Y') }}
+                    @if ($this->procedures->isEmpty())
+                        <tr>
+                            <td colspan="6" class="px-4 py-3 text-center text-sm text-zinc-500 dark:text-zinc-400">
+                                {{ __('No procedures found') }}
                             </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                                {{ $p->patient_name }}
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm">
-                                {{ $p->procedure_type }}
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm">
-                                {{ $p->instrumentist->name ?? '—' }}
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-center">
-                                <div class="flex flex-row justify-between items-center">
-                                    <div>
-                                        {{ $p->duration_minutes }}
-                                        <span class="text-xs text-zinc-500 dark:text-zinc-400">
-                                            {{ __('min') }}
-                                        </span>
-                                        <br>
-                                        <span class="text-xs text-zinc-500 dark:text-zinc-400">
-                                            {{ \Carbon\Carbon::parse($p->start_time)->format('H:i') }}
-                                            <span>
-                                                -
+                        </tr>
+                    @else
+                        @forelse($this->procedures as $p)
+                            @php
+                                $rule = data_get($p->pricing_snapshot, 'rule', 'default_rate');
+                            @endphp
+                            <tr
+                                class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors text-zinc-600 dark:text-zinc-300">
+                                <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                    {{ $p->procedure_date->format('d/m/Y') }}
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                                    {{ $p->patient_name }}
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                    {{ $p->procedure_type }}
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                    {{ $p->instrumentist->name ?? '—' }}
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-center">
+                                    <div class="flex flex-row justify-between items-center">
+                                        <div>
+                                            {{ $p->duration_minutes }}
+                                            <span class="text-xs text-zinc-500 dark:text-zinc-400">
+                                                {{ __('min') }}
                                             </span>
-                                            {{ \Carbon\Carbon::parse($p->end_time)->format('H:i') }}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <x-procedure-rule-badge :rule="$rule" :videosurgery="$p->is_videosurgery" />
-                                    </div>
-                                </div>
-                            </td>
-                            <td
-                                class="px-4 py-3 whitespace-nowrap text-right text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                                Q{{ number_format((float) $p->calculated_amount, 2) }}
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <flux:badge size="sm" color="{{ $p->status === 'paid' ? 'green' : 'zinc' }}">
-                                    {{ $p->status === 'paid' ? __('Paid') : __('Pending') }}
-                                </flux:badge>
-                            </td>
-                            @if ($p->status !== 'paid')
-                                <td class="px-4 py-3 whitespace-nowrap text-center">
-                                    <div class="flex flex-row justify-center items-center gap-2">
-                                        <a href="{{ route('procedures.edit', $p->id) }}"
-                                            class="inline-flex items-center gap-1.5 text-sm text-indigo-500 dark:text-indigo-500 hover:text-indigo-900 dark:hover:text-indigo-900 transition-colors">
-                                            <flux:icon name="pencil" size="sm" />
-                                        </a>
-                                        <a
-                                            class="inline-flex items-center gap-1.5 text-sm text-red-500 dark:text-red-500 hover:text-red-900 dark:hover:text-red-900 transition-colors">
-                                            <flux:icon name="trash" size="sm" />
-                                        </a>
+                                            <br>
+                                            <span class="text-xs text-zinc-500 dark:text-zinc-400">
+                                                {{ \Carbon\Carbon::parse($p->start_time)->format('H:i') }}
+                                                <span>
+                                                    -
+                                                </span>
+                                                {{ \Carbon\Carbon::parse($p->end_time)->format('H:i') }}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <x-procedure-rule-badge :rule="$rule" :videosurgery="$p->is_videosurgery" />
+                                        </div>
                                     </div>
                                 </td>
-                            @endif
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="9" class="px-6 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400 italic">
-                                {{ __('No results found') }}
-                            </td>
-                        </tr>
-                    @endforelse
+                                <td
+                                    class="px-4 py-3 whitespace-nowrap text-right text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                                    Q{{ number_format((float) $p->calculated_amount, 2) }}
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-center">
+                                    <flux:badge size="sm" color="{{ $p->status === 'paid' ? 'green' : 'zinc' }}">
+                                        {{ __($p->status) }}
+                                    </flux:badge>
+                                </td>
+                                @if ($p->status === 'paid' && $this->status === 'all')
+                                    <td></td>
+                                @endif
+                                @if ($p->status === 'pending' && ($this->status === 'all' || $this->status === 'pending'))
+                                    <td class="px-4 py-3 whitespace-nowrap text-center">
+                                        <div class="flex flex-row justify-center items-center gap-2">
+                                            <a href="{{ route('procedures.edit', $p->id) }}"
+                                                class="inline-flex items-center gap-1.5 text-sm text-indigo-500 dark:text-indigo-500 hover:text-indigo-900 dark:hover:text-indigo-900 transition-colors">
+                                                <flux:icon name="pencil" size="sm" />
+                                            </a>
+                                            <a
+                                                class="inline-flex items-center gap-1.5 text-sm text-red-500 dark:text-red-500 hover:text-red-900 dark:hover:text-red-900 transition-colors">
+                                                <flux:icon name="trash" size="sm" />
+                                            </a>
+                                        </div>
+                                    </td>
+                                @endif
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="9" class="px-6 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400 italic">
+                                    {{ __('No results found') }}
+                                </td>
+                            </tr>
+                        @endforelse
+                    @endif
                 </tbody>
             </table>
         </div>

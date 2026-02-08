@@ -112,21 +112,21 @@ $toggleDelete = function () {
 ?>
 
 <div class="max-w-xl mx-auto p-4 space-y-6">
-    <div class="flex items-center justify-between">
-        <div>
-            <flux:heading size="xl">{{ __('Edit User') }}</flux:heading>
-            <flux:text variant="subtle" class="text-sm">
-                ID: {{ $this->user->id ?? '' }} &middot; Username: {{ $this->user->username ?? '' }}
-            </flux:text>
-        </div>
-        <flux:link href="{{ route('users.index') }}" class="text-sm">Volver</flux:link>
-    </div>
+    <flux:button href="{{ route('users.index') }}" variant="primary" size="sm" icon="arrow-left">
+        {{ __('Back') }}
+    </flux:button>
 
     @if($success_message)
         <flux:callout variant="success" icon="check-circle" heading="{{ $success_message }}" />
     @endif
 
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-6 space-y-6">
+        <div class="flex items-center justify-between gap-2">
+            <flux:heading size="xl">{{ __('Edit User') }}</flux:heading>
+            <flux:text variant="subtle">
+                {{ __('ID') }}: {{ $this->user->id ?? '' }}
+            </flux:text>
+        </div>
         <div class="flex items-center justify-between p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50">
             <div class="flex items-center gap-2">
                 <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">{{ __('State') }}:</span>
@@ -141,19 +141,19 @@ $toggleDelete = function () {
             </flux:button>
         </div>
 
-        <flux:input wire:model.live="name" label="{{ __('Name') }}" />
+        <flux:input wire:model="name" label="{{ __('Name') }}" />
 
-        <flux:input wire:model.live="username" label="{{ __('Username') }}" />
+        <flux:input wire:model="username" label="{{ __('Username') }}" />
 
-        <flux:input wire:model.live="email" type="email" label="{{ __('Email') }}" />
+        <flux:input wire:model="email" type="email" label="{{ __('Email') }}" />
 
         <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{{ __('Role') }}</label>
-        <select wire:model.live="role"
-            class="w-full rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500 p-2.5">
-            <option value="admin">Admin</option>
-            <option value="instrumentist">Instrumentista</option>
-            <option value="doctor">Médico</option>
-            <option value="circulating">Circulante</option>
+        <select wire:model="role"
+            class="w-full rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-200 focus:ring-0 focus:border-zinc-500 p-2.5">
+            <option value="admin">{{ __('Admin') }}</option>
+            <option value="instrumentist">{{ __('Instrumentist') }}</option>
+            <option value="doctor">{{ __('Doctor') }}</option>
+            <option value="circulating">{{ __('Circulating') }}</option>
         </select>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
