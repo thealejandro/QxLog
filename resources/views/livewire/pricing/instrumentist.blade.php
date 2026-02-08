@@ -43,12 +43,12 @@ $toggle = function (int $id) {
 
 <div class="max-w-4xl mx-auto p-4 space-y-6">
     <div class="mb-4">
-        <flux:heading size="xl">{{ __('Instrumentistas') }}</flux:heading>
-        <flux:subheading>{{ __('Marcar quién usa esquema especial de pago') }}</flux:subheading>
+        <flux:heading size="xl">{{ __('Instrumentists') }}</flux:heading>
+        <flux:subheading>{{ __('Mark who uses special payment scheme') }}</flux:subheading>
     </div>
 
     <div class="space-y-4">
-        <flux:input icon="magnifying-glass" wire:model.live="q" placeholder="Buscar nombre o username..." />
+        <flux:input icon="magnifying-glass" wire:model.live="q" placeholder="{{ __('Search name or username...') }}" />
 
         <!-- Mobile View (Cards) -->
         <div class="grid grid-cols-1 gap-4 sm:hidden">
@@ -68,7 +68,7 @@ $toggle = function (int $id) {
                         <flux:button size="sm"
                             class="w-full !bg-indigo-50 dark:!bg-indigo-900/30 !text-indigo-600 dark:!text-indigo-400 !border-indigo-100 dark:!border-indigo-800"
                             wire:click="toggle({{ $u->id }})">
-                            {{ $u->use_pay_scheme ? 'Desactivar esquema' : 'Activar esquema' }}
+                            {{ $u->use_pay_scheme ? __('Deactivate scheme') : __('Activate scheme') }}
                         </flux:button>
                     </div>
                 </div>
@@ -86,7 +86,7 @@ $toggle = function (int $id) {
                     <tr>
                         <th scope="col"
                             class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Nombre') }}
+                            {{ __('Name') }}
                         </th>
                         <th scope="col"
                             class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
@@ -94,11 +94,11 @@ $toggle = function (int $id) {
                         </th>
                         <th scope="col"
                             class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Esquema') }}
+                            {{ __('Scheme') }}
                         </th>
                         <th scope="col"
                             class="px-6 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Acción') }}
+                            {{ __('Action') }}
                         </th>
                     </tr>
                 </thead>
@@ -113,20 +113,20 @@ $toggle = function (int $id) {
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <flux:badge size="sm" color="{{ $u->use_pay_scheme ? 'green' : 'zinc' }}">
-                                    {{ $u->use_pay_scheme ? 'Especial' : 'Estándar' }}
+                                    {{ $u->use_pay_scheme ? __('Special') : __('Standard') }}
                                 </flux:badge>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
                                 <flux:button size="sm" variant="subtle" class="!text-indigo-600 dark:!text-indigo-400"
                                     wire:click="toggle({{ $u->id }})">
-                                    {{ __('Cambiar') }}
+                                    {{ __('Change') }}
                                 </flux:button>
                             </td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="4" class="px-6 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400 italic">
-                                {{ __('No hay instrumentistas.') }}
+                                {{ __('No instrumentists.') }}
                             </td>
                         </tr>
                     @endforelse

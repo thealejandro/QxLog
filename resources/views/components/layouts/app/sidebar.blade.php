@@ -19,7 +19,7 @@
 
         <flux:navlist variant="outline">
             @if(auth()->user()->role !== "admin" && auth()->check())
-                <flux:navlist.group :heading="__('Procedimientos')" class="grid">
+                <flux:navlist.group :heading="__('Procedures')" class="grid">
                     @if(!auth()->check())
                         <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
                             wire:navigate>
@@ -29,36 +29,36 @@
 
                     <flux:navlist.item icon="home" :href="route('procedures.create')"
                         :current="request()->routeIs('procedures.create')" wire:navigate>
-                        {{ __('Registrar Procedimiento') }}
+                        {{ __('Register Procedure') }}
                     </flux:navlist.item>
                 </flux:navlist.group>
             @endif
 
             @if(auth()->user()->role === 'admin')
-                <flux:navlist.group :heading="__('Pagos')" class="grid">
+                <flux:navlist.group :heading="__('Payouts')" class="grid">
                     <flux:navlist.item icon="home" :href="route('payouts.create')"
                         :current="request()->routeIs('payouts.create')" wire:navigate>
-                        {{ __('Realizar Pago') }}
+                        {{ __('Make Payment') }}
                     </flux:navlist.item>
                 </flux:navlist.group>
-                <flux:navlist.group :heading="__('Historial')" class="grid">
+                <flux:navlist.group :heading="__('History')" class="grid">
                     <flux:navlist.item icon="layout-grid" :href="route('payouts.index')"
                         :current="request()->routeIs('payouts.index')" wire:navigate>
-                        {{ __('Historial de Pagos') }}
+                        {{ __('Payment History') }}
                     </flux:navlist.item>
                     <flux:navlist.item icon="layout-grid" :href="route('procedures.index')"
                         :current="request()->routeIs('procedures.index')" wire:navigate>
-                        {{ __('Historial de Procedimientos') }}
+                        {{ __('Procedure History') }}
                     </flux:navlist.item>
                 </flux:navlist.group>
-                <flux:navlist.group :heading="__('Configuraciones')" class="grid">
+                <flux:navlist.group :heading="__('Configurations')" class="grid">
                     <flux:navlist.item icon="users" :href="route('pricing.instrumentists')"
                         :current="request()->routeIs('pricing.instrumentists')" wire:navigate>
-                        {{ __('Configurar Instrumentistas') }}
+                        {{ __('Configure Instrumentists') }}
                     </flux:navlist.item>
                     <flux:navlist.item icon="wrench" :href="route('pricing.settings')"
                         :current="request()->routeIs('pricing.settings')" wire:navigate>
-                        {{ __('Precios de Instrumentistas') }}
+                        {{ __('Instrumentist Pricing') }}
                     </flux:navlist.item>
                 </flux:navlist.group>
             @endif

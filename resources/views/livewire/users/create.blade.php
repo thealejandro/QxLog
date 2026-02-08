@@ -76,10 +76,10 @@ $save = function () {
 <div class="max-w-xl mx-auto p-4 space-y-6">
     <div class="flex items-center justify-between">
         <div>
-            <flux:heading size="xl">{{ __('Nuevo usuario') }}</flux:heading>
-            <flux:subheading>{{ __('Solo Super Admin') }}</flux:subheading>
+            <flux:heading size="xl">{{ __('New User') }}</flux:heading>
+            <flux:subheading>{{ __('Only Super Admin') }}</flux:subheading>
         </div>
-        <flux:link href="{{ route('users.index') }}" class="text-sm">Volver</flux:link>
+        <flux:link href="{{ route('users.index') }}" class="text-sm">{{ __('Back') }}</flux:link>
     </div>
 
     @if($success_message)
@@ -87,35 +87,35 @@ $save = function () {
     @endif
 
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-6 space-y-6">
-        <flux:input wire:model.live="name" label="Nombre" placeholder="Nombre completo" />
+        <flux:input wire:model.live="name" label="{{ __('Name') }}" placeholder="{{ __('Full Name') }}" />
 
-        <flux:input wire:model.live="username" label="Username" placeholder="usuario" />
+        <flux:input wire:model.live="username" label="{{ __('Username') }}" placeholder="{{ __('Username') }}" />
 
-        <flux:input wire:model.live="email" type="email" label="Email" placeholder="correo electrónico" />
+        <flux:input wire:model.live="email" type="email" label="{{ __('Email') }}" placeholder="email" />
 
-        <flux:input wire:model.live="phone" label="Teléfono" placeholder="Teléfono" />
+        <flux:input wire:model.live="phone" label="{{ __('Phone') }}" placeholder="{{ __('Phone') }}" />
 
-        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Rol</label>
+        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{{ __('Role') }}</label>
         <select wire:model.live="role"
             class="w-full rounded-lg border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500 p-2.5">
-            <option value="">-- Seleccionar --</option>
+            <option value="">-- {{ __('Select') }} --</option>
             <option value="admin">Admin</option>
             <option value="instrumentist">Instrumentista</option>
             <option value="doctor">Médico</option>
             <option value="circulating">Circulante</option>
         </select>
 
-        <flux:input wire:model.live="password" type="password" label="Contraseña" />
+        <flux:input wire:model.live="password" type="password" label="{{ __('Password') }}" />
 
-        <flux:input wire:model.live="password_confirmation" type="password" label="Confirmar contraseña" />
+        <flux:input wire:model.live="password_confirmation" type="password" label="{{ __('Confirm Password') }}" />
 
         <flux:checkbox wire:model.live="is_super_admin" label="Super Admin" />
 
-        <flux:checkbox wire:model.live="use_pay_scheme" label="Usar esquema de pago" />
+        <flux:checkbox wire:model.live="use_pay_scheme" label="{{ __('Use Pay Scheme') }}" />
 
         <div class="pt-2 flex justify-end">
             <flux:button variant="primary" wire:click="save" class="w-full sm:w-auto">
-                {{ __('Guardar') }}
+                {{ __('Save') }}
             </flux:button>
         </div>
     </div>

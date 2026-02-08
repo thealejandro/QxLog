@@ -273,8 +273,8 @@ $save = function () {
 <div class="max-w-4xl mx-auto p-4 space-y-6">
     <flux:button href="{{ route('procedures.index') }}" icon="arrow-left" variant="subtle">Atrás</flux:button>
     <div>
-        <flux:heading size="xl">Editar procedimiento</flux:heading>
-        <flux:subheading>Modificar los detalles del procedimiento quirúrgico.</flux:subheading>
+        <flux:heading size="xl">{{ __('Edit Procedure') }}</flux:heading>
+        <flux:subheading>{{ __('Modify the details of the surgical procedure.') }}</flux:subheading>
     </div>
 
     @if($success_message)
@@ -289,7 +289,7 @@ $save = function () {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
                 <flux:label>
-                    {{ __('Fecha') }}
+                    {{ __('Date') }}
                 </flux:label>
                 <input type="date" max="{{ now()->format('Y-m-d') }}" min="{{ now()->subWeeks(4)->format('Y-m-d') }}"
                     wire:model.live="procedure_date"
@@ -303,7 +303,7 @@ $save = function () {
 
             <div>
                 <flux:label>
-                    {{ __('Hora de inicio') }}
+                    {{ __('Start Time') }}
                 </flux:label>
                 <input type="time" wire:model.live="start_time"
                     class="mt-2 block w-full min-w-0 max-w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
@@ -315,7 +315,7 @@ $save = function () {
 
             <div>
                 <flux:label>
-                    {{ __('Hora de finalización') }}
+                    {{ __('End Time') }}
                 </flux:label>
                 <input type="time" wire:model.live="end_time"
                     class="mt-2 block w-full min-w-0 max-w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
@@ -329,9 +329,9 @@ $save = function () {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <flux:label>
-                    {{ __('Paciente') }}
+                    {{ __('Patient') }}
                 </flux:label>
-                <input type="text" wire:model="patient_name" placeholder="{{ __('Nombre del paciente') }}"
+                <input type="text" wire:model="patient_name" placeholder="{{ __('Patient Name') }}"
                     class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
                 @error('patient_name') <p class="text-sm text-red-600 dark:text-red-400 mt-1">
                         {{ $message }}
@@ -341,7 +341,7 @@ $save = function () {
 
             <div>
                 <flux:label>
-                    {{ __('Procedimiento') }}
+                    {{ __('Procedure') }}
                 </flux:label>
                 <input type="text" wire:model="procedure_type" placeholder="{{ __('Cesárea, Apendicectomía...') }}"
                     class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
@@ -353,8 +353,8 @@ $save = function () {
         </div>
 
         <div class="w-full flex justify-center md:justify-start">
-            <flux:checkbox wire:model.live="is_videosurgery" label="{{ __('Videocirugía') }}"
-                description="{{ __('Marcar si el procedimiento fue por video.') }}" />
+            <flux:checkbox wire:model.live="is_videosurgery" label="{{ __('Videosurgery') }}"
+                description="{{ __('Check if the procedure was by video.') }}" />
         </div>
 
         <hr class="border-indigo-300 dark:border-zinc-600">
@@ -362,7 +362,7 @@ $save = function () {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
                 <flux:label>
-                    {{ __('Médico (Cirujano)') }}
+                    {{ __('Doctor (Surgeon)') }}
                 </flux:label>
 
                 <div class="relative">
@@ -403,7 +403,7 @@ $save = function () {
 
             <div class="space-y-2">
                 <flux:label>
-                    {{ __('Circulante (Enfermería)') }}
+                    {{ __('Circulating (Nurse)') }}
                 </flux:label>
 
                 <div class="relative">
@@ -449,7 +449,7 @@ $save = function () {
             <div class="flex flex-row items-center justify-center gap-8 w-full sm:w-auto">
                 <div class="flex flex-col items-start">
                     <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                        {{ __('Duración') }}
+                        {{ __('Duration') }}
                     </span>
                     <span class="text-xl font-bold text-zinc-900 dark:text-zinc-100">
                         {{ is_int($this->duration_minutes) ? $this->duration_minutes . ' min' : '--' }}
@@ -459,7 +459,7 @@ $save = function () {
 
                 <div class="flex flex-col items-start">
                     <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                        {{ __('Monto') }}
+                        {{ __('Amount') }}
                     </span>
                     <span class="text-xl font-bold text-indigo-600 dark:text-zinc-100">
                         {{ is_numeric($this->amount_preview) ? 'Q' . number_format($this->amount_preview, 2) : '--' }}

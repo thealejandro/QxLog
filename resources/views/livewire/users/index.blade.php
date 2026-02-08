@@ -79,13 +79,13 @@ $roleColor = function (?string $role) {
 <div class="max-w-5xl mx-auto p-4 space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <flux:heading size="xl">{{ __('Usuarios') }}</flux:heading>
-            <flux:subheading>{{ __('Solo Super Admin') }}</flux:subheading>
+            <flux:heading size="xl">{{ __('Users') }}</flux:heading>
+            <flux:subheading>{{ __('Only Super Admin') }}</flux:subheading>
         </div>
 
         <flux:button href="{{ route('users.create') }}" icon="plus"
             class="w-full sm:w-auto !bg-indigo-500 hover:!bg-indigo-600 !border-indigo-500 !text-white dark:!bg-indigo-600 dark:hover:!bg-indigo-500">
-            {{ __('Nuevo usuario') }}
+            {{ __('New User') }}
         </flux:button>
     </div>
 
@@ -93,10 +93,10 @@ $roleColor = function (?string $role) {
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="md:col-span-2">
                 <flux:input icon="magnifying-glass" wire:model.live="q"
-                    placeholder="Buscar nombre, username o email..." />
+                    placeholder="{{ __('Search name, username or email...') }}" />
             </div>
 
-            <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Rol</label>
+            <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{{ __('Role') }}</label>
             <select wire:model.live="role"
                 class="w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                 <option value="">-- Todos --</option>
@@ -107,7 +107,7 @@ $roleColor = function (?string $role) {
             </select>
 
             <div class="flex items-center">
-                <flux:checkbox wire:model.live="show_deleted" label="Ver eliminados" />
+                <flux:checkbox wire:model.live="show_deleted" label="{{ __('Show deleted') }}" />
             </div>
         </div>
 
@@ -123,7 +123,7 @@ $roleColor = function (?string $role) {
                             <div class="text-xs text-zinc-400 font-mono mt-0.5">{{ $u->username }}</div>
                         </div>
                         <flux:badge size="sm" color="{{ $u->deleted_at ? 'red' : 'green' }}">
-                            {{ $u->deleted_at ? 'Eliminado' : 'Activo' }}
+                            {{ $u->deleted_at ? __('Deleted') : __('Active') }}
                         </flux:badge>
                     </div>
 
@@ -134,16 +134,16 @@ $roleColor = function (?string $role) {
                     <div class="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-end gap-2">
                         @if(!$u->deleted_at)
                             <flux:button href="{{ route('users.edit', $u->id) }}" size="sm" variant="subtle">
-                                {{ __('Editar') }}
+                                {{ __('Edit') }}
                             </flux:button>
 
                             <flux:button wire:click="deleteUser({{ $u->id }})"
-                                wire:confirm="¿Eliminar este usuario? (se puede restaurar)" size="sm" variant="danger"
+                                wire:confirm="{{ __('Delete this user? (can be restored)') }}" size="sm" variant="danger"
                                 icon="trash" />
                         @else
                             <flux:button wire:click="restoreUser({{ $u->id }})" size="sm" variant="filled"
                                 icon="arrow-uturn-left">
-                                {{ __('Restaurar') }}
+                                {{ __('Restore') }}
                             </flux:button>
                         @endif
                     </div>
@@ -162,7 +162,7 @@ $roleColor = function (?string $role) {
                     <tr>
                         <th scope="col"
                             class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                            {{ __('Nombre') }}
+                            {{ __('Name') }}
                         </th>
                         <th scope="col"
                             class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
@@ -174,15 +174,15 @@ $roleColor = function (?string $role) {
                         </th>
                         <th scope="col"
                             class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                            {{ __('Rol') }}
+                            {{ __('Role') }}
                         </th>
                         <th scope="col"
                             class="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                            {{ __('Estado') }}
+                            {{ __('State') }}
                         </th>
                         <th scope="col"
                             class="px-4 py-3 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                            {{ __('Acciones') }}
+                            {{ __('Actions') }}
                         </th>
                     </tr>
                 </thead>
@@ -202,27 +202,27 @@ $roleColor = function (?string $role) {
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <flux:badge size="sm" color="{{ $u->deleted_at ? 'red' : 'green' }}">
-                                    {{ $u->deleted_at ? 'Eliminado' : 'Activo' }}
+                                    {{ $u->deleted_at ? __('Deleted') : __('Active') }}
                                 </flux:badge>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-right text-sm space-x-2">
                                 @if(!$u->deleted_at)
                                     <flux:button href="{{ route('users.edit', $u->id) }}" size="sm" variant="subtle">
-                                        {{ __('Editar') }}
+                                        {{ __('Edit') }}
                                     </flux:button>
                                     <flux:button wire:click="deleteUser({{ $u->id }})"
-                                        wire:confirm="¿Eliminar este usuario? (se puede restaurar)" size="sm" variant="danger"
-                                        icon="trash" class="!px-2.5" />
+                                        wire:confirm="{{ __('Delete this user? (can be restored)') }}" size="sm"
+                                        variant="danger" icon="trash" class="!px-2.5" />
                                 @else
                                     <flux:button wire:click="restoreUser({{ $u->id }})" size="sm" variant="filled"
-                                        icon="arrow-uturn-left" tooltip="Restaurar" />
+                                        icon="arrow-uturn-left" tooltip="{{ __('Restore') }}" />
                                 @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="6" class="px-6 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400 italic">
-                                {{ __('No hay usuarios.') }}
+                                {{ __('No users.') }}
                             </td>
                         </tr>
                     @endforelse
@@ -231,7 +231,7 @@ $roleColor = function (?string $role) {
         </div>
 
         <div class="px-4 text-xs text-zinc-500 dark:text-zinc-400 text-center sm:text-left">
-            {{ __('Máximo 150 registros.') }}
+            {{ __('Maximum 150 records.') }}
         </div>
     </div>
 </div>

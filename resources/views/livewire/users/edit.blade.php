@@ -114,7 +114,7 @@ $toggleDelete = function () {
 <div class="max-w-xl mx-auto p-4 space-y-6">
     <div class="flex items-center justify-between">
         <div>
-            <flux:heading size="xl">{{ __('Editar usuario') }}</flux:heading>
+            <flux:heading size="xl">{{ __('Edit User') }}</flux:heading>
             <flux:text variant="subtle" class="text-sm">
                 ID: {{ $this->user->id ?? '' }} &middot; Username: {{ $this->user->username ?? '' }}
             </flux:text>
@@ -129,25 +129,25 @@ $toggleDelete = function () {
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-6 space-y-6">
         <div class="flex items-center justify-between p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50">
             <div class="flex items-center gap-2">
-                <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Estado:</span>
+                <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">{{ __('State') }}:</span>
                 <flux:badge size="sm" color="{{ $this->user->deleted_at ? 'red' : 'green' }}">
-                    {{ $this->user->deleted_at ? 'Eliminado' : 'Activo' }}
+                    {{ $this->user->deleted_at ? __('Deleted') : __('Active') }}
                 </flux:badge>
             </div>
 
-            <flux:button wire:click="toggleDelete" wire:confirm="¿Seguro?" size="sm"
+            <flux:button wire:click="toggleDelete" wire:confirm="{{ __('Are you sure?') }}" size="sm"
                 variant="{{ $this->user->deleted_at ? 'filled' : 'danger' }}">
-                {{ $this->user->deleted_at ? 'Restaurar' : 'Eliminar' }}
+                {{ $this->user->deleted_at ? __('Restore') : __('Delete') }}
             </flux:button>
         </div>
 
-        <flux:input wire:model.live="name" label="Nombre" />
+        <flux:input wire:model.live="name" label="{{ __('Name') }}" />
 
-        <flux:input wire:model.live="username" label="Username" />
+        <flux:input wire:model.live="username" label="{{ __('Username') }}" />
 
-        <flux:input wire:model.live="email" type="email" label="Email" />
+        <flux:input wire:model.live="email" type="email" label="{{ __('Email') }}" />
 
-        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Rol</label>
+        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{{ __('Role') }}</label>
         <select wire:model.live="role"
             class="w-full rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500 p-2.5">
             <option value="admin">Admin</option>
@@ -157,23 +157,24 @@ $toggleDelete = function () {
         </select>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <flux:checkbox wire:model.live="is_super_admin" label="Super Admin" />
-            <flux:checkbox wire:model.live="use_pay_scheme" label="Usar esquema de pago" />
+            <flux:checkbox wire:model.live="is_super_admin" label="{{ __('Super Admin') }}" />
+            <flux:checkbox wire:model.live="use_pay_scheme" label="{{ __('Use Pay Scheme') }}" />
         </div>
 
         <flux:separator />
 
         <div>
-            <flux:heading size="lg" class="mb-4">Cambiar contraseña (opcional)</flux:heading>
+            <flux:heading size="lg" class="mb-4">{{ __('Change Password (optional)') }}</flux:heading>
             <div class="space-y-4">
-                <flux:input wire:model.live="password" type="password" label="Nueva contraseña" />
-                <flux:input wire:model.live="password_confirmation" type="password" label="Confirmar contraseña" />
+                <flux:input wire:model.live="password" type="password" label="{{ __('New Password') }}" />
+                <flux:input wire:model.live="password_confirmation" type="password"
+                    label="{{ __('Confirm Password') }}" />
             </div>
         </div>
 
         <div class="pt-2 flex justify-end">
             <flux:button variant="primary" wire:click="save" class="w-full sm:w-auto">
-                {{ __('Guardar cambios') }}
+                {{ __('Save Changes') }}
             </flux:button>
         </div>
     </div>

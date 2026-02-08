@@ -327,7 +327,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
 
 <div class="max-w-4xl mx-auto p-4 space-y-6">
     <div class="mb-4">
-        <flux:heading size="xl">Registrar procedimiento</flux:heading>
+        <flux:heading size="xl">{{ __('Register Procedure') }}</flux:heading>
         <flux:subheading>QxLog • Registro de intervenciones quirúrgicas • (Instrumentista)</flux:subheading>
     </div>
 
@@ -357,7 +357,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
 
             <div>
                 <flux:label>
-                    {{ __('Hora de inicio') }}
+                    {{ __('Start Time') }}
                 </flux:label>
                 <input type="time" wire:model.live="start_time"
                     class="mt-2 block w-full min-w-0 max-w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
@@ -369,7 +369,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
 
             <div>
                 <flux:label>
-                    {{ __('Hora de finalización') }}
+                    {{ __('End Time') }}
                 </flux:label>
                 <input type="time" wire:model.live="end_time"
                     class="mt-2 block w-full min-w-0 max-w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
@@ -385,7 +385,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                 <flux:label>
                     {{ __('Paciente') }}
                 </flux:label>
-                <input type="text" wire:model="patient_name" placeholder="{{ __('Nombre del paciente') }}"
+                <input type="text" wire:model="patient_name" placeholder="{{ __('Patient Name') }}"
                     class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
                 @error('patient_name') <p class="text-sm text-red-600 dark:text-red-400 mt-1">
                         {{ $message }}
@@ -395,7 +395,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
 
             <div>
                 <flux:label>
-                    {{ __('Procedimiento') }}
+                    {{ __('Procedure') }}
                 </flux:label>
                 <input type="text" wire:model="procedure_type" placeholder="{{ __('Cesárea, Apendicectomía...') }}"
                     class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
@@ -407,8 +407,8 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
         </div>
 
         <div class="w-full flex justify-center md:justify-start">
-            <flux:checkbox wire:model="is_videosurgery" label="{{ __('Videocirugía') }}"
-                description="{{ __('Marcar si el procedimiento fue por video.') }}" />
+            <flux:checkbox wire:model="is_videosurgery" label="{{ __('Videosurgery') }}"
+                description="{{ __('Check if the procedure was by video.') }}" />
         </div>
 
         <hr class="border-indigo-300 dark:border-zinc-600">
@@ -416,7 +416,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
                 <flux:label>
-                    {{ __('Médico (Cirujano)') }}
+                    {{ __('Doctor (Surgeon)') }}
                 </flux:label>
 
                 <div class="relative">
@@ -425,8 +425,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                     </div>
                     <input type="text"
                         class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 pl-10 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors"
-                        placeholder="{{ __('Buscar o escribir nombre...') }}"
-                        wire:model.live.debounce.200ms="doctor_query">
+                        placeholder="{{ __('Search or type name...') }}" wire:model.live.debounce.200ms="doctor_query">
 
                     @if(!empty($this->doctor_suggestions))
                         <div
@@ -457,7 +456,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
 
             <div class="space-y-2">
                 <flux:label>
-                    {{ __('Circulante (Enfermería)') }}
+                    {{ __('Circulating (Nurse)') }}
                 </flux:label>
 
                 <div class="relative">
@@ -466,7 +465,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                     </div>
                     <input type="text"
                         class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 pl-10 pr-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors"
-                        placeholder="{{ __('Buscar o escribir nombre...') }}"
+                        placeholder="{{ __('Search or type name...') }}"
                         wire:model.live.debounce.200ms="circulating_query">
 
                     @if(!empty($this->circulating_suggestions))
@@ -504,7 +503,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                 @if (Auth::user()->use_pay_scheme)
                     <div class="flex flex-col items-start">
                         <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                            {{ __('Duración') }}
+                            {{ __('Duration') }}
                         </span>
                         <span class="text-xl font-bold text-zinc-900 dark:text-zinc-100">
                             {{ is_int($this->duration_minutes) ? $this->duration_minutes . ' min' : '--' }}
@@ -515,7 +514,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
 
                 <div class="flex flex-col items-center sm:items-start">
                     <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                        {{ __('Monto') }}
+                        {{ __('Amount') }}
                     </span>
                     <span class="text-xl font-bold text-indigo-600 dark:text-zinc-100">
                         {{ is_numeric($this->amount_preview) ? 'Q' . number_format($this->amount_preview, 2) : '--' }}
@@ -525,7 +524,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
 
             <flux:button wire:click="save" variant="primary" loading="save" class="w-full sm:w-auto">
                 <span class="text-lg font-bold">
-                    {{ __('Registrar Procedimiento') }}
+                    {{ __('Register Procedure') }}
                 </span>
             </flux:button>
         </div>
@@ -534,7 +533,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
     <div class="mt-8 space-y-4">
         <div class="flex flex-col md:flex-row gap-2 items-center justify-between">
             <h2 class="text-lg font-semibold text-zinc-700 dark:text-zinc-200">
-                {{ __('Procedimientos Pendientes') }}
+                {{ __('Pending Procedures') }}
             </h2>
 
             <div
@@ -558,29 +557,29 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                         <tr>
                             <th class="px-6 py-4 font-medium text-left">
                                 <flux:label for="procedure_date">
-                                    {{ __('Fecha') }}
+                                    {{ __('Date') }}
                                 </flux:label>
                             </th>
                             @if (Auth::user()->use_pay_scheme)
                                 <th class="px-6 py-4 font-medium text-center">
                                     <flux:label for="procedure_time">
-                                        {{ __('Horario') }}
+                                        {{ __('Schedule') }}
                                     </flux:label>
                                 </th>
                             @endif
                             <th class="px-6 py-4 font-medium text-left">
                                 <flux:label for="patient_id">
-                                    {{ __('Paciente') }}
+                                    {{ __('Patient') }}
                                 </flux:label>
                             </th>
                             <th class="px-6 py-4 font-medium text-left">
                                 <flux:label for="procedure_id">
-                                    {{ __('Cirugía') }}
+                                    {{ __('Surgery') }}
                                 </flux:label>
                             </th>
                             <th class="px-6 py-4 font-medium text-right">
                                 <flux:label for="amount">
-                                    {{ __('Monto') }}
+                                    {{ __('Amount') }}
                                 </flux:label>
                             </th>
                         </tr>
@@ -694,7 +693,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                         <div class="flex flex-col items-center gap-2">
                             <flux:icon.document-text class="size-6 opacity-50" />
                             <p class="text-sm">
-                                No hay procedimientos pendientes todavía.
+                                {{ __('You have no pending procedures yet.') }}
                             </p>
                         </div>
                     </div>
