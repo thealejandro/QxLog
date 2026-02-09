@@ -13,6 +13,7 @@ state([
     'summaryRows' => [],
     'longThreshold' => null,
     'items' => [],
+    'usePayScheme' => false,
 ]);
 
 mount(function (string|int $batch) {
@@ -30,7 +31,7 @@ mount(function (string|int $batch) {
 
     $this->mode = request('mode', 'summary');
 
-    $usePayScheme = (bool) data_get($b->items, '0.snapshot.pricing_snapshot.use_pay_scheme', false);
+    $this->usePayScheme = (bool) data_get($b->items, '0.snapshot.pricing_snapshot.use_pay_scheme', false);
 
     $rows = [
         'default_rate' => [
@@ -73,7 +74,7 @@ mount(function (string|int $batch) {
         'night_rate' => (float) $rates['night_rate'] ?? 0,
     ];
 
-    if (!$usePayScheme) {
+    if (!$this->usePayScheme) {
         $count = $this->items->count();
         $amount = $this->batch->total_amount;
 
@@ -279,26 +280,28 @@ mount(function (string|int $batch) {
         </div>
 
         @if($this->mode === 'summary')
-            <div class="mt-6">
-                <table class="min-w-full text-sm">
+
+            <!-- Tabla resumida -->
+            <div class="mt-6 rounded-lg border border-zinc-200 dark:border-zinc-700">
+                <table class="w-full text-sm">
                     <thead class="text-left text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
                         <tr>
-                            <th class="py-2 pr-6 font-medium text-center">
-                                <flux:label>
-                                    {{ __('Quantity') }}
-                                </flux:label>
-                            </th>
-                            <th class="py-2 pr-6 font-medium">
+                            <th class="py-4 px-6 font-medium">
                                 <flux:label>
                                     {{ __('Concept') }}
                                 </flux:label>
                             </th>
-                            <th class="py-2 pr-6 font-medium text-right">
+                            <th class="py-4 px-6 font-medium text-center">
+                                <flux:label>
+                                    {{ __('Quantity') }}
+                                </flux:label>
+                            </th>
+                            <th class="py-4 px-6 font-medium text-right">
                                 <flux:label>
                                     {{ __('Unit Price') }}
                                 </flux:label>
                             </th>
-                            <th class="py-2 font-medium text-right">
+                            <th class="py-4 px-6 font-medium text-right">
                                 <flux:label>
                                     {{ __('Subtotal') }}
                                 </flux:label>
@@ -308,24 +311,26 @@ mount(function (string|int $batch) {
 
                     <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
                         <tr>
-                            <td colspan="1"></td>
-                            <td colspan="1" class="py-3 font-mono text-zinc-800 dark:text-zinc-300">
+                            <td colspan="1"
+                                class="{{ $this->usePayScheme ? 'py-3' : 'py-6' }} pl-6 pr-2 text-justify font-mono text-zinc-800 dark:text-zinc-300">
                                 {{ config('qxlog.voucher_legend') }}
                             </td>
                         </tr>
-
                         @foreach($this->summaryRows as $key => $row)
                             <tr>
-                                <td class="py-3 pr-6 text-center font-mono text-zinc-800 dark:text-zinc-300">
-                                    {{ $row['count'] }}
-                                </td>
-                                <td class="py-3 pr-6 text-zinc-800 dark:text-zinc-300">
+                                <td class="{{ $this->usePayScheme ? 'py-3' : 'py-6' }} px-6 text-zinc-800 dark:text-zinc-300">
                                     {{ $row['label'] }}
                                 </td>
-                                <td class="py-3 pr-6 text-right font-mono text-zinc-800 dark:text-zinc-300">
+                                <td
+                                    class="{{ $this->usePayScheme ? 'py-3' : 'py-6' }} px-6 text-center text-zinc-800 dark:text-zinc-300">
+                                    {{ $row['count'] }}
+                                </td>
+                                <td
+                                    class="{{ $this->usePayScheme ? 'py-3' : 'py-6' }} px-6 text-right text-zinc-800 dark:text-zinc-300">
                                     Q{{ number_format((float) $row['unit'], 2) }}
                                 </td>
-                                <td class="py-3 text-right font-mono text-zinc-800 dark:text-zinc-300">
+                                <td
+                                    class="{{ $this->usePayScheme ? 'py-3' : 'py-6' }} px-6 text-right text-zinc-800 dark:text-zinc-300">
                                     Q{{ number_format((float) $row['amount'], 2) }}
                                 </td>
                             </tr>
@@ -334,18 +339,20 @@ mount(function (string|int $batch) {
 
                     <tfoot class="items-center">
                         <tr>
-                            <td colspan="4" class="pt-6"></td>
+                            <td colspan="4" class="{{ $this->usePayScheme ? 'py-4' : 'py-6' }} px-6"></td>
                         </tr>
                         <tr>
-                            <td colspan="2" class="pt-4"></td>
+                            <td colspan="2"
+                                class="{{ $this->usePayScheme ? 'py-2' : 'py-4' }} px-6 border-t border-zinc-200 dark:border-zinc-700">
+                            </td>
                             <td colspan="1"
-                                class="pt-4 text-center items-center font-bold text-zinc-900 dark:text-zinc-200">
+                                class="{{ $this->usePayScheme ? 'py-2' : 'py-4' }} px-6 text-center items-center font-bold text-zinc-900 dark:text-zinc-200 border-t border-zinc-200 dark:border-zinc-700">
                                 <flux:label>
                                     {{ __('Total') }}
                                 </flux:label>
                             </td>
                             <td colspan="1"
-                                class="pt-4 text-right font-bold border-t border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-200">
+                                class="{{ $this->usePayScheme ? 'py-2' : 'py-4' }} px-6 text-right font-bold text-zinc-900 dark:text-zinc-200 border-t border-zinc-200 dark:border-zinc-700">
                                 <flux:label>
                                     Q{{ number_format((float) $this->batch->total_amount, 2) }}
                                 </flux:label>
@@ -356,6 +363,7 @@ mount(function (string|int $batch) {
             </div>
         @else
 
+            <!-- Tabla detallada -->
             <div class="mt-6 overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead class="text-left text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
@@ -448,7 +456,7 @@ mount(function (string|int $batch) {
 
         <!-- Footer signature -->
         <div
-            class="grid grid-cols-3 gap-12 text-center items-center text-xs mt-12 pt-12 border-t border-zinc-200 dark:border-zinc-700">
+            class="grid grid-cols-3 gap-12 text-center items-center text-xs {{ $this->batch->is_super_admin ? 'mt-24' : 'mt-12' }}">
             <div>
                 <div class="text-zinc-500 dark:text-zinc-400 mb-12">
                     {{ __('Received by') }}
@@ -478,7 +486,8 @@ mount(function (string|int $batch) {
         </div>
 
         <!-- Footer note -->
-        <p class="hidden print:block mt-12 text-xs text-zinc-400 dark:text-zinc-500 text-center">
+        <p
+            class="hidden print:block {{ $this->batch->is_super_admin ? 'mt-6' : 'mt-12' }} text-xs text-zinc-400 dark:text-zinc-500 text-center">
             {{ __('Generated by QxLog. Keep for internal control.') }}
         </p>
     </div>
