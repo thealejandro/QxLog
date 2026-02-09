@@ -15,19 +15,25 @@ test('authenticated users can visit the dashboard', function () {
     $response->assertStatus(200);
 });
 
-test('admins see admin shortcuts on dashboard', function () {
+test('admins see admin shortcuts and stats on dashboard', function () {
     $user = User::factory()->create(['role' => 'admin']);
     $this->actingAs($user);
+
+    // Create some data
+    \App\Models\Procedure::factory()->create(['status' => 'pending']);
+    \App\Models\PayoutBatch::factory()->create(['total_amount' => 500, 'status' => 'active']);
 
     $response = $this->get(route('dashboard'));
 
     $response->assertStatus(200);
     $response->assertSee('Procedimientos');
     $response->assertSee('Pagos');
-    $response->assertSee('Ajustar precios y configuraciones.'); // Unique to Admin card
+    $response->assertSee('Total Procedimientos');
+    $response->assertSee('Pendientes de Pago');
+    $response->assertSee('Total Pagado');
 });
 
-test('instrumentists see instrumentist shortcuts on dashboard', function () {
+test('instrumentists see instrumentist shortcuts and stats on dashboard', function () {
     $user = User::factory()->create(['role' => 'instrumentist']);
     $this->actingAs($user);
 
@@ -35,9 +41,9 @@ test('instrumentists see instrumentist shortcuts on dashboard', function () {
 
     $response->assertStatus(200);
     $response->assertSee('Mis Pagos');
-    $response->assertSee('Ver mi historial de pagos recibidos.'); // Unique to Instrumentist card
     $response->assertSee('Mi Perfil');
-    $response->assertDontSee('Ajustar precios y configuraciones.'); // Should not see Admin card
+    $response->assertSee('Ganancias Totales');
+    $response->assertSee('Pendiente de Cobro');
 });
 
 test('other users see default shortcuts on dashboard', function () {

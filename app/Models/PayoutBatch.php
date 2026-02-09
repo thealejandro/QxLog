@@ -4,8 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class PayoutBatch extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'instrumentist_id',
         'paid_by_id',
