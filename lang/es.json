@@ -221,5 +221,10 @@
     "pending": "Pendiente",
     "settled": "Liquidado",
     "all": "Todos",
-    "Search by name or username...": "Buscar nombre o username..."
+    "Search by name or username...": "Buscar nombre o username...",
+    "My Services": "Mis Servicios",
+    "Procedures History": "Historial de Procedimientos",
+    "My Payouts": "Mis Pagos",
+    "My Procedures": "Mis Procedimientos",
+    "My History": "Mi Historial"
 }

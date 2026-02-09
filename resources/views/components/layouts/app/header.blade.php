@@ -26,7 +26,11 @@
             @if (auth()->user()->role === 'instrumentist' || auth()->user()->role === 'doctor' || auth()->user()->role === 'circulating')
                 <flux:navbar.item icon="layout-grid" :href="route('procedures.create')"
                     :current="request()->routeIs('procedures.create')" wire:navigate>
-                    {{ __('Registrar Procedimiento') }}
+                    {{ __('Register Procedure') }}
+                </flux:navbar.item>
+                <flux:navbar.item icon="layout-list" :href="route('instrumentist.payouts')"
+                    :current="request()->routeIs('instrumentist.payouts')" wire:navigate>
+                    {{ __('My Services') }}
                 </flux:navbar.item>
             @endif
             @if(auth()->user()->role === 'admin')

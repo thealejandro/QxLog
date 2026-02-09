@@ -616,6 +616,10 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                                         @if (Auth::user()->use_pay_scheme)
                                             <x-procedure-rule-badge :rule="data_get($p, 'pricing_snapshot.rule')"
                                                 :videosurgery="$p->is_videosurgery" />
+                                        @else
+                                            @if ($p->is_videosurgery)
+                                                <flux:badge color="indigo" size="sm">{{ __('Video') }}</flux:badge>
+                                            @endif
                                         @endif
                                     </div>
                                 </td>

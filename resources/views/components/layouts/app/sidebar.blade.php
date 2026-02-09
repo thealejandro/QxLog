@@ -27,9 +27,15 @@
                         </flux:navlist.item>
                     @endif
 
-                    <flux:navlist.item icon="home" :href="route('procedures.create')"
+                    <flux:navlist.item icon="clipboard-document-list" :href="route('procedures.create')"
                         :current="request()->routeIs('procedures.create')" wire:navigate>
                         {{ __('Register Procedure') }}
+                    </flux:navlist.item>
+                </flux:navlist.group>
+                <flux:navlist.group :heading="__('History')" class="grid">
+                    <flux:navlist.item icon="queue-list" :href="route('instrumentist.payouts')"
+                        :current="request()->routeIs('instrumentist.payouts')" wire:navigate>
+                        {{ __('My Procedures') }}
                     </flux:navlist.item>
                 </flux:navlist.group>
             @endif
