@@ -4,7 +4,7 @@ use App\Models\Procedure;
 use App\Models\PayoutBatch;
 use Illuminate\Support\Facades\Auth;
 
-use function Livewire\Volt\{state, mount};
+use function Livewire\Volt\{state, mount, computed};
 
 state([
     // Pending
@@ -13,14 +13,16 @@ state([
     'pending_total' => 0.0,
 
     // History
-    'batches' => [],
-    'from' => null,
-    'to' => null,
+    'from' => '',
+    'to' => '',
 ]);
 
 mount(function () {
     $user = Auth::user();
     abort_unless(Auth::check(), 401);
+
+    $this->from = Carbon\Carbon::now()->subMonth()->format('Y-m-d');
+    $this->to = Carbon\Carbon::now()->format('Y-m-d');
 
     // ======================
     // Pending procedures
@@ -38,26 +40,25 @@ mount(function () {
         ->limit(50)
         ->get();
 
-    // ======================
-    // Paid batches history
-    // ======================
-    $batchesQ = PayoutBatch::query()
+});
+
+$batches = computed(function () {
+    $user = Auth::user();
+
+    $query = PayoutBatch::query()
         ->where('instrumentist_id', $user->id)
         ->withCount('items')
         ->orderByDesc('paid_at');
 
     if ($this->from) {
-        $batchesQ->whereDate('paid_at', '>=', $this->from);
+        $query->whereDate('paid_at', '>=', $this->from);
     }
     if ($this->to) {
-        $batchesQ->whereDate('paid_at', '<=', $this->to);
+        $query->whereDate('paid_at', '<=', $this->to);
     }
 
-    $this->batches = $batchesQ->limit(100)->get();
+    return $query->limit(100)->get();
 });
-
-$updatedFrom = fn() => $this->load();
-$updatedTo = fn() => $this->load();
 
 $ruleLabel = function (?string $rule) {
     return match ($rule) {
@@ -79,167 +80,184 @@ $ruleColor = function (?string $rule) {
 
 ?>
 
-<div class="max-w-6xl mx-auto p-4 space-y-6">
+<div class="max-w-6xl mx-auto p-4 space-y-8">
     <div class="flex items-center justify-between gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ __('My Payouts') }}</h1>
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                {{ __('Pending balance and paid vouchers.') }}
-            </p>
+            <flux:heading size="xl">{{ __('My Payouts') }}</flux:heading>
+            <flux:subheading>{{ __('Pending balance and paid vouchers.') }}</flux:subheading>
         </div>
     </div>
 
     {{-- Pending --}}
-    <div class="rounded-xl border bg-white p-6 dark:bg-zinc-900 dark:border-zinc-700">
-        <div class="flex items-start justify-between gap-4">
+    <section>
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
             <div>
-                <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{{ __('Pending') }}</h2>
-                <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                    {{ __('Estimated total of procedures not yet paid.') }}
-                </p>
+                <flux:heading size="lg">{{ __('Pending') }}</flux:heading>
+                <flux:subheading>{{ __('Estimated total of procedures not yet paid.') }}</flux:subheading>
             </div>
 
-            <div class="text-right">
-                <div class="text-sm text-zinc-500 dark:text-zinc-400">{{ __('Procedures') }}</div>
-                <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 font-mono">
-                    {{ $this->pending_count }}
+            <div
+                class="flex items-center gap-4 bg-indigo-50 dark:bg-indigo-500/10 px-6 py-3 rounded-full border border-indigo-100 dark:border-indigo-500/20">
+                <div class="text-right flex flex-col items-center gap-1">
+                    <div class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                        {{ __('Procedures') }}
+                    </div>
+                    <div class="text-xl font-bold text-zinc-900 dark:text-zinc-200 leading-none">
+                        {{ $this->pending_count }}
+                    </div>
                 </div>
 
-                <div class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{{ __('Estimated') }}</div>
-                <div class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 font-mono">
-                    Q{{ number_format((float) $this->pending_total, 2) }}
+                <div class="w-px h-8 bg-indigo-200 dark:bg-indigo-500/30"></div>
+
+                <div class="text-right flex flex-col items-center gap-1">
+                    <div class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                        {{ __('Amount') }}
+                    </div>
+                    <div class="text-xl font-bold text-indigo-600 dark:text-indigo-300 leading-none">
+                        Q{{ number_format((float) $this->pending_total, 2) }}
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="mt-4 overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead class="text-left text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
-                    <tr>
-                        <th class="py-2 px-3 font-medium">{{ __('Date') }}</th>
-                        <th class="py-2 px-3 font-medium">{{ __('Start') }}</th>
-                        <th class="py-2 px-3 font-medium">{{ __('Patient') }}</th>
-                        <th class="py-2 px-3 font-medium">{{ __('Procedure') }}</th>
-                        <th class="py-2 px-3 font-medium text-right">{{ __('Amount') }}</th>
-                    </tr>
-                </thead>
+        <div
+            class="rounded-xl border border-zinc-200 bg-white shadow-sm dark:bg-zinc-900 dark:border-zinc-700 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm divide-y divide-zinc-200 dark:divide-zinc-700">
+                    <thead class="bg-zinc-50 dark:bg-zinc-800/50 text-zinc-500 dark:text-zinc-400">
+                        <tr>
+                            <th class="px-6 py-3 text-left font-medium">{{ __('Date') }}</th>
+                            <th class="px-6 py-3 text-left font-medium">{{ __('Start') }}</th>
+                            <th class="px-6 py-3 text-left font-medium">{{ __('Patient') }}</th>
+                            <th class="px-6 py-3 text-left font-medium">{{ __('Procedure') }}</th>
+                            <th class="px-6 py-3 text-right font-medium">{{ __('Amount') }}</th>
+                        </tr>
+                    </thead>
 
-                <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
-                    @forelse($this->pending as $p)
-                        <tr>
-                            <td class="py-3 px-3 text-zinc-600 dark:text-zinc-300 whitespace-nowrap">
-                                {{ \Carbon\Carbon::parse($p->procedure_date)->format('d/m/Y') ?? '-' }}
-                            </td>
-                            <td class="py-3 px-3 text-zinc-600 dark:text-zinc-300 whitespace-nowrap">
-                                {{ \Carbon\Carbon::parse($p->start_time)->format('H:i') ?? '-' }}
-                            </td>
-                            <td class="py-3 px-3 text-zinc-900 dark:text-zinc-100 font-medium whitespace-nowrap">
-                                {{ $p->patient_name ?? '-' }}
-                            </td>
-                            <td class="py-3 px-3 text-zinc-600 dark:text-zinc-300 whitespace-nowrap">
-                                <div class="flex items-center gap-2 whitespace-nowrap">
-                                    {{ $p->procedure_type ?? '-' }}
-                                    @if (Auth::user()->use_pay_scheme)
-                                        <x-procedure-rule-badge :rule="data_get($p->pricing_snapshot, 'rule')"
-                                            :videosurgery="$p->is_videosurgery" />
-                                    @else
-                                        @if ($p->is_videosurgery)
-                                            <flux:badge color="indigo" size="sm">{{ __('Video') }}</flux:badge>
+                    <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+                        @forelse($this->pending as $p)
+                            <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors">
+                                <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300 whitespace-nowrap">
+                                    {{ \Carbon\Carbon::parse($p->procedure_date)->format('d/m/Y') ?? '-' }}
+                                </td>
+                                <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300 whitespace-nowrap">
+                                    {{ \Carbon\Carbon::parse($p->start_time)->format('H:i') ?? '-' }}
+                                </td>
+                                <td class="px-6 py-4 text-zinc-900 dark:text-zinc-100 font-medium whitespace-nowrap">
+                                    {{ $p->patient_name ?? '-' }}
+                                </td>
+                                <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300 whitespace-nowrap">
+                                    <div class="flex items-center gap-2">
+                                        <span>{{ $p->procedure_type ?? '-' }}</span>
+                                        @if (Auth::user()->use_pay_scheme)
+                                            <x-procedure-rule-badge :rule="data_get($p->pricing_snapshot, 'rule')"
+                                                :videosurgery="$p->is_videosurgery" />
+                                        @else
+                                            @if ($p->is_videosurgery)
+                                                <flux:badge color="indigo" size="sm" icon="video-camera">{{ __('Video') }}
+                                                </flux:badge>
+                                            @endif
                                         @endif
-                                    @endif
-                                </div>
-                            </td>
-                            <td
-                                class="py-3 px-3 text-right font-mono font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">
-                                Q{{ number_format((float) ($p->calculated_amount ?? 0), 2) }}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="py-6 text-center text-zinc-500 dark:text-zinc-400">
-                                {{ __('No pending procedures.') }}
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                    </div>
+                                </td>
+                                <td
+                                    class="px-6 py-4 text-right font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap">
+                                    Q{{ number_format((float) ($p->calculated_amount ?? 0), 2) }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-12 text-center text-zinc-500 dark:text-zinc-400">
+                                    <div class="flex flex-col items-center gap-2">
+                                        <flux:icon.document-text class="size-6 opacity-40" />
+                                        <p>{{ __('No pending procedures.') }}</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
             @if($this->pending_count > count($this->pending))
-                <p class="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
-                    {{ __('Showing latest') }} {{ count($this->pending) }}. {{ __('You have more pending items.') }}
-                </p>
+                <div class="px-6 py-3 bg-zinc-50 dark:bg-zinc-800/50 border-t border-zinc-200 dark:border-zinc-700">
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 text-center">
+                        {{ __('Showing latest') }} {{ count($this->pending) }}. {{ __('You have more pending items.') }}
+                    </p>
+                </div>
             @endif
         </div>
-    </div>
+    </section>
 
     {{-- History --}}
-    <div class="rounded-xl border bg-white p-6 dark:bg-zinc-900 dark:border-zinc-700">
-        <div class="flex items-start justify-between gap-4">
+    <section>
+        <div class="flex flex-col md:flex-row items-start md:items-end justify-between gap-4 mb-4">
             <div>
-                <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{{ __('History') }}</h2>
-                <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                    {{ __('Paid vouchers.') }}
-                </p>
+                <flux:heading size="lg">{{ __('History') }}</flux:heading>
+                <flux:subheading>{{ __('Paid vouchers.') }}</flux:subheading>
             </div>
 
-            <div class="flex items-end gap-3">
-                <div>
-                    <div class="text-xs text-zinc-500 dark:text-zinc-400 mb-1">{{ __('From') }}</div>
-                    <input type="date" wire:model.live="from"
-                        class="rounded-md border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 text-sm" />
-                </div>
-                <div>
-                    <div class="text-xs text-zinc-500 dark:text-zinc-400 mb-1">{{ __('To') }}</div>
-                    <input type="date" wire:model.live="to"
-                        class="rounded-md border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 text-sm" />
-                </div>
+            <div class="flex flex-col md:flex-row items-center md:items-end gap-2 md:gap-3 w-full md:w-auto">
+                <flux:input type="date" wire:model.live="from" label="{{ __('From') }}" class="w-full md:w-40" />
+                <flux:input type="date" wire:model.live="to" label="{{ __('To') }}" class="w-full md:w-40" />
             </div>
         </div>
 
-        <div class="mt-4 overflow-x-auto">
-            <table class="min-w-full text-sm">
-                <thead class="text-left text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
-                    <tr>
-                        <th class="py-2 pr-3 font-medium">
-                            {{ __('Voucher') }}
-                        </th>
-                        <th class="py-2 pr-3 font-medium">
-                            {{ __('Paid at') }}
-                        </th>
-                        <th class="py-2 pr-3 font-medium text-right">
-                            {{ __('Procedures') }}
-                        </th>
-                        <th class="py-2 pr-3 font-medium text-right">
-                            {{ __('Total') }}
-                        </th>
-                    </tr>
-                </thead>
+        <div
+            class="rounded-xl border border-zinc-200 bg-white shadow-sm dark:bg-zinc-900 dark:border-zinc-700 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm divide-y divide-zinc-200 dark:divide-zinc-700">
+                    <thead class="bg-zinc-50 dark:bg-zinc-800/50 text-zinc-500 dark:text-zinc-400">
+                        <tr>
+                            <th class="px-6 py-3 text-left font-medium text-zinc-900 dark:text-zinc-100">
+                                {{ __('Voucher') }}
+                            </th>
+                            <th class="px-6 py-3 text-left font-medium text-zinc-900 dark:text-zinc-100">
+                                {{ __('Date of Payment') }}
+                            </th>
+                            <th class="px-6 py-3 text-right font-medium text-zinc-900 dark:text-zinc-100">
+                                {{ __('Total Procedures') }}
+                            </th>
+                            <th class="px-6 py-3 text-right font-medium text-zinc-900 dark:text-zinc-100">
+                                {{ __('Total Amount') }}
+                            </th>
+                        </tr>
+                    </thead>
 
-                <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
-                    @forelse($this->batches as $b)
-                        <tr>
-                            <td class="py-3 pr-3 text-zinc-900 dark:text-zinc-100 font-mono">
-                                QX-{{ str_pad((string) $b->id, 6, '0', STR_PAD_LEFT) }}
-                            </td>
-                            <td class="py-3 pr-3 text-zinc-600 dark:text-zinc-300">
-                                {{ optional($b->paid_at)->format('Y-m-d H:i') ?? $b->paid_at }}
-                            </td>
-                            <td class="py-3 pr-3 text-right font-mono text-zinc-900 dark:text-zinc-100">
-                                {{ (int) ($b->items_count ?? 0) }}
-                            </td>
-                            <td class="py-3 pr-3 text-right font-mono font-medium text-zinc-900 dark:text-zinc-100">
-                                Q{{ number_format((float) ($b->total_amount ?? 0), 2) }}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="py-6 text-center text-zinc-500 dark:text-zinc-400">
-                                {{ __('No payments yet.') }}
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+                        @forelse($this->batches as $b)
+                            <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors">
+                                <td class="px-6 py-4 text-zinc-900 dark:text-zinc-100">
+                                    {{ 'QX-' . Carbon\Carbon::parse($b->paid_at)->format('Y') . '-' . str_pad((string) $b->id, 6, '0', STR_PAD_LEFT) }}
+                                </td>
+                                <td class="px-6 py-4 text-zinc-600 dark:text-zinc-300 whitespace-nowrap">
+                                    <div class="flex flex-col w-full md:w-auto md:flex-row md:items-center md:gap-2">
+                                        {{ Carbon\Carbon::parse($b->paid_at)->format('Y-m-d') }}
+                                        <span class="text-xs text-zinc-500 dark:text-zinc-400">
+                                            {{ Carbon\Carbon::parse($b->paid_at)->format('h:i a') }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-right text-zinc-900 dark:text-zinc-100">
+                                    {{ (int) ($b->items_count ?? 0) }}
+                                </td>
+                                <td class="px-6 py-4 text-right font-medium text-zinc-900 dark:text-zinc-100">
+                                    Q{{ number_format((float) ($b->total_amount ?? 0), 2) }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-6 py-12 text-center text-zinc-500 dark:text-zinc-400">
+                                    <div class="flex flex-col items-center gap-2">
+                                        <flux:icon.currency-dollar class="size-6 opacity-40" />
+                                        <p>{{ __('No payments yet.') }}</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    </section>
 </div>
