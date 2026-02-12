@@ -53,7 +53,7 @@
 
         <flux:navbar class="me-1.5 space-x-0.5 rtl:space-x-reverse py-0!">
             <flux:tooltip :content="__('Search')" position="bottom">
-                <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="magnifying-glass" href="#"
+                <flux:navbar.item class="h-10 [&>div>svg]:size-5" icon="magnifying-glass" href="#"
                     :label="__('Search')" />
             </flux:tooltip>
             <flux:tooltip :content="__('Settings')" position="bottom">
@@ -71,22 +71,34 @@
                 </form>
             </flux:tooltip>
             @if(auth()->user()->is_super_admin)
-                <flux:tooltip :content="__('Usuarios')" position="bottom">
+                <flux:tooltip :content="__('Users')" position="bottom">
                     <flux:navbar.item icon="user" :href="route('users.index')" :current="request()->routeIs('users.index')"
                         wire:navigate>
-                        {{ __('Usuarios') }}
+                        {{ __('Users') }}
                     </flux:navbar.item>
                 </flux:tooltip>
-                <flux:tooltip :content="__('Instrumentistas')" position="bottom">
+                <flux:tooltip :content="__('Roles')" position="bottom">
+                    <flux:navbar.item icon="user" :href="route('roles.index')" :current="request()->routeIs('roles.index')"
+                        wire:navigate>
+                        {{ __('Roles') }}
+                    </flux:navbar.item>
+                </flux:tooltip>
+                <flux:tooltip :content="__('Permissions')" position="bottom">
+                    <flux:navbar.item icon="user" :href="route('permissions.index')"
+                        :current="request()->routeIs('permissions.index')" wire:navigate>
+                        {{ __('Permissions') }}
+                    </flux:navbar.item>
+                </flux:tooltip>
+                <flux:tooltip :content="__('Instrumentists')" position="bottom">
                     <flux:navbar.item icon="users" :href="route('pricing.instrumentists')"
                         :current="request()->routeIs('pricing.instrumentists')" wire:navigate>
-                        {{ __('Instrumentistas') }}
+                        {{ __('Instrumentists') }}
                     </flux:navbar.item>
                 </flux:tooltip>
-                <flux:tooltip :content="__('Configuración de precios')" position="bottom">
+                <flux:tooltip :content="__('Pricing')" position="bottom">
                     <flux:navbar.item icon="wrench" :href="route('pricing.settings')"
                         :current="request()->routeIs('pricing.settings')" wire:navigate>
-                        {{ __('Configuración de precios') }}
+                        {{ __('Pricing') }}
                     </flux:navbar.item>
                 </flux:tooltip>
             @endif

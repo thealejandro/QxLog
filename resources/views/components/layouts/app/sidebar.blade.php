@@ -78,6 +78,14 @@
                     wire:navigate>
                     {{ __('Users') }}
                 </flux:navlist.item>
+                <flux:navlist.item icon="user" :href="route('roles.index')" :current="request()->routeIs('roles.index')"
+                    wire:navigate>
+                    {{ __('Roles') }}
+                </flux:navlist.item>
+                <flux:navlist.item icon="user" :href="route('permissions.index')"
+                    :current="request()->routeIs('permissions.index')" wire:navigate>
+                    {{ __('Permissions') }}
+                </flux:navlist.item>
             @endif
         </flux:navlist>
 
