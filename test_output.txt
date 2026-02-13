@@ -1,0 +1,48 @@
+
+   FAIL  Tests\Feature\Livewire\Users\CreateTest
+  ⨯ super admin can view user creation page                              0.66s  
+  ✓ non super admin cannot view user creation page                       0.02s  
+  ⨯ can create user with role                                            1.92s  
+  ✓ validation requires role                                             0.24s  
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Livewire\Users\CreateTest > super admin can view us…   
+  Expected: <!DOCTYPE html>\n
+  <html lang="es" class="dark">\n
+  \n
+  ... (702 more lines)
+
+  To contain: New User
+
+  at tests/Feature/Livewire/Users/CreateTest.php:21
+     17▕ 
+     18▕     $this->actingAs($user)
+     19▕         ->get(route('users.create'))
+     20▕         ->assertSuccessful()
+  ➜  21▕         ->assertSee('New User');
+     22▕ });
+     23▕ 
+     24▕ test('non super admin cannot view user creation page', function () {
+     25▕     $user = User::factory()->create(['is_super_admin' => false, 'role' => 'admin']);
+
+  ────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Livewire\Users\CreateTest > can crea…  ViewException   
+  foreach() argument must be of type array|object, null given (View: /Users/thealejandro/Projects/QxLog/resources/views/livewire/users/create.blade.php)
+
+  at storage/framework/views/8277af09353d42b7b208c7d6df002c3c.php:202
+    198▕         <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"><?php echo e(__('Role')); ?></label>
+    199▕         <select wire:model.live="role"
+    200▕             class="w-full rounded-lg border-zinc-200 dark:border-zinc-800 bg-indigo-50 dark:bg-zinc-700/60 text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500 p-2.5">
+    201▕             <option value="">-- <?php echo e(__('Select')); ?> --</option>
+  ➜ 202▕             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $roles; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $role): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
+    203▕                 <option value="<?php echo e($id); ?>"><?php echo e($role); ?></option>
+    204▕             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
+    205▕                 <option value=""><?php echo e(__('No roles found.')); ?></option>
+    206▕             <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+      [2m+37 vendor frames [22m
+  38  tests/Feature/Livewire/Users/CreateTest.php:47
+
+
+  Tests:    2 failed, 2 passed (6 assertions)
+  Duration: 2.94s
+

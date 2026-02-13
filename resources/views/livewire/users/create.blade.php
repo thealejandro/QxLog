@@ -4,6 +4,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Role;
 
 use function Livewire\Volt\{state, mount, rules};
 
@@ -18,14 +19,15 @@ state([
     'use_pay_scheme' => false,
     'phone' => '',
     'success_message' => null,
+    'availableRoles' => [],
 ]);
 
 mount(function () {
     $u = Auth::user();
-    if (!$u)
-        abort(401);
-    if ($u->role !== 'admin' && !$u->is_super_admin)
+    if (!$u || !$u->is_super_admin)
         abort(403);
+
+    $this->availableRoles = Role::pluck('name', 'id')->toArray();
 });
 
 rules([
@@ -33,47 +35,52 @@ rules([
     'username' => ['required', 'string', 'max:50', 'alpha_dash', Rule::unique('users', 'username')],
     'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
     'role' => ['required', 'string', 'max:50'],
+    'availableRoles' => ['required', 'array'],
     'password' => ['required', 'string', 'min:6', 'confirmed'],
     'is_super_admin' => ['boolean'],
     'use_pay_scheme' => ['boolean'],
     'phone' => ['nullable', 'string', 'max:8'],
 ]);
 
+
 $save = function () {
     $me = Auth::user();
-    if ($me->role !== 'admin' && !$me->is_super_admin)
+    if (!$me && !$me->is_super_admin)
         abort(403);
 
     $data = $this->validate();
 
-    User::create([
+    $u = User::create([
         'name' => $data['name'],
         'username' => $data['username'],
         'email' => $data['email'],
-        'role' => $data['role'],
         'password' => Hash::make($data['password']),
         'is_super_admin' => $data['is_super_admin'],
         'use_pay_scheme' => $data['use_pay_scheme'],
         'phone' => $data['phone'],
+        'role' => $data['role']
     ]);
 
+    $u->assignRole($data['role']);
+
     $this->success_message = __('User created.');
+
     $this->reset([
         'name',
         'username',
         'email',
+        'phone',
         'role',
+        'availableRoles',
         'password',
         'password_confirmation',
         'is_super_admin',
-        'use_pay_scheme',
-        'phone'
+        'use_pay_scheme'
     ]);
 };
-
 ?>
 
-<div class="max-w-xl mx-auto p-4 space-y-6">
+<div class="max-w-2xl mx-auto p-4 space-y-6">
     <div class="flex items-center justify-between">
         <div>
             <flux:heading size="xl">{{ __('New User') }}</flux:heading>
@@ -91,23 +98,28 @@ $save = function () {
 
         <flux:input wire:model.live="username" label="{{ __('Username') }}" placeholder="{{ __('Username') }}" />
 
-        <flux:input wire:model.live="email" type="email" label="{{ __('Email') }}" placeholder="email" />
+        <flux:input wire:model.live="email" type="email" label="{{ __('Email') }}" placeholder="{{ __('Email') }}" />
 
         <flux:input wire:model.live="phone" label="{{ __('Phone') }}" placeholder="{{ __('Phone') }}" />
 
         <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{{ __('Role') }}</label>
         <select wire:model.live="role"
-            class="w-full rounded-lg border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500 p-2.5">
+            class="w-full rounded-lg border-zinc-200 dark:border-zinc-800 bg-indigo-50 dark:bg-zinc-700/60 text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500 p-2.5">
             <option value="">-- {{ __('Select') }} --</option>
-            <option value="admin">Admin</option>
-            <option value="instrumentist">{{ __('Instrumentist') }}</option>
-            <option value="doctor">{{ __('Doctor (Surgeon)') }}</option>
-            <option value="circulating">{{ __('Circulating (Nurse)') }}</option>
+            @if($availableRoles)
+                @forelse($availableRoles as $id => $role)
+                    <option value="{{ $role }}">{{ $role }}</option>
+                @empty
+                    <option value="">{{ __('No roles found.') }}</option>
+                @endforelse
+            @endif
         </select>
 
-        <flux:input wire:model.live="password" type="password" label="{{ __('Password') }}" />
+        <flux:input wire:model.live="password" type="password" label="{{ __('Password') }}"
+            placeholder="{{ __('Password') }}" />
 
-        <flux:input wire:model.live="password_confirmation" type="password" label="{{ __('Confirm Password') }}" />
+        <flux:input wire:model.live="password_confirmation" type="password" label="{{ __('Confirm Password') }}"
+            placeholder="{{ __('Confirm Password') }}" />
 
         <flux:checkbox wire:model.live="is_super_admin" label="{{ __('Super Admin') }}" />
 
