@@ -4,6 +4,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Role;
 
 use function Livewire\Volt\{state, mount, rules};
 
@@ -21,43 +22,41 @@ state([
     'password_confirmation' => '',
 
     'success_message' => null,
+
+    'availableRoles' => [],
 ]);
 
 mount(function (string|int $user) {
     $me = Auth::user();
-    if (!$me)
-        abort(401);
-    if ($me->role !== 'admin' && !$me->is_super_admin)
-        abort(403);
+    abort_unless($me && $me->is_super_admin, 403);
 
     $u = User::withTrashed()->findOrFail($user);
+
+    $this->availableRoles = Role::pluck('name', 'id')->toArray();
 
     $this->user = $u;
     $this->name = $u->name;
     $this->username = $u->username;
     $this->email = $u->email;
-    $this->role = $u->role;
+    $this->role = $u->getRoleNames()->first() ?? '';
     $this->is_super_admin = $u->is_super_admin;
     $this->use_pay_scheme = $u->use_pay_scheme;
 });
 
-rules([
+rules(fn() => [
     'name' => ['required', 'string', 'max:255'],
-    'username' => ['required', 'string', 'max:50', 'alpha_dash'],
-    'email' => ['required', 'email', 'max:255'],
+    'username' => ['required', 'string', 'max:50', 'alpha_dash', Rule::unique('users', 'username')->ignore($this->user->id)],
+    'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->user->id)],
     'role' => ['required', 'string', 'max:50'],
     'password' => ['nullable', 'string', 'min:6', 'confirmed'],
     'is_super_admin' => ['boolean'],
     'use_pay_scheme' => ['boolean'],
+    'availableRoles' => ['required', 'array'],
 ]);
 
 $save = function () {
     $me = Auth::user();
-    if ($me->role !== 'admin' && !$me->is_super_admin)
-        abort(403);
-
-    if (!$this->user)
-        abort(404);
+    abort_unless($me && $me->is_super_admin, 403);
 
     $data = $this->validate();
 
@@ -81,6 +80,18 @@ $save = function () {
         'use_pay_scheme' => $data['use_pay_scheme'],
     ]);
 
+    if (!$this->user->hasRole($data['role'])) {
+        if (count($this->user->getRoleNames()) > 0) {
+            foreach ($this->user->getRoleNames() as $role) {
+                if ($role === 'admin') {
+                    continue;
+                }
+                $this->user->removeRole($role);
+            }
+        }
+        $this->user->assignRole($data['role']);
+    }
+
     if (!empty($data['password'])) {
         $this->user->update([
             'password' => Hash::make($data['password']),
@@ -93,8 +104,7 @@ $save = function () {
 
 $toggleDelete = function () {
     $me = Auth::user();
-    if ($me->role !== 'super_admin')
-        abort(403);
+    abort_unless($me && $me->is_super_admin, 403);
 
     if ($me->id === $this->user->id) {
         abort(403, 'No puedes desactivar tu propio usuario.');
@@ -150,10 +160,10 @@ $toggleDelete = function () {
         <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{{ __('Role') }}</label>
         <select wire:model="role"
             class="w-full rounded-lg border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-200 focus:ring-0 focus:border-zinc-500 p-2.5">
-            <option value="admin">{{ __('Admin') }}</option>
-            <option value="instrumentist">{{ __('Instrumentist') }}</option>
-            <option value="doctor">{{ __('Doctor') }}</option>
-            <option value="circulating">{{ __('Circulating') }}</option>
+            <option value="">-- {{ __('Select') }} --</option>
+            @foreach($availableRoles as $id => $role)
+                <option value="{{ $role }}">{{ $role }}</option>
+            @endforeach
         </select>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
