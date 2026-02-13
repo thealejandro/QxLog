@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
 
 use function Livewire\Volt\{state, computed, mount};
 
@@ -9,14 +10,12 @@ state([
     'q' => '',
     'role' => '',
     'show_deleted' => false,
+    'rolesAvailable' => [],
 ]);
 
 mount(function () {
-    $u = Auth::user();
-    if (!$u)
-        abort(401);
-    if (!$u->is_super_admin)
-        abort(403);
+    abort_unless(Auth::check() && Auth::user()->is_super_admin, 403);
+    $this->rolesAvailable = Role::pluck('name', 'id')->toArray();
 });
 
 $users = computed(function () {
@@ -36,7 +35,7 @@ $users = computed(function () {
     }
 
     if ($this->role) {
-        $query->where('role', $this->role);
+        $query->role($this->role);
     }
 
     return $query->limit(150)->get(['id', 'name', 'username', 'email', 'role', 'deleted_at']);
@@ -44,8 +43,7 @@ $users = computed(function () {
 
 $deleteUser = function (int $id) {
     $me = Auth::user();
-    if (!$me->is_super_admin)
-        abort(403);
+    abort_unless($me->is_super_admin, 403);
 
     if ($me->id === $id) {
         abort(403, 'No puedes eliminar tu propio usuario.');
@@ -57,8 +55,7 @@ $deleteUser = function (int $id) {
 
 $restoreUser = function (int $id) {
     $me = Auth::user();
-    if (!$me->is_super_admin)
-        abort(403);
+    abort_unless($me->is_super_admin, 403);
 
     $u = User::onlyTrashed()->findOrFail($id);
     $u->restore();
@@ -79,8 +76,12 @@ $roleColor = function (?string $role) {
 <div class="max-w-5xl mx-auto p-4 space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <flux:heading size="xl">{{ __('Users') }}</flux:heading>
-            <flux:subheading>{{ __('Only Super Admin') }}</flux:subheading>
+            <flux:heading size="xl">
+                {{ __('Users') }}
+            </flux:heading>
+            <flux:subheading>
+                {{ __('Only Super Admin') }}
+            </flux:subheading>
         </div>
 
         <flux:button href="{{ route('users.create') }}" icon="plus" class="w-full sm:w-auto" variant="primary">
@@ -95,14 +96,17 @@ $roleColor = function (?string $role) {
                     placeholder="{{ __('Search name, username or email...') }}" />
             </div>
 
-            <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{{ __('Role') }}</label>
+            <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                {{ __('Role') }}
+            </label>
             <select wire:model.live="role"
-                class="w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
+                class="w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-700/50 text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                 <option value="">-- {{ __('All') }} --</option>
-                <option value="admin">{{ __('Admin') }}</option>
-                <option value="instrumentist">{{ __('Instrumentist') }}</option>
-                <option value="doctor">{{ __('Doctor (Surgeon)') }}</option>
-                <option value="circulating">{{ __('Circulating (Nurse)') }}</option>
+                @forelse ($this->rolesAvailable as $role)
+                    <option value="{{ $role }}">{{ ucfirst(__($role)) }}</option>
+                @empty
+                    <option value="">{{ __('No roles available') }}</option>
+                @endforelse
             </select>
 
             <div class="flex items-center">
@@ -148,8 +152,9 @@ $roleColor = function (?string $role) {
                     </div>
 
                     <div class="flex items-center justify-between gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-                        <flux:badge size="sm" color="{{ $this->roleColor($u->role) }}" class="capitalize">
-                            {{ $u->role }}
+                        <flux:badge size="sm" color="{{ $this->roleColor($u->getRoleNames()->first()) }}"
+                            class="capitalize">
+                            {{ ucfirst(__($u->getRoleNames()->first())) }}
                         </flux:badge>
                         <flux:badge size="sm" color="{{ $u->deleted_at ? 'red' : 'green' }}" class="capitalize">
                             {{ $u->deleted_at ? __('Deleted') : __('Active') }}
@@ -202,7 +207,9 @@ $roleColor = function (?string $role) {
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">{{ $u->email }}
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
-                                <flux:badge size="sm" color="{{ $this->roleColor($u->role) }}">{{ $u->role }}</flux:badge>
+                                <flux:badge size="sm" color="{{ $this->roleColor($u->getRoleNames()->first()) }}">
+                                    {{ ucfirst(__($u->getRoleNames()->first())) }}
+                                </flux:badge>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-center">
                                 <flux:badge size="sm" color="{{ $u->deleted_at ? 'red' : 'green' }}">
