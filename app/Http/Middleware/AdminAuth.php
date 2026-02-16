@@ -16,7 +16,7 @@ class AdminAuth
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        abort_unless((bool) $user && (bool) ($user->role === "admin" || $user->is_super_admin), 403);
+        abort_unless((bool) $user && $user->hasRole("admin"), 401);
 
         return $next($request);
     }

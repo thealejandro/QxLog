@@ -18,20 +18,21 @@ state([
 
 mount(function () {
     $user = Auth::user();
-    if (!$user)
-        abort(401);
-    if ($user->role !== 'admin')
-        abort(403);
+    abort_unless((bool) $user, 401);
+    abort_unless($user->can('payouts.view'), 403);
 
-    $this->instrumentists = User::query()
-        ->where('role', 'instrumentist')
+    $this->instrumentists = User::role('instrumentist')
         ->orderBy('name')
         ->get(['id', 'name'])
-        ->map(fn($u) => ['id' => $u->id, 'name' => $u->name])
-        ->all();
+        ->map(fn($u) => ['id' => $u->id, 'name' => $u->name]);
 });
 
 $batches = computed(function () {
+
+    if ($this->instrumentist_id === '') {
+        return collect();
+    }
+
     $q = PayoutBatch::query()
         ->with([
             'instrumentist:id,name',
@@ -39,7 +40,7 @@ $batches = computed(function () {
         ])
         ->orderByDesc('paid_at');
 
-    if ($this->instrumentist_id !== '' && $this->instrumentist_id !== null) {
+    if ($this->instrumentist_id !== 'all') {
         $q->where('instrumentist_id', (int) $this->instrumentist_id);
     }
 
@@ -56,7 +57,7 @@ $batches = computed(function () {
 
 ?>
 
-<div class="max-w-5xl mx-auto p-4 space-y-6">
+<div class="max-w-6xl mx-auto p-4 space-y-6">
     <div class="mb-4">
         <flux:heading size="xl">{{ __('Payouts') }}</flux:heading>
         <flux:subheading>{{ __('Settlement History') }}</flux:subheading>
@@ -64,28 +65,27 @@ $batches = computed(function () {
 
     <div class="rounded-xl border bg-white p-6 dark:bg-zinc-900 dark:border-zinc-700 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
+            <flux:field>
                 <flux:label>{{ __('Instrumentist') }}</flux:label>
-                <select wire:model.live="instrumentist_id"
-                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:bg-zinc-800/50 py-2.5 px-3 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-0 focus:border-zinc-500">
-                    <option value="">{{ __('All') }}</option>
+                <flux:select wire:model.change="instrumentist_id" placeholder="{{ __('Select instrumentist') }}">
+                    <flux:select.option value="all">{{ __('All') }}</flux:select.option>
                     @foreach($instrumentists as $i)
-                        <option value="{{ $i['id'] }}">{{ $i['name'] }}</option>
+                        <flux:select.option value="{{ $i['id'] }}">
+                            {{ $i['name'] }}
+                        </flux:select.option>
                     @endforeach
-                </select>
-            </div>
+                </flux:select>
+            </flux:field>
 
-            <div>
+            <flux:field>
                 <flux:label>{{ __('From') }}</flux:label>
-                <input type="date" wire:model.live="date_from"
-                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
-            </div>
+                <flux:input type="date" wire:model.live="date_from" />
+            </flux:field>
 
-            <div>
+            <flux:field>
                 <flux:label>{{ __('To') }}</flux:label>
-                <input type="date" wire:model.live="date_to"
-                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
-            </div>
+                <flux:input type="date" wire:model.live="date_to" />
+            </flux:field>
         </div>
 
         <div class="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
@@ -134,7 +134,11 @@ $batches = computed(function () {
                         @empty
                             <tr>
                                 <td colspan="5" class="px-4 py-8 text-center text-zinc-500 dark:text-zinc-400">
-                                    {{ __('No payments registered yet.') }}
+                                    @if ($this->instrumentist_id === '')
+                                        {{ __('Select an instrumentist to see their payments.') }}
+                                    @else
+                                        {{ __('No payments registered yet.') }}
+                                    @endif
                                 </td>
                             </tr>
                         @endforelse
@@ -173,7 +177,11 @@ $batches = computed(function () {
                     </div>
                 @empty
                     <div class="p-8 text-center text-zinc-500 dark:text-zinc-400">
-                        {{ __('No payments registered yet.') }}
+                        @if ($this->instrumentist_id === '')
+                            {{ __('Select an instrumentist to see their payments.') }}
+                        @else
+                            {{ __('No payments registered yet.') }}
+                        @endif
                     </div>
                 @endforelse
             </div>

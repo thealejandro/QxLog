@@ -11,7 +11,7 @@ use Illuminate\Validation\ValidationException;
 use function Livewire\Volt\{state, computed, mount, rules, updated};
 
 state([
-    'instrumentist_id' => null,
+    'instrumentist_id' => '',
     'instrumentists' => [],
 
     // IDs de procedures seleccionados
@@ -29,20 +29,13 @@ rules([
 
 mount(function () {
     $user = Auth::user();
-    if (!$user)
-        abort(401);
+    abort_unless((bool) $user, 401);
+    abort_unless($user->can("payouts.create"), 403);
 
-    // Solo admin (por ahora, sin middleware)
-    if ($user->role !== 'admin')
-        abort(403);
-
-    // Cargar instrumentistas para el select
-    $this->instrumentists = User::query()
-        ->where('role', 'instrumentist')
+    $this->instrumentists = User::role('instrumentist')
         ->orderBy('name')
         ->get(['id', 'name'])
-        ->map(fn($u) => ['id' => $u->id, 'name' => $u->name])
-        ->all();
+        ->map(fn($u) => ['id' => $u->id, 'name' => $u->name]);
 });
 
 updated(['instrumentist_id'], function () {
@@ -91,7 +84,6 @@ $toggleAll = function () {
         return;
     }
 
-    // Si ya están todos seleccionados -> deseleccionar
     $allIds = $list->pluck('id')->map(fn($v) => (int) $v)->all();
     $current = array_map('intval', (array) $this->selected);
 
@@ -104,10 +96,8 @@ $liquidate = function () {
     $this->success_message = null;
 
     $admin = Auth::user();
-    if (!$admin)
-        abort(401);
-    if ($admin->role !== 'admin' || $admin->is_super_admin !== true)
-        abort(403);
+    abort_unless((bool) $admin, 401);
+    abort_unless($admin->can("payouts.create"), 403);
 
     $data = $this->validate();
 
@@ -179,7 +169,7 @@ $liquidate = function () {
 
 ?>
 
-<div class="max-w-4xl mx-auto p-4 space-y-6">
+<div class="max-w-6xl mx-auto p-4 space-y-6">
     <div class="mb-4">
         <flux:heading size="xl">{{ __('Liquidate Procedures') }}</flux:heading>
         <flux:subheading>{{ __('Generate payout batch') }}</flux:subheading>
@@ -194,20 +184,14 @@ $liquidate = function () {
 
     <div class="rounded-xl border bg-white p-6 dark:bg-zinc-900 dark:border-zinc-700 space-y-6">
         <div>
-            <flux:label>
-                {{ __('Instrumentist') }}
-            </flux:label>
-            <select wire:model.change="instrumentist_id"
-                class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50/20 dark:border-zinc-700 dark:bg-zinc-800/50 py-2.5 px-3 text-sm text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
-                <option value="">
-                    {{ __('Select instrumentist') }}
-                </option>
+            <flux:select wire:model.change="instrumentist_id" label="{{ __('Instrumentist') }}"
+                placeholder="{{ __('Select instrumentist') }}" empty="{{ __('Not found') }}">
                 @foreach($this->instrumentists as $i)
-                    <option value="{{ $i['id'] }}">
+                    <flux:select.option value="{{ $i['id'] }}">
                         {{ $i['name'] }}
-                    </option>
+                    </flux:select.option>
                 @endforeach
-            </select>
+            </flux:select>
         </div>
 
         @if($this->instrumentist_id)

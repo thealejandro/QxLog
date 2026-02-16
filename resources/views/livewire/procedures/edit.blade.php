@@ -37,14 +37,14 @@ state([
 
 mount(function (Procedure $procedure) {
     $user = Auth::user();
-    abort_unless($user && ($user->role === 'admin' || (bool) $user->is_super_admin), 403);
+    abort_unless($user && $user->can('procedures.edit'), 403);
 
     // Solo editable si pendiente
     abort_unless($procedure->status === 'pending', 403);
 
     $this->procedure = $procedure;
 
-    $this->procedure_date = optional($procedure->procedure_date)->format('Y-m-d') ?? $procedure->procedure_date;
+    $this->procedure_date = Carbon\Carbon::parse($procedure->procedure_date)->format('Y-m-d');
     $this->start_time = $procedure->start_time ? substr($procedure->start_time, 0, 5) : '';
     $this->end_time = $procedure->end_time ? substr($procedure->end_time, 0, 5) : '';
     $this->patient_name = $procedure->patient_name ?? '';
@@ -106,8 +106,7 @@ $searchDoctor = function () {
 
     $this->doctor_id = null;
 
-    $allDoctors = User::query()
-        ->where('role', 'doctor')
+    $allDoctors = User::role('doctor')
         ->orderBy('name')
         ->get(['id', 'name']);
 
@@ -124,7 +123,7 @@ $searchDoctor = function () {
 };
 
 $selectDoctor = function (int $id) {
-    $u = User::query()->where('role', 'doctor')->find($id);
+    $u = User::role('doctor')->find($id);
 
     if (!$u)
         return;
@@ -145,8 +144,7 @@ $searchCirculating = function () {
 
     $this->circulating_id = null;
 
-    $allCirculatings = User::query()
-        ->where('role', 'circulating')
+    $allCirculatings = User::role('circulating')
         ->orderBy('name')
         ->get(['id', 'name']);
 
@@ -163,7 +161,7 @@ $searchCirculating = function () {
 };
 
 $selectCirculating = function (int $id) {
-    $u = User::query()->where('role', 'circulating')->find($id);
+    $u = User::role('circulating')->find($id);
 
     if (!$u)
         return;
@@ -184,14 +182,12 @@ updated([
 
 $save = function () {
     $user = Auth::user();
-    abort_unless($user && ($user->role === 'admin' || (bool) $user->is_super_admin), 403);
+    abort_unless($user && $user->can('procedures.edit'), 403);
 
-    /** @var \App\Models\Procedure $p */
     $p = $this->procedure;
     abort_unless($p && $p->exists, 404);
     abort_unless($p->status === 'pending', 403);
 
-    // Validación básica
     if (!$this->procedure_date) {
         throw ValidationException::withMessages(['procedure_date' => 'La fecha es requerida.']);
     }
@@ -217,13 +213,11 @@ $save = function () {
         throw ValidationException::withMessages(['circulating_query' => 'El circulante es requerido.']);
     }
 
-    // Duración (usa tu helper)
     $duration = TimeHelper::durationMinutes($this->procedure_date, $this->start_time, $this->end_time);
     if ($duration <= 0) {
         throw ValidationException::withMessages(['end_time' => 'La hora fin debe ser mayor a la hora inicio.']);
     }
 
-    // Recalcular pricing
     $instrumentist = $p->instrumentist ?? User::find($p->instrumentist_id);
     if (!$instrumentist) {
         throw ValidationException::withMessages(['instrumentist' => 'No se encontró el instrumentista.']);
@@ -270,7 +264,7 @@ $save = function () {
 
 ?>
 
-<div class="max-w-4xl mx-auto p-4 space-y-6">
+<div class="max-w-6xl mx-auto p-4 space-y-6">
     <flux:button href="{{ route('procedures.index') }}" icon="arrow-left" variant="subtle">{{ __('Back') }}
     </flux:button>
     <div>
@@ -288,69 +282,53 @@ $save = function () {
 
     <div class="rounded-xl border bg-white p-6 dark:bg-zinc-900 dark:border-zinc-700 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
+            <flux:field>
                 <flux:label>
                     {{ __('Date') }}
                 </flux:label>
-                <input type="date" max="{{ now()->format('Y-m-d') }}" min="{{ now()->subWeeks(4)->format('Y-m-d') }}"
-                    wire:model.live="procedure_date"
-                    class="mt-2 block w-full min-w-0 max-w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
+                <flux:input type="date" max="{{ now()->format('Y-m-d') }}"
+                    min="{{ now()->subWeeks(4)->format('Y-m-d') }}" wire:model.live="procedure_date" clearable />
 
-                @error('procedure_date') <p class="text-sm text-red-600 dark:text-red-400 mt-1">
-                        {{ $message }}
-                    </p>
+                @error('procedure_date') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                 @enderror
-            </div>
+            </flux:field>
 
-            <div>
+            <flux:field>
                 <flux:label>
                     {{ __('Start Time') }}
                 </flux:label>
-                <input type="time" wire:model.live="start_time"
-                    class="mt-2 block w-full min-w-0 max-w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
-                @error('start_time') <p class="text-sm text-red-600 dark:text-red-400 mt-1">
-                        {{ $message }}
-                    </p>
-                @enderror
-            </div>
+                <flux:input type="time" wire:model.live="start_time" clearable />
+                @error('start_time') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
+            </flux:field>
 
-            <div>
+            <flux:field>
                 <flux:label>
                     {{ __('End Time') }}
                 </flux:label>
-                <input type="time" wire:model.live="end_time"
-                    class="mt-2 block w-full min-w-0 max-w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
-                @error('end_time') <p class="text-sm text-red-600 dark:text-red-400 mt-1">
-                        {{ $message }}
-                    </p>
-                @enderror
-            </div>
+                <flux:input type="time" wire:model.live="end_time" clearable />
+                @error('end_time') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
+            </flux:field>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
+            <flux:field>
                 <flux:label>
                     {{ __('Patient') }}
                 </flux:label>
-                <input type="text" wire:model="patient_name" placeholder="{{ __('Patient Name') }}"
-                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
-                @error('patient_name') <p class="text-sm text-red-600 dark:text-red-400 mt-1">
-                        {{ $message }}
-                    </p>
+                <flux:input type="text" wire:model="patient_name" placeholder="{{ __('Patient Name') }}" clearable />
+                @error('patient_name') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                 @enderror
-            </div>
+            </flux:field>
 
-            <div>
+            <flux:field>
                 <flux:label>
                     {{ __('Procedure') }}
                 </flux:label>
-                <input type="text" wire:model="procedure_type" placeholder="{{ __('C-Section, Appendectomy...') }}"
-                    class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
-                @error('procedure_type') <p class="text-sm text-red-600 dark:text-red-400 mt-1">
-                        {{ $message }}
-                    </p>
+                <flux:input type="text" wire:model="procedure_type" clearable
+                    placeholder="{{ __('C-Section, Appendectomy...') }}" />
+                @error('procedure_type') <p class="text-sm text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
                 @enderror
-            </div>
+            </flux:field>
         </div>
 
         <div class="w-full flex justify-center md:justify-start">

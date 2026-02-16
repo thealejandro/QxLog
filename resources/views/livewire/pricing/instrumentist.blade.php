@@ -6,19 +6,18 @@ use Illuminate\Support\Facades\Auth;
 use function Livewire\Volt\{state, computed, mount};
 
 state([
-    'q' => '',
+    'searchInstrumentists' => '',
 ]);
 
 mount(function () {
     abort_unless(Auth::check(), 401);
-    abort_unless((bool) Auth::user()->role !== 'admin', 403);
+    abort_unless((bool) Auth::user()->can('pricing.manage'), 403);
 });
 
 $instrumentists = computed(function () {
-    return User::query()
-        ->where('role', 'instrumentist')
-        ->when($this->q, function ($q) {
-            $term = trim($this->q);
+    return User::role('instrumentist')
+        ->when($this->searchInstrumentists, function ($q) {
+            $term = trim($this->searchInstrumentists);
             $q->where(function ($s) use ($term) {
                 $s->where('name', 'like', "%{$term}%")
                     ->orWhere('username', 'like', "%{$term}%");
@@ -29,11 +28,9 @@ $instrumentists = computed(function () {
 });
 
 $toggle = function (int $id) {
-    abort_unless((bool) Auth::user()->role !== 'admin', 403);
+    abort_unless((bool) Auth::user()->can('pricing.manage'), 403);
 
-    $u = User::query()
-        ->where('role', 'instrumentist')
-        ->findOrFail($id);
+    $u = User::role('instrumentist')->findOrFail($id);
 
     $u->use_pay_scheme = !(bool) $u->use_pay_scheme;
     $u->save();
@@ -41,14 +38,15 @@ $toggle = function (int $id) {
 
 ?>
 
-<div class="max-w-4xl mx-auto p-4 space-y-6">
+<div class="max-w-6xl mx-auto p-4 space-y-6">
     <div class="mb-4">
         <flux:heading size="xl">{{ __('Instrumentists') }}</flux:heading>
         <flux:subheading>{{ __('Mark who uses special payment scheme') }}</flux:subheading>
     </div>
 
     <div class="space-y-4">
-        <flux:input icon="magnifying-glass" wire:model.live="q" placeholder="{{ __('Search name or username...') }}" />
+        <flux:input icon="magnifying-glass" wire:model.live.debounce.300ms="searchInstrumentists"
+            placeholder="{{ __('Search name or username...') }}" clearable />
 
         <!-- Mobile View (Cards) -->
         <div class="grid grid-cols-1 gap-4 sm:hidden">
@@ -82,23 +80,19 @@ $toggle = function (int $id) {
         <!-- Desktop View (Table) -->
         <div class="hidden sm:block overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700">
             <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
-                <thead class="bg-zinc-50 dark:bg-zinc-800/50">
+                <thead class="bg-indigo-100 dark:bg-indigo-500/25">
                     <tr>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Name') }}
+                        <th class="px-6 py-4 text-left text-xs font-medium tracking-wider">
+                            <flux:label>{{ __('Name') }}</flux:label>
                         </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Username') }}
+                        <th class="px-6 py-4 text-left text-xs font-medium tracking-wider">
+                            <flux:label>{{ __('Username') }}</flux:label>
                         </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Scheme') }}
+                        <th class="px-6 py-4 text-left text-xs font-medium tracking-wider">
+                            <flux:label>{{ __('Scheme') }}</flux:label>
                         </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                            {{ __('Actions') }}
+                        <th class="px-6 py-4 text-center text-xs font-medium tracking-wider">
+                            <flux:label>{{ __('Actions') }}</flux:label>
                         </th>
                     </tr>
                 </thead>
@@ -113,10 +107,10 @@ $toggle = function (int $id) {
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <flux:badge size="sm" color="{{ $u->use_pay_scheme ? 'green' : 'zinc' }}">
-                                    {{ $u->use_pay_scheme ? __('Special') : __('Standard') }}
+                                    {{ $u->use_pay_scheme ? __('Yes') : __('No') }}
                                 </flux:badge>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                            <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
                                 <button
                                     class="cursor-pointer transition-colors font-medium h-8 px-2 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-100 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/30 hover:border-indigo-200 dark:hover:border-indigo-700 hover:text-indigo-700 dark:hover:text-indigo-300 text-indigo-600 dark:text-indigo-400"
                                     wire:click="toggle({{ $u->id }})">

@@ -18,8 +18,7 @@ state([
 
 mount(function (string|int $batch) {
     abort_unless((bool) Auth::check(), 401);
-    abort_unless((bool) Auth::user()->role === 'admin' || (bool) Auth::user()->is_super_admin, 403);
-
+    abort_unless((bool) Auth::user()->can('payouts.view'), 403);
 
     $b = PayoutBatch::query()
         ->with([
@@ -111,7 +110,6 @@ mount(function (string|int $batch) {
     $this->summaryRows = $rows;
 });
 
-
 ?>
 
 <style>
@@ -178,7 +176,7 @@ mount(function (string|int $batch) {
     }
 </style>
 
-<div id="print-content" class="max-w-4xl mx-auto p-4 print-wrap">
+<div id="print-content" class="max-w-4xl mx-auto p-4 print-wrap print:text-black">
     <div class="no-print mb-6 flex items-center justify-between gap-2">
         <a href="{{ route('payouts.index') }}"
             class="text-md text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors flex items-center gap-1">
@@ -206,7 +204,8 @@ mount(function (string|int $batch) {
         </div>
     </div>
 
-    <div class="rounded-xl border bg-white p-8 dark:bg-zinc-900 dark:border-zinc-700 dark-mode-override">
+    <div
+        class="rounded-xl border bg-white p-8 dark:bg-zinc-900 border-zinc-400 print:border-zinc-900 dark:border-zinc-700">
         <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-6">
             <div class="items-center text-center md:text-left md:items-start">
                 <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
@@ -223,7 +222,7 @@ mount(function (string|int $batch) {
             <div
                 class="print:w-full flex flex-col print:flex-row print:justify-between justify-between items-center md:items-end">
                 <div>
-                    <span class="text-zinc-500 dark:text-zinc-400">
+                    <span class="text-zinc-700 dark:text-zinc-400">
                         {{ __('Folio') }}:
                     </span>
                     <span class="font-semibold text-zinc-900 dark:text-zinc-100">
@@ -232,7 +231,7 @@ mount(function (string|int $batch) {
                 </div>
 
                 <div>
-                    <span class="text-zinc-500 dark:text-zinc-400">
+                    <span class="text-zinc-700 dark:text-zinc-400">
                         {{ __('Payment Date') }}:
                     </span>
                     <span class="font-semibold text-zinc-900 dark:text-zinc-100">
@@ -241,7 +240,7 @@ mount(function (string|int $batch) {
                 </div>
 
                 <div class="no-print">
-                    <span class="text-zinc-500 dark:text-zinc-400">
+                    <span class="text-zinc-700 dark:text-zinc-400">
                         {{ __('Time') }}:
                     </span>
                     <span class="font-semibold text-zinc-900 dark:text-zinc-100">
@@ -251,7 +250,8 @@ mount(function (string|int $batch) {
             </div>
         </div>
 
-        <div class="flex flex-col gap-2 justify-between py-6 px-6 border border-zinc-200 dark:border-zinc-700">
+        <div
+            class="flex flex-col gap-2 justify-between py-6 px-6 border border-zinc-400 print:border-zinc-900 dark:border-zinc-700">
             <div class="flex gap-2">
                 <flux:label class="w-2/6">
                     {{ __('Pay to') }}:
@@ -282,9 +282,10 @@ mount(function (string|int $batch) {
         @if($this->mode === 'summary')
 
             <!-- Tabla resumida -->
-            <div class="mt-6 rounded-lg border border-zinc-200 dark:border-zinc-700">
+            <div class="mt-6 rounded-lg border border-zinc-400 print:border-zinc-900 dark:border-zinc-700">
                 <table class="w-full text-sm">
-                    <thead class="text-left text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
+                    <thead
+                        class="text-left text-zinc-500 print:text-black dark:text-zinc-400 border-b border-zinc-400 print:border-zinc-900 dark:border-zinc-700">
                         <tr>
                             <th class="py-4 px-6 font-medium">
                                 <flux:label>
@@ -309,7 +310,7 @@ mount(function (string|int $batch) {
                         </tr>
                     </thead>
 
-                    <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+                    <tbody class="divide-y divide-zinc-300 dark:divide-zinc-700 print:text-black">
                         <tr>
                             <td colspan="1"
                                 class="{{ $this->usePayScheme ? 'py-3' : 'py-6' }} pl-6 pr-2 text-justify font-mono text-zinc-800 dark:text-zinc-300">
@@ -343,16 +344,16 @@ mount(function (string|int $batch) {
                         </tr>
                         <tr>
                             <td colspan="2"
-                                class="{{ $this->usePayScheme ? 'py-2' : 'py-4' }} px-6 border-t border-zinc-200 dark:border-zinc-700">
+                                class="{{ $this->usePayScheme ? 'py-2' : 'py-4' }} px-6 border-t border-zinc-400 print:border-zinc-900 dark:border-zinc-700">
                             </td>
                             <td colspan="1"
-                                class="{{ $this->usePayScheme ? 'py-2' : 'py-4' }} px-6 text-center items-center font-bold text-zinc-900 dark:text-zinc-200 border-t border-zinc-200 dark:border-zinc-700">
+                                class="{{ $this->usePayScheme ? 'py-2' : 'py-4' }} px-6 text-center items-center font-bold text-zinc-900 dark:text-zinc-200 border-t border-zinc-400 print:border-zinc-900 dark:border-zinc-700">
                                 <flux:label>
                                     {{ __('Total') }}
                                 </flux:label>
                             </td>
                             <td colspan="1"
-                                class="{{ $this->usePayScheme ? 'py-2' : 'py-4' }} px-6 text-right font-bold text-zinc-900 dark:text-zinc-200 border-t border-zinc-200 dark:border-zinc-700">
+                                class="{{ $this->usePayScheme ? 'py-2' : 'py-4' }} px-6 text-right font-bold text-zinc-900 dark:text-zinc-200 border-t border-zinc-400 print:border-zinc-900 dark:border-zinc-700">
                                 <flux:label>
                                     Q{{ number_format((float) $this->batch->total_amount, 2) }}
                                 </flux:label>
@@ -456,30 +457,33 @@ mount(function (string|int $batch) {
 
         <!-- Footer signature -->
         <div
-            class="grid grid-cols-3 gap-12 text-center items-center text-xs {{ $this->batch->is_super_admin ? 'mt-24' : 'mt-12' }}">
+            class="grid grid-cols-3 gap-12 text-center items-center text-xs {{ $this->usePayScheme ? 'mt-12' : 'mt-16' }}">
             <div>
-                <div class="text-zinc-500 dark:text-zinc-400 mb-12">
+                <div class="text-zinc-500 print:text-black dark:text-zinc-400 mb-12">
                     {{ __('Received by') }}
                 </div>
-                <div class="border-t border-zinc-300 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
+                <div
+                    class="border-t border-zinc-300 print:border-zinc-900 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
                     {{ $this->batch->instrumentist->name ?? '' }}
                 </div>
             </div>
 
             <div>
-                <div class="text-zinc-500 dark:text-zinc-400 mb-12">
+                <div class="text-zinc-500 print:text-black dark:text-zinc-400 mb-12">
                     {{ __('Paid by') }} ({{ __('Administration') }})
                 </div>
-                <div class="border-t border-zinc-300 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
+                <div
+                    class="border-t border-zinc-300 print:border-zinc-900 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
                     {{ $this->batch->paidByUser->name ?? '' }}
                 </div>
             </div>
 
             <div>
-                <div class="text-zinc-500 dark:text-zinc-400 mb-12">
+                <div class="text-zinc-500 print:text-black dark:text-zinc-400 mb-12">
                     {{ __('Authorized Signature') }}
                 </div>
-                <div class="border-t border-zinc-300 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
+                <div
+                    class="border-t border-zinc-300 print:border-zinc-900 dark:border-zinc-600 pt-2 text-zinc-900 dark:text-zinc-100">
                     {{ __('Medical Director') }}
                 </div>
             </div>
@@ -487,8 +491,8 @@ mount(function (string|int $batch) {
 
         <!-- Footer note -->
         <p
-            class="hidden print:block {{ $this->batch->is_super_admin ? 'mt-6' : 'mt-12' }} text-xs text-zinc-400 dark:text-zinc-500 text-center">
-            {{ __('Generated by QxLog. Keep for internal control.') }}
+            class="hidden print:block {{ $this->usePayScheme ? 'mt-10' : 'mt-18' }} text-xs text-zinc-400 print:text-black dark:text-zinc-500 text-center">
+            {{ __('Generated by ' . config('app.name') . '. Keep for internal control.') }}
         </p>
     </div>
 </div>

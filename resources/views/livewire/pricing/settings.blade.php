@@ -6,19 +6,19 @@ use Illuminate\Support\Facades\Auth;
 use function Livewire\Volt\{state, mount, rules};
 
 state([
-    'default_rate' => 200,
-    'video_rate' => 300,
-    'night_rate' => 350,
-    'long_case_rate' => 350,
-    'long_case_threshold_minutes' => 120,
-    'night_start' => '22:00',
-    'night_end' => '06:00',
+    'default_rate' => 0,
+    'video_rate' => 0,
+    'night_rate' => 0,
+    'long_case_rate' => 0,
+    'long_case_threshold_minutes' => 0,
+    'night_start' => '00:00',
+    'night_end' => '00:00',
     'success' => null,
 ]);
 
 mount(function () {
     abort_unless(Auth::check(), 401);
-    abort_unless((bool) Auth::user()->role !== 'admin', 403);
+    abort_unless((bool) Auth::user()->can('pricing.manage'), 403);
 
     $s = PricingSetting::firstOrCreate(['id' => 1]);
 
@@ -42,7 +42,7 @@ rules([
 ]);
 
 $save = function () {
-    abort_unless((bool) Auth::user()->role !== 'admin', 403);
+    abort_unless((bool) Auth::user()->can('pricing.manage'), 403);
 
     $data = $this->validate();
 
@@ -53,7 +53,7 @@ $save = function () {
 
 ?>
 
-<div class="max-w-3xl mx-auto p-4 space-y-6">
+<div class="max-w-6xl mx-auto p-4 space-y-6">
     <div class="mb-4">
         <flux:heading size="xl">{{ __('Global Pricing') }}</flux:heading>
         <flux:subheading>{{ __('Applies to special scheme instrumentists') }}</flux:subheading>
@@ -68,21 +68,24 @@ $save = function () {
 
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-6 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <flux:input label="{{ __('Base Rate (Q)') }}" type="number" step="0.01" wire:model.live="default_rate" />
+            <flux:input label="{{ __('Base Rate (Q)') }}" type="number" step="0.01" wire:model.live="default_rate"
+                clearable />
 
-            <flux:input label="{{ __('Video Surgery (Q)') }}" type="number" step="0.01" wire:model.live="video_rate" />
+            <flux:input label="{{ __('Video Surgery (Q)') }}" type="number" step="0.01" wire:model.live="video_rate"
+                clearable />
 
-            <flux:input label="{{ __('Night Rate (Q)') }}" type="number" step="0.01" wire:model.live="night_rate" />
+            <flux:input label="{{ __('Night Rate (Q)') }}" type="number" step="0.01" wire:model.live="night_rate"
+                clearable />
 
             <flux:input label="{{ __('Long Procedure (Q)') }}" type="number" step="0.01"
-                wire:model.live="long_case_rate" />
+                wire:model.live="long_case_rate" clearable />
 
-            <flux:input label='{{ __('Long Procedure Threshold (min)') }}' type="number"
-                wire:model.live="long_case_threshold_minutes" />
+            <flux:input label="{{ __('Long Procedure Threshold (min)') }}" type="number" step="1"
+                wire:model.live="long_case_threshold_minutes" clearable />
 
-            <div class="grid grid-cols-2 gap-4">
-                <flux:input label="{{ __('Night Start Time') }}" type="time" wire:model.live="night_start" />
-                <flux:input label="{{ __('Night End Time') }}" type="time" wire:model.live="night_end" />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <flux:input label="{{ __('Night Start Time') }}" type="time" wire:model.live="night_start" clearable />
+                <flux:input label="{{ __('Night End Time') }}" type="time" wire:model.live="night_end" clearable />
             </div>
         </div>
 
