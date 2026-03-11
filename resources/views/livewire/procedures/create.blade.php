@@ -397,7 +397,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                 <flux:label>
                     {{ __('Procedure') }}
                 </flux:label>
-                <input type="text" wire:model="procedure_type" placeholder="{{ __('C-Section, Appendectomy...') }}"
+                <input type="text" wire:model="procedure_type" placeholder="{{ __('Procedure Name') }}"
                     class="mt-2 block w-full rounded-lg border-zinc-200 bg-indigo-50 py-2.5 px-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden dark:border-zinc-700 dark:bg-zinc-700 dark:text-zinc-100 dark:focus:border-indigo-400 dark:placeholder-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors" />
                 @error('procedure_type') <p class="text-sm text-red-600 dark:text-red-400 mt-1">
                         {{ $message }}
@@ -406,9 +406,13 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             </div>
         </div>
 
-        <div class="w-full flex justify-center md:justify-start">
+        <hr class="border-indigo-300 dark:border-zinc-600">
+
+        <div class="w-full flex flex-col md:flex-row justify-center md:justify-between sm:px-6 gap-10 md:w-auto">
             <flux:checkbox wire:model="is_videosurgery" label="{{ __('Videosurgery') }}"
                 description="{{ __('Check if the procedure was by video.') }}" />
+            <flux:checkbox wire:model="is_courtesy" label="{{ __('Courtesy') }}"
+                description="{{ __('Check if the procedure was by courtesy.') }}" />
         </div>
 
         <hr class="border-indigo-300 dark:border-zinc-600">
@@ -495,11 +499,9 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
             </div>
         </div>
 
-        <hr class="border-indigo-300 dark:border-zinc-600">
-
         <div
             class="flex flex-col sm:flex-row items-center justify-between gap-6 bg-indigo-100 dark:bg-indigo-900/40 p-4 rounded-lg border border-indigo-100 dark:border-indigo-700/50">
-            <div class="flex flex-row items-center justify-center gap-8 w-full sm:w-auto">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 w-full sm:w-auto">
                 @if (Auth::user()->use_pay_scheme)
                     <div class="flex flex-col items-start">
                         <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
@@ -509,7 +511,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                             {{ is_int($this->duration_minutes) ? $this->duration_minutes . ' min' : '--' }}
                         </span>
                     </div>
-                    <div class="w-px h-12 bg-indigo-300 dark:bg-indigo-600"></div>
+                    <div class="w-full h-px sm:w-px sm:h-12 bg-indigo-300 dark:bg-indigo-600"></div>
                 @endif
 
                 <div class="flex flex-col items-center sm:items-start">
@@ -522,10 +524,8 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                 </div>
             </div>
 
-            <flux:button wire:click="save" variant="primary" loading="save" class="w-full sm:w-auto">
-                <span class="text-lg font-bold">
-                    {{ __('Register Procedure') }}
-                </span>
+            <flux:button wire:click="save" wire:target="save" wire:loading.class="opacity-50 cursor-not-allowed" wire:loading.class.remove="opacity-50 cursor-not-allowed" color="indigo" loading="save" variant="primary" class="w-full font-bold sm:w-1/3 cursor-pointer uppercase">
+                {{ __('Save') }}
             </flux:button>
         </div>
     </div>
@@ -652,11 +652,11 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                                 <div class="font-medium text-zinc-900 dark:text-zinc-100">
                                     {{ $p->patient_name }}
                                 </div>
-                                <div class="text-sm text-zinc-500 dark:text-zinc-400">
+                                <div class="text-sm text-zinc-500 dark:text-zinc-400 truncate">
                                     {{ $p->procedure_type }}
                                 </div>
                             </div>
-                            <div class="text-right">
+                            <div class="text-right shrink-0">
                                 <div class="font-mono font-medium text-zinc-600 dark:text-zinc-200/80">
                                     Q{{ number_format((float) $p->calculated_amount, 2) }}
                                 </div>
@@ -667,15 +667,15 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                         </div>
 
                         @if(Auth::user()->use_pay_scheme)
-                            <div class="flex items-center justify-between text-sm pt-2 text-zinc-500 dark:text-zinc-400">
-                                <div class="flex flex-col items-center">
-                                    <div class="flex justify-between items-center">
+                            <div class="flex items-center justify-between gap-2 text-sm pt-2 text-zinc-500 dark:text-zinc-400">
+                                <div class="flex flex-col flex-wrap items-center">
+                                    <div class="flex flex-wrap justify-between items-center gap-1">
                                         <div class="flex items-center">
                                             {{ Carbon\Carbon::parse($p->start_time)->format('H:i') }} <span
                                                 class="text-xs text-zinc-400 dark:text-zinc-500 ml-1">hrs</span>
                                         </div>
 
-                                        <span class="text-xs text-zinc-400 dark:text-zinc-500 mx-1">-</span>
+                                        <span class="text-xs text-zinc-400 dark:text-zinc-500">-</span>
 
                                         <div class="flex items-center">
                                             {{ Carbon\Carbon::parse($p->end_time)->format('H:i') }} <span
@@ -683,7 +683,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                                         </div>
                                     </div>
 
-                                    <span class="text-xs text-zinc-400 dark:text-zinc-500 ml-1">
+                                    <span class="text-xs text-zinc-400 dark:text-zinc-500">
                                         {{ $p->duration_minutes }} min
                                     </span>
                                 </div>

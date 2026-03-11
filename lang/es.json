@@ -258,5 +258,14 @@
     "Paid vouchers.": "Vouchers pagados.",
     "Settled vouchers.": "Vouchers liquidados.",
     "Estimated total of procedures not yet paid.": "Monto estimado de procedimientos aún no pagados.",
-    "Pending balance and paid vouchers.": "Saldo pendiente y vouchers pagados."
+    "Pending balance and paid vouchers.": "Saldo pendiente y vouchers pagados.",
+    "Courtesy": "Cortesía",
+    "No procedures.": "No hay procedimientos.",
+    "No payouts registered yet.": "No hay pagos registrados todavía.",
+    "No payments.": "No hay pagos.",
+    "No payouts.": "No hay pagos.",
+    "Procedure Name": "Nombre del Procedimiento",
+    "Procedure Type": "Tipo de Procedimiento",
+    "Procedure Date": "Fecha del Procedimiento",
+    "Check if the procedure was by video": "Marcar si el procedimiento fue por video"
 }

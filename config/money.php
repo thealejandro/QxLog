@@ -6,8 +6,8 @@ return [
      | Laravel money
      |--------------------------------------------------------------------------
      */
-    'locale' => config('app.locale', 'en_US'),
-    'defaultCurrency' => config('app.currency', 'USD'),
+    'locale' => config('app.locale', 'es_GT'),
+    'defaultCurrency' => config('app.currency', 'GTQ'),
     'defaultFormatter' => null,
     'defaultSerializer' => null,
     'isoCurrenciesPath' => is_dir(__DIR__.'/../vendor')
