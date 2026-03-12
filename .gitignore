@@ -24,4 +24,14 @@ yarn-error.log
 
 # QxLog
 .DS_Store
+
+# Tests
+/tests
+
+# AI
+.agent
+GEMINI.md
 WARP.md
+.cursor
+.gemini
+.junie
