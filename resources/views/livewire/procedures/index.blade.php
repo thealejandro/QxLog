@@ -3,6 +3,7 @@
 use App\Models\Procedure;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Flux\Flux;
 
 use function Livewire\Volt\{state, computed, mount};
 
@@ -12,6 +13,7 @@ state([
     'instrumentist_id' => '',
     'date_from' => '',
     'date_to' => '',
+    'procedure_to_delete' => null,
 ]);
 
 mount(function () {
@@ -84,8 +86,17 @@ $ruleColor = function (?string $rule) {
     };
 };
 
-$delete = function (Procedure $procedure) {
-    $procedure->delete();
+$confirmDelete = function (int $id) {
+    $this->procedure_to_delete = $id;
+    Flux::modal('confirm-procedure-deletion')->show();
+};
+
+$delete = function () {
+    if ($this->procedure_to_delete) {
+        Procedure::findOrFail($this->procedure_to_delete)->delete();
+        $this->procedure_to_delete = null;
+        Flux::modal('confirm-procedure-deletion')->close();
+    }
 };
 
 ?>
@@ -205,8 +216,7 @@ $delete = function (Procedure $procedure) {
                                         {{ __('Edit') }}
                                     </flux:menu.item>
                                     <flux:menu.separator />
-                                    <flux:menu.item icon="trash" variant="danger" wire:click="delete({{ $p->id }})"
-                                        wire:confirm="{{ __('Are you sure you want to delete this procedure?') }}">
+                                    <flux:menu.item icon="trash" variant="danger" wire:click="confirmDelete({{ $p->id }})">
                                         {{ __('Delete') }}
                                     </flux:menu.item>
                                 </flux:menu>
@@ -384,9 +394,8 @@ $delete = function (Procedure $procedure) {
                                             class="inline-flex items-center gap-1.5 text-sm text-indigo-500 dark:text-indigo-500 hover:text-indigo-900 dark:hover:text-indigo-900 transition-colors">
                                             <flux:icon name="pencil" size="sm" />
                                         </a>
-                                        <button type="button" wire:click="delete({{ $p->id }})"
-                                            wire:confirm="{{ __('Are you sure you want to delete this procedure?') }}"
-                                            class="inline-flex items-center gap-1.5 text-sm text-red-500 dark:text-red-500 hover:text-red-900 dark:hover:text-red-900 transition-colors">
+                                        <button type="button" wire:click="confirmDelete({{ $p->id }})"
+                                            class="inline-flex items-center gap-1.5 text-sm text-red-500 dark:text-red-500 hover:text-red-900 dark:hover:text-red-900 transition-colors cursor-pointer">
                                             <flux:icon name="trash" size="sm" />
                                         </button>
                                     </div>
@@ -404,4 +413,33 @@ $delete = function (Procedure $procedure) {
             </table>
         </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    <flux:modal name="confirm-procedure-deletion" class="max-w-lg">
+        <form wire:submit="delete" class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('Delete Procedure') }}</flux:heading>
+                <flux:text>
+                    {{ __('Are you sure you want to delete this procedure?') }}
+                </flux:text>
+                <br>
+                <flux:text>
+                    {{ __('This action cannot be undone, although it will be kept in the database history.') }}
+                </flux:text>
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <flux:spacer />
+
+                <flux:modal.close>
+                    <flux:button wire:loading.attr="disabled" class="cursor-pointer" variant="filled">{{ __('Cancel') }}
+                    </flux:button>
+                </flux:modal.close>
+
+                <flux:button wire:loading.attr="disabled" class="cursor-pointer" variant="danger" type="submit">
+                    {{ __('Delete') }}
+                </flux:button>
+            </div>
+        </form>
+    </flux:modal>
 </div>
