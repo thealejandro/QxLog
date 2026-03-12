@@ -81,6 +81,7 @@ $ruleColor = function (?string $rule) {
         'night_rate' => 'rose',
         'long_case_rate' => 'amber',
         default => 'zinc',
+    };
 };
 
 $delete = function (Procedure $procedure) {
@@ -204,7 +205,8 @@ $delete = function (Procedure $procedure) {
                                         {{ __('Edit') }}
                                     </flux:menu.item>
                                     <flux:menu.separator />
-                                    <flux:menu.item icon="trash" variant="danger" wire:click="delete({{ $p->id }})" wire:confirm="{{ __('Are you sure you want to delete this procedure?') }}">
+                                    <flux:menu.item icon="trash" variant="danger" wire:click="delete({{ $p->id }})"
+                                        wire:confirm="{{ __('Are you sure you want to delete this procedure?') }}">
                                         {{ __('Delete') }}
                                     </flux:menu.item>
                                 </flux:menu>
@@ -382,7 +384,8 @@ $delete = function (Procedure $procedure) {
                                             class="inline-flex items-center gap-1.5 text-sm text-indigo-500 dark:text-indigo-500 hover:text-indigo-900 dark:hover:text-indigo-900 transition-colors">
                                             <flux:icon name="pencil" size="sm" />
                                         </a>
-                                        <button type="button" wire:click="delete({{ $p->id }})" wire:confirm="{{ __('Are you sure you want to delete this procedure?') }}"
+                                        <button type="button" wire:click="delete({{ $p->id }})"
+                                            wire:confirm="{{ __('Are you sure you want to delete this procedure?') }}"
                                             class="inline-flex items-center gap-1.5 text-sm text-red-500 dark:text-red-500 hover:text-red-900 dark:hover:text-red-900 transition-colors">
                                             <flux:icon name="trash" size="sm" />
                                         </button>
