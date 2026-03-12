@@ -99,14 +99,14 @@ $amount_preview = computed(function () {
     if (!is_int($mins) || $mins <= 0)
         return null;
 
-        $pricing = app(PricingService::class)->calculate(
-            instrumentist: $user,
-            isVideosurgery: (bool) $this->is_videosurgery,
-            isCourtesy: (bool) $this->is_courtesy,
-            durationMinutes: $mins,
-            startTimeHHMM: $this->start_time,
-            endTimeHHMM: $this->end_time,
-        );
+    $pricing = app(PricingService::class)->calculate(
+        instrumentist: $user,
+        isVideosurgery: (bool) $this->is_videosurgery,
+        isCourtesy: (bool) $this->is_courtesy,
+        durationMinutes: $mins,
+        startTimeHHMM: $this->start_time,
+        endTimeHHMM: $this->end_time,
+    );
 
     return $pricing['amount'] ?? null;
 });
@@ -329,7 +329,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
 
 ?>
 
-<div class="max-w-4xl mx-auto p-4 space-y-6">
+<div class="max-w-6xl mx-auto p-4 space-y-6">
     <div class="mb-4">
         <flux:heading size="xl">{{ __('Register Procedure') }}</flux:heading>
         <flux:subheading>QxLog • Registro de intervenciones quirúrgicas • (Instrumentista)</flux:subheading>
@@ -528,7 +528,9 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                 </div>
             </div>
 
-            <flux:button wire:click="save" wire:target="save" wire:loading.class="opacity-50 cursor-not-allowed" wire:loading.class.remove="opacity-50 cursor-not-allowed" color="indigo" loading="save" variant="primary" class="w-full font-bold sm:w-1/3 cursor-pointer uppercase">
+            <flux:button wire:click="save" wire:target="save" wire:loading.class="opacity-50 cursor-not-allowed"
+                wire:loading.class.remove="opacity-50 cursor-not-allowed" color="indigo" loading="save"
+                variant="primary" class="w-full font-bold sm:w-1/3 cursor-pointer uppercase">
                 {{ __('Save') }}
             </flux:button>
         </div>
@@ -578,7 +580,12 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                             </th>
                             <th class="px-6 py-4 font-medium text-left">
                                 <flux:label for="procedure_id">
-                                    {{ __('Surgery') }}
+                                    {{ __('Procedure') }}
+                                </flux:label>
+                            </th>
+                            <th class="px-6 py-4 font-medium text-left">
+                                <flux:label for="rule">
+                                    {{ __('Rule') }}
                                 </flux:label>
                             </th>
                             <th class="px-6 py-4 font-medium text-right">
@@ -589,7 +596,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                         </tr>
                     </thead>
                     <tbody
-                        class="divide-y divide-indigo-200 dark:divide-zinc-700 whitespace-nowrap text-zinc-600 dark:text-zinc-300 transition-colors">
+                        class="divide-y divide-indigo-200 dark:divide-zinc-700 whitespace-nowrap text-zinc-600 dark:text-zinc-400 transition-colors">
                         @forelse($this->pending_procedures as $p)
                             <tr class=" hover:bg-indigo-50 dark:hover:bg-indigo-800/30 transition-colors">
                                 <td class="px-6 py-3 font-medium text-left">
@@ -611,24 +618,24 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                                         </div>
                                     </td>
                                 @endif
-                                <td class="px-6 py-3 text-left">
-                                    {{ $p->patient_name }}
+                                <td class="px-6 py-3 text-left capitalize font-bold text-zinc-600 dark:text-zinc-200/90">
+                                    {{ strtolower($p->patient_name) }}
                                 </td>
-                                <td class="px-6 py-3 whitespace-nowrap items-center text-left">
-                                    <div class="flex flex-row items-center justify-between">
-                                        {{ $p->procedure_type }}
-                                        @if (Auth::user()->use_pay_scheme)
-                                            <x-procedure-rule-badge :rule="data_get($p, 'pricing_snapshot.rule')"
-                                                :videosurgery="$p->is_videosurgery" />
-                                        @else
-                                            @if ($p->is_videosurgery)
-                                                <flux:badge color="indigo" size="sm">{{ __('Video') }}</flux:badge>
-                                            @endif
-                                            @if (data_get($p, 'pricing_snapshot.is_courtesy'))
-                                                <flux:badge color="lime" size="sm">{{ __('Courtesy') }}</flux:badge>
-                                            @endif
+                                <td class="px-6 py-3 truncate capitalize max-w-35">
+                                    {{ strtolower($p->procedure_type) }}
+                                </td>
+                                <td class="px-6 py-3">
+                                    @if (Auth::user()->use_pay_scheme)
+                                        <x-procedure-rule-badge :rule="data_get($p, 'pricing_snapshot.rule')"
+                                            :videosurgery="$p->is_videosurgery" />
+                                    @else
+                                        @if ($p->is_videosurgery)
+                                            <flux:badge color="indigo" size="sm">{{ __('Video') }}</flux:badge>
                                         @endif
-                                    </div>
+                                        @if (data_get($p, 'pricing_snapshot.is_courtesy'))
+                                            <flux:badge color="lime" size="sm">{{ __('Courtesy') }}</flux:badge>
+                                        @endif
+                                    @endif
                                 </td>
                                 <td class="px-6 py-3 text-right font-bold text-zinc-600 dark:text-zinc-200/90">
                                     Q{{ number_format((float) $p->calculated_amount, 2) }}
@@ -659,7 +666,7 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                                 <div class="font-medium text-zinc-900 dark:text-zinc-100">
                                     {{ $p->patient_name }}
                                 </div>
-                                <div class="text-sm text-zinc-500 dark:text-zinc-400 truncate">
+                                <div class="text-sm text-zinc-500 dark:text-zinc-400">
                                     {{ $p->procedure_type }}
                                 </div>
                             </div>
@@ -697,10 +704,10 @@ updated(['doctor_query' => $searchDoctor, 'circulating_query' => $searchCirculat
                                 <x-procedure-rule-badge :rule="data_get($p, 'pricing_snapshot.rule')"
                                     :videosurgery="$p->is_videosurgery" />
                             </div>
-                            @else
-                                @if (data_get($p, 'pricing_snapshot.is_courtesy'))
-                                    <flux:badge color="lime" size="sm">{{ __('Courtesy') }}</flux:badge>
-                                @endif
+                        @else
+                            @if (data_get($p, 'pricing_snapshot.is_courtesy'))
+                                <flux:badge color="lime" size="sm">{{ __('Courtesy') }}</flux:badge>
+                            @endif
                         @endif
                     </div>
                 @empty
