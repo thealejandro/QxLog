@@ -179,8 +179,8 @@ $ruleColor = function (?string $rule) {
                     class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-900 shadow-sm space-y-3">
                     <div class="flex justify-between items-start">
                         <div>
-                            <div class="font-medium text-zinc-900 dark:text-zinc-100 text-lg">
-                                {{ $p->patient_name }}
+                            <div class="font-medium text-zinc-900 dark:text-zinc-100 text-lg capitalize">
+                                {{ strtolower($p->patient_name) }}
                             </div>
                             <div class="text-xs text-zinc-400 font-mono">
                                 {{ $p->procedure_type }}
@@ -326,18 +326,18 @@ $ruleColor = function (?string $rule) {
                         @php
                             $rule = data_get($p->pricing_snapshot, 'rule', 'default_rate');
                         @endphp
-                        <tr
-                            class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors text-zinc-600 dark:text-zinc-300">
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                             <td class="px-4 py-3 whitespace-nowrap text-sm">
                                 {{ $p->procedure_date->format('d/m/Y') }}
                             </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                                {{ $p->patient_name }}
+                            <td
+                                class="px-4 py-3 text-pretty max-w-3xs capitalize text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                                {{ strtolower($p->patient_name) }}
                             </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm">
+                            <td class="px-4 py-3 text-sm truncate max-w-50" title="{{ $p->procedure_type }}">
                                 {{ $p->procedure_type }}
                             </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm">
+                            <td class="px-4 py-3 truncate text-sm">
                                 {{ $p->instrumentist->name ?? '—' }}
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-center">
@@ -361,12 +361,11 @@ $ruleColor = function (?string $rule) {
                                     </div>
                                 </div>
                             </td>
-                            <td
-                                class="px-4 py-3 whitespace-nowrap text-right text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                            <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-bold">
                                 Q{{ number_format((float) $p->calculated_amount, 2) }}
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-center">
-                                <flux:badge size="sm" color="{{ $p->status === 'paid' ? 'green' : 'zinc' }}">
+                                <flux:badge size="sm" color="{{ $p->status === 'paid' ? 'green' : 'orange' }}">
                                     {{ __($p->status) }}
                                 </flux:badge>
                             </td>

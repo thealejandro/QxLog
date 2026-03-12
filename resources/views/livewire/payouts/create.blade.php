@@ -230,8 +230,9 @@ $liquidate = function () {
 
                 {{-- Desktop Table --}}
                 <div class="hidden md:block overflow-x-auto overflow-y-auto">
-                    <table class="min-w-full text-sm divide-y divide-zinc-200 dark:divide-zinc-700">
-                        <thead class="bg-zinc-50 dark:bg-zinc-800 text-center text-zinc-500 dark:text-zinc-400">
+                    <table
+                        class="min-w-full text-sm divide-y divide-zinc-200 dark:divide-zinc-700 text-zinc-500 dark:text-zinc-400">
+                        <thead class="bg-zinc-50 dark:bg-zinc-800 text-center">
                             <tr>
                                 <th class="px-4 py-3 font-medium text-left">
                                     <flux:checkbox wire:click="toggleAll" />
@@ -268,27 +269,25 @@ $liquidate = function () {
                                 </th>
                             </tr>
                         </thead>
-
                         <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700 bg-white dark:bg-zinc-900">
                             @forelse($this->pending_procedures as $p)
-                                <tr
-                                    class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors text-sm whitespace-nowrap">
+                                <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors text-sm">
                                     <td class="px-4 py-3">
                                         <flux:checkbox wire:model.live="selected" value="{{ $p->id }}" />
                                     </td>
-                                    <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">
+                                    <td class="px-4 py-3">
                                         {{ $p->procedure_date->format('d/m/Y') }}
                                     </td>
-                                    <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300 whitespace-nowrap text-center">
+                                    <td class="px-4 py-3 whitespace-nowrap text-center">
                                         <div class="flex flex-row justify-between items-center">
                                             <div class="flex flex-col items-center">
                                                 <div>
                                                     {{ $p->duration_minutes }}
-                                                    <span class="text-xs text-zinc-500 dark:text-zinc-400">
+                                                    <span class="text-xs">
                                                         {{ __('min') }}
                                                     </span>
                                                 </div>
-                                                <span class="text-xs text-zinc-500 dark:text-zinc-400">
+                                                <span class="text-xs">
                                                     {{ Carbon\Carbon::parse($p->start_time)->format('H:i') }}
                                                     -
                                                     {{ Carbon\Carbon::parse($p->end_time)->format('H:i') }}
@@ -300,13 +299,13 @@ $liquidate = function () {
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">
-                                        {{ $p->patient_name }}
+                                    <td class="px-4 py-3 font-medium capitalize text-zinc-900 dark:text-zinc-100">
+                                        {{ strtolower($p->patient_name) }}
                                     </td>
-                                    <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">
+                                    <td class="px-4 py-3 truncate max-w-45" title="{{ $p->procedure_type }}">
                                         {{ $p->procedure_type }}
                                     </td>
-                                    <td class="px-4 py-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                                    <td class="px-4 py-3 text-right font-bold">
                                         Q{{ number_format((float) $p->calculated_amount, 2) }}
                                     </td>
                                 </tr>

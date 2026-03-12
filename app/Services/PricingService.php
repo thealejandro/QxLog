@@ -41,6 +41,7 @@ class PricingService
             'video_rate' => (float) $settings->video_rate,
             'night_rate' => (float) $settings->night_rate,
             'long_case_rate' => (float) $settings->long_case_rate,
+            'courtesy_rate' => (float) 0.00,
         ];
 
         $thresholds = [
@@ -76,7 +77,7 @@ class PricingService
 
         // Regla 4: cortesía
         if ($isCourtesy) {
-            $candidates['courtesy'] = (float) 0.00;
+            $candidates['courtesy_rate'] = (float) 0.00;
         }
 
         // Determinar monto y regla a aplicar
@@ -84,7 +85,7 @@ class PricingService
             // Escoger el candidato con el mayor monto
             if ($isCourtesy) {
                 $amount = 0.00;
-                $rule = 'courtesy';
+                $rule = 'courtesy_rate';
             } else {
                 foreach ($candidates as $candidateRule => $candidateAmount) {
                     if ($candidateAmount > $amount) {

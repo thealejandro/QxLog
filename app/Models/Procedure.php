@@ -2,13 +2,52 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Procedure extends Model
 {
     use HasFactory;
+
+    /**
+     * Estandarizar textos a Title Case al guardar.
+     */
+    protected function patientName(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value) => $value ? ucwords(strtolower($value)) : null,
+        );
+    }
+
+    protected function procedureType(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value) => $value ? ucwords(strtolower($value)) : null,
+        );
+    }
+
+    protected function instrumentistName(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value) => $value ? ucwords(strtolower($value)) : null,
+        );
+    }
+
+    protected function doctorName(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value) => $value ? ucwords(strtolower($value)) : null,
+        );
+    }
+
+    protected function circulatingName(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value) => $value ? ucwords(strtolower($value)) : null,
+        );
+    }
+
     protected $fillable = [
         'procedure_date',
         'start_time',
@@ -55,5 +94,4 @@ class Procedure extends Model
     {
         return $this->belongsTo(User::class);
     }
-
 }

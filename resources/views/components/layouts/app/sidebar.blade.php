@@ -5,17 +5,18 @@
     @include('partials.head')
 </head>
 
-<body class="min-h-screen bg-white dark:bg-zinc-950">
-    <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-indigo-50 dark:border-zinc-800 dark:bg-zinc-700">
-        <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
+<body class="min-h-screen bg-slate-50 dark:bg-zinc-950">
+    <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-indigo-100 dark:border-zinc-800 dark:bg-zinc-700">
+        <flux:sidebar.toggle
+            class="lg:hidden ml-2 bg-indigo-400 dark:bg-indigo-400 border border-indigo-600 dark:border-indigo-600 rounded-lg"
+            icon="x-mark" inset="left" />
 
-
-        <flux:brand href="{{ route('dashboard') }}" name="QxLog" class="me-5 flex items-center rtl:space-x-reverse"
-            wire:navigate>
-            <x-slot name="logo" class="bg-accent text-accent-foreground">
-                <i class="font-serif font-bold">A</i>
+        <flux:sidebar.brand href="{{ route('dashboard') }}" name="{{ config('app.name') }}"
+            class="flex items-center rtl:space-x-reverse" wire:navigate>
+            <x-slot name="logo" class="bg-accent text-accent-foreground border-indigo-600 dark:border-indigo-600">
+                <i class="font-serif font-bold text-lg">A</i>
             </x-slot>
-        </flux:brand>
+        </flux:sidebar.brand>
 
         <flux:navlist variant="outline">
             @if(auth()->user()->role !== "admin" && auth()->check())
@@ -151,7 +152,7 @@
     <!-- Mobile User Menu -->
     <flux:header class="lg:hidden">
         <flux:sidebar.toggle
-            class="lg:hidden ml-2 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg"
+            class="lg:hidden ml-2 bg-indigo-400 dark:bg-indigo-400 border border-indigo-600 dark:border-indigo-600 rounded-lg"
             icon="bars-3" inset="left" />
 
         <flux:spacer />

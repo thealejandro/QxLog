@@ -19,34 +19,44 @@ class ProcedureRuleBadge extends Component
 
     public function badge(): array
     {
-        if ($this->videosurgery) {
-            return [
-                'label' => __('Video'),
-                'color' => 'blue',
-                'tooltip' => __('Video surgery procedure'),
-            ];
-        }
+        // if ($this->videosurgery) {
+        //     return [
+        //         'label' => __('Video'),
+        //         'color' => 'blue',
+        //         'tooltip' => __('Video surgery procedure'),
+        //     ];
+        // }
 
         return match ($this->rule) {
             'default_rate' => [
                 'label' => __('Standard'),
                 'color' => 'indigo',
-                'tooltip' => __('Standard'),
+                'tooltip' => __('Standard procedure'),
             ],
             'night_rate' => [
                 'label' => __('Night'),
                 'color' => 'violet',
-                'tooltip' => __('Night'),
+                'tooltip' => __('Night procedure'),
             ],
             'long_case_rate' => [
                 'label' => __('Long'),
                 'color' => 'yellow',
-                'tooltip' => __('Long'),
+                'tooltip' => __('Long procedure'),
+            ],
+            'courtesy_rate' => [
+                'label' => __('Courtesy'),
+                'color' => 'emerald',
+                'tooltip' => __('Courtesy procedure'),
+            ],
+            'video_rate' => [
+                'label' => __('Video'),
+                'color' => 'blue',
+                'tooltip' => __('Video procedure'),
             ],
             default => [
                 'label' => __('Standard'),
                 'color' => 'indigo',
-                'tooltip' => __('Standard'),
+                'tooltip' => __('Standard procedure'),
             ],
         };
     }
