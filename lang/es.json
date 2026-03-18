@@ -276,5 +276,20 @@
     "Procedure Duration": "Duración del Procedimiento",
     "Procedure Duration (minutes)": "Duración del Procedimiento (minutos)",
     "Procedure Duration (hours)": "Duración del Procedimiento (horas)",
-    "Return": "Volver"
+    "Return": "Volver",
+    "Procedure Rules": "Reglas de Procedimiento",
+    "Procedure Rule": "Regla de Procedimiento",
+    "Rule": "Regla",
+    "Special Scheme": "Esquema Especial",
+    "Night Rate": "Madrugada",
+    "Threshold": "Umbral",
+    "Minutes": "Minutos",
+    "Hours": "Horas",
+    "No rules": "No hay reglas",
+    "Select a doctor": "Selecciona un médico",
+    "Select a circulating": "Selecciona un circulante",
+    "Select a doctor or write the name.": "Selecciona un médico o escribe el nombre.",
+    "Select a circulating or write the name.": "Selecciona un circulante o escribe el nombre.",
+    "Select a doctor or write the name": "Selecciona un médico o escribe el nombre",
+    "Select a circulating or write the name": "Selecciona un circulante o escribe el nombre"
 }
