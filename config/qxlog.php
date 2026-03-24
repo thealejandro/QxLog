@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'version' => '1.0.0',
+    'version' => '2.0.0',
 
     'voucher_legend' => env('QXLOG_VOUCHER_LEGEND', 'Por honorarios correspondientes a servicios prestados en procedimientos quirúrgicos.'),
     'org_name' => env('QXLOG_ORG_NAME', 'Mi Hospital'),
 
     'default_rate' => (float) env('QXLOG_DEFAULT_RATE', 200.00),
 
-    //Condiciones de pago
+    // Condiciones de pago
     'conditions_payment' => [
         'cash' => 'Efectivo',
         'check' => 'Cheque',
@@ -16,7 +16,7 @@ return [
         'other' => 'Otro',
     ],
 
-    //Roles quirúrgicos
+    // Roles quirúrgicos
     'roles' => [
         'surgeon' => 'Cirujano Principal',
         'assistant' => 'Ayudante',
